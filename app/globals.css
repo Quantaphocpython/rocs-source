@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "PixelFont";
+  src: url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+}
+
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -24,8 +29,8 @@
     --card-foreground: 0 0% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 0 72.2% 50.6%;
+    --primary-foreground: 0 85.7% 97.3%;
     --secondary: 0 0% 96.1%;
     --secondary-foreground: 0 0% 9%;
     --muted: 0 0% 96.1%;
@@ -42,33 +47,28 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-    --radius: 0.5rem;
+    --radius: 0;
   }
   .dark {
-    --background: 0 0% 3.9%;
+    --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
+    --card: 240 10% 3.9%;
     --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
+    --popover: 240 10% 3.9%;
     --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
+    --primary: 0 72.2% 50.6%;
+    --primary-foreground: 0 85.7% 97.3%;
+    --secondary: 240 3.7% 15.9%;
     --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
   }
 }
 
@@ -78,5 +78,126 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: "PixelFont", monospace;
+    image-rendering: pixelated;
+  }
+}
+
+@layer components {
+  .pixel-border {
+    @apply border-4 border-black relative;
+    box-shadow: -4px -4px 0 0 theme("colors.gray.700"),
+      4px 4px 0 0 theme("colors.gray.300");
+  }
+
+  .pixel-card {
+    @apply bg-white p-4 pixel-border;
+    background-image: linear-gradient(45deg, #e5e5e5 25%, transparent 25%),
+      linear-gradient(-45deg, #e5e5e5 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #e5e5e5 75%),
+      linear-gradient(-45deg, transparent 75%, #e5e5e5 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+  }
+
+  .pixel-button {
+    @apply px-4 py-2 bg-primary text-primary-foreground pixel-border transition-all;
+  }
+
+  .pixel-button:hover {
+    @apply translate-y-0.5;
+    box-shadow: -2px -2px 0 0 theme("colors.gray.700"),
+      2px 2px 0 0 theme("colors.gray.300");
+  }
+
+  .pixel-button:active {
+    @apply translate-y-1;
+    box-shadow: -1px -1px 0 0 theme("colors.gray.700"),
+      1px 1px 0 0 theme("colors.gray.300");
+  }
+
+  .pixel-stats {
+    @apply flex items-center gap-2 bg-white px-3 py-2 pixel-border;
+  }
+
+  .pixel-icon {
+    image-rendering: pixelated;
+    transform: scale(1.2);
+  }
+
+  .game-card {
+    @apply relative w-64 h-96 transition-transform cursor-pointer;
+    perspective: 1000px;
+  }
+
+  .game-card.disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
+
+  .game-card.selected {
+    @apply ring-4 ring-primary;
+    transform: translateY(-10px);
+  }
+
+  .card-frame {
+    @apply w-full h-full relative rounded-lg overflow-hidden;
+    background: linear-gradient(45deg, #d4af37, #f4e5a9, #d4af37);
+    border: 12px solid #d4af37;
+    box-shadow: 0 0 0 2px #000, inset 0 0 0 2px #000;
+  }
+
+  .card-name-box {
+    @apply absolute top-0 left-0 right-0 h-12 bg-gradient-to-r from-yellow-700 to-yellow-500 flex items-center px-4;
+    border-bottom: 2px solid #000;
+  }
+
+  .card-name {
+    @apply text-white font-bold text-lg truncate;
+    text-shadow: 2px 2px 0 #000;
+  }
+
+  .card-image-box {
+    @apply w-full h-40 mt-12 relative;
+    border: 2px solid #000;
+    background: linear-gradient(45deg, #666, #999);
+  }
+
+  .card-image {
+    @apply w-full h-full object-cover;
+  }
+
+  .card-class-box {
+    @apply absolute top-2 right-2 flex gap-1;
+  }
+
+  .card-class-icon {
+    @apply w-8 h-8 rounded-full flex items-center justify-center shadow-md;
+    border: 2px solid #000;
+  }
+
+  .card-effects-box {
+    @apply p-2 mt-2 h-24 bg-gradient-to-b from-stone-200 to-stone-300 overflow-y-auto text-xs;
+    border: 2px solid #000;
+  }
+
+  .card-effect-title {
+    @apply font-bold text-sm mb-1;
+  }
+
+  .card-stats-box {
+    @apply absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-r from-yellow-700 to-yellow-500 flex items-center justify-between px-4;
+    border-top: 2px solid #000;
+  }
+
+  .card-stat {
+    @apply flex items-center gap-1 bg-black/30 px-2 py-1 rounded text-white;
+  }
+
+  .card-stat-icon {
+    @apply w-4 h-4;
+  }
+
+  .card-stat-value {
+    @apply font-bold;
   }
 }
