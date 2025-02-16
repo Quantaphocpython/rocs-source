@@ -7,10 +7,9 @@ import { Heart, Shield, Sword } from "lucide-react";
 import { toast } from "sonner";
 import { PlayerStats } from "./game/player-stats";
 import { MonsterDisplay } from "./game/monster-display";
-import { PlayArea } from "./game/play-area";
-import { BattleHistory } from "./game/battle-history";
 import { DeckBuilder } from "./game/deck-builder";
 import { GameCard as GameCardComponent } from "./ui/game-card";
+import { Button } from "./ui/button";
 
 const DECK_SIZE = 13;
 const INITIAL_HAND_SIZE = 5;
@@ -24,7 +23,6 @@ export function GameBoard() {
   const [availableCards, setAvailableCards] = useState<Card[]>([]);
   const [remainingDeck, setRemainingDeck] = useState<Card[]>([]);
 
-  // Initialize available cards
   useEffect(() => {
     const shuffledCards = [...cardPool]
       .sort(() => Math.random() - 0.5)
@@ -75,10 +73,7 @@ export function GameBoard() {
   };
 
   const startGame = (selectedDeck: Card[]) => {
-    // Shuffle the deck
     const shuffledDeck = [...selectedDeck].sort(() => Math.random() - 0.5);
-    
-    // Split into initial hand and remaining deck
     const initialHand = shuffledDeck.slice(0, INITIAL_HAND_SIZE);
     const remaining = shuffledDeck.slice(INITIAL_HAND_SIZE);
 
@@ -89,7 +84,7 @@ export function GameBoard() {
         currentHealth: card.health
       }))
     }));
-    
+
     setRemainingDeck(remaining);
     setIsDeckBuilding(false);
   };
@@ -155,12 +150,11 @@ export function GameBoard() {
 
   const endTurn = () => {
     if (!isPlayerTurn) return;
-    drawCard(); // Draw a card at the end of turn
+    drawCard();
     setIsPlayerTurn(false);
     setSelectedCard(null);
   };
 
-  // Monster's turn
   useEffect(() => {
     if (isPlayerTurn || isDeckBuilding) return;
 
@@ -178,7 +172,7 @@ export function GameBoard() {
         }
 
         const monsterHealthAfterThorns = Math.max(0, prev.currentMonster.health - thornsDamage);
-        
+
         const monsterAttack = prev.currentMonster.attack;
         let finalDamage = monsterAttack;
         let healAmount = 0;
@@ -202,7 +196,7 @@ export function GameBoard() {
             icon: <Sword className="w-4 h-4 text-red-500" />,
           });
         }
-        
+
         const newPlayerHealth = Math.max(0, prev.playerHealth - finalDamage);
         const newMonsterHealth = Math.min(prev.currentMonster.health + healAmount, 60);
         const newStamina = Math.min(5, prev.playerStamina + 1);
@@ -232,7 +226,6 @@ export function GameBoard() {
     return () => clearTimeout(monsterTurn);
   }, [isPlayerTurn, isDeckBuilding]);
 
-  // Check win/lose conditions
   useEffect(() => {
     if (isDeckBuilding) return;
 
@@ -266,55 +259,97 @@ export function GameBoard() {
   }
 
   return (
-    <div className="h-screen max-h-[1080px] w-full max-w-[1920px] mx-auto bg-gray-100 flex flex-col">
-      {/* Boss Area (15% height) */}
-      <div className="h-[15%] p-4 bg-gradient-to-b from-gray-800 to-gray-900">
-        <div className="h-full flex items-center justify-between">
-          <div className="text-white text-2xl font-bold">
+    <div className="h-screen w-full max-w-[1920px] mx-auto bg-black flex flex-col">
+      {/* Header Area (20%) */}
+      <div className="h-[20%] relative bg-gray-900 p-4">
+        {/* Turn Indicator */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 px-4 py-1 bg-black border-x border-b border-gray-800">
+          <div className="text-sm font-medium text-white">
             {isPlayerTurn ? "Your Turn" : "Monster's Turn"}
           </div>
-          <MonsterDisplay
-            health={gameState.currentMonster.health}
-            attack={gameState.currentMonster.attack}
-          />
+        </div>
+
+        {/* Stats Container */}
+        <div className="h-full flex items-center justify-between">
           <PlayerStats
             health={gameState.playerHealth}
             stamina={gameState.playerStamina}
             stage={gameState.currentStage}
           />
+          <MonsterDisplay
+            health={gameState.currentMonster.health}
+            attack={gameState.currentMonster.attack}
+          />
         </div>
       </div>
 
-      {/* Field Area (65% height) */}
-      <div className="h-[65%] p-4 bg-gradient-to-b from-gray-100 to-gray-200 overflow-hidden">
-        <PlayArea
-          deck={gameState.deck}
-          cardsOnField={gameState.cardsOnField}
-          isPlayerTurn={isPlayerTurn}
-          playerStamina={gameState.playerStamina}
-          selectedCard={selectedCard}
-          onCardSelect={setSelectedCard}
-          onPlayCard={() => selectedCard !== null && playCard(selectedCard)}
-          onEndTurn={endTurn}
-        />
+      {/* Battle Field (60%) */}
+      <div className="h-[60%] bg-gray-900 relative">
+        {/* Field Background */}
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1624559888077-1a829f93c9f8?q=80&w=1920&auto=format&fit=crop')] bg-cover bg-center opacity-10" />
+
+        {/* Field Grid Lines */}
+        <div className="absolute inset-0 grid grid-cols-5 grid-rows-2 gap-0.5 p-4 pointer-events-none">
+          {[...Array(10)].map((_, i) => (
+            <div key={i} className="border border-white/5 rounded-sm" />
+          ))}
+        </div>
+
+        {/* Field Content */}
+        <div className="relative h-full flex flex-col p-4">
+          {/* Cards Area */}
+          <div className="flex-1 grid grid-cols-5 gap-4 p-4">
+            {gameState.cardsOnField.map((card, index) => (
+              <div
+                key={`field-${index}`}
+                className="flex items-center justify-center"
+              >
+                <div className="transform transition-all duration-300 hover:scale-105">
+                  <GameCardComponent
+                    card={card}
+                    disabled={true}
+                    size="small"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex justify-end gap-2 p-4 bg-black/30 border-t border-white/10">
+            <Button
+              className="bg-blue-900 hover:bg-blue-800 text-white text-sm px-4 py-2 border border-blue-800 transition-colors"
+              disabled={!isPlayerTurn || selectedCard === null}
+              onClick={() => selectedCard !== null && playCard(selectedCard)}
+            >
+              Play Card
+            </Button>
+            <Button
+              className="bg-red-900 hover:bg-red-800 text-white text-sm px-4 py-2 border border-red-800 transition-colors"
+              disabled={!isPlayerTurn}
+              onClick={endTurn}
+            >
+              End Turn
+            </Button>
+          </div>
+        </div>
       </div>
 
-      {/* Hand Area (20% height) */}
-      <div className="h-[20%] p-4 bg-gradient-to-b from-gray-800 to-gray-900">
-        <div className="h-full flex items-center justify-center gap-4">
+      {/* Hand Area (20%) */}
+      <div className="h-[20%] bg-gray-900 p-4 border-t border-gray-800">
+        <div className="h-full flex items-center justify-center gap-2">
           {gameState.deck.map((card, index) => (
             <div
               key={`hand-${index}`}
-              className={`transform transition-all duration-300 hover:translate-y-[-20px] ${
-                selectedCard === index ? 'translate-y-[-20px]' : ''
-              }`}
-              style={{ height: '90%' }}
+              className={`transform transition-all duration-300 hover:-translate-y-2 ${selectedCard === index ? '-translate-y-2' : ''
+                }`}
             >
               <GameCardComponent
                 card={card}
                 onClick={() => isPlayerTurn && setSelectedCard(index)}
                 selected={selectedCard === index}
                 disabled={!isPlayerTurn || gameState.playerStamina < card.staminaCost}
+                size="small"
               />
             </div>
           ))}
