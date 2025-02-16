@@ -1,97 +1,75 @@
 "use client";
 
-import { Card } from "@/types/game";
-import { Heart, Sword, Zap, Shield, Bomb } from "lucide-react";
+import { Card as CardType } from "@/types/game";
+import { Heart, Shield, Sword, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface GameCardProps {
-  card: Card;
+  card: CardType & { currentHealth?: number };
   onClick?: () => void;
-  selected?: boolean;
   disabled?: boolean;
+  selected?: boolean;
+  size?: "normal" | "small";
 }
 
-export function GameCard({ card, onClick, selected, disabled }: GameCardProps) {
-  const getEffectDescription = () => {
-    const effects = [];
-    
-    if (card.onAttackEffect !== 'NONE') {
-      effects.push(`Attack Effect: ${card.onAttackEffect.replace(/_/g, ' ')}`);
-    }
-    if (card.onDefenseEffect !== 'NONE') {
-      effects.push(`Defense Effect: ${card.onDefenseEffect.replace(/_/g, ' ')}`);
-    }
-    if (card.onDeadEffect !== 'NONE') {
-      effects.push(`Death Effect: ${card.onDeadEffect.replace(/_/g, ' ')}`);
-    }
-    if (card.activeSkill !== 'NONE') {
-      effects.push(`Active Skill: ${card.activeSkill.replace(/_/g, ' ')}`);
-    }
-
-    return effects;
-  };
-
-  const getClassColor = (cardClass: string) => {
-    return `class-${cardClass}`;
-  };
-
-  const getCardImage = () => {
-    // You can map card types to specific images
-    return "https://images.unsplash.com/photo-1559813089-c41a4bf0aa1b?w=300&h=200&fit=crop";
-  };
+export function GameCard({
+  card,
+  onClick,
+  disabled = false,
+  selected = false,
+  size = "normal"
+}: GameCardProps) {
+  const mainClass = cn(
+    "game-card",
+    size === "small" && "game-card-small",
+    disabled && "disabled",
+    selected && "selected"
+  );
 
   return (
-    <div
-      className={cn(
-        "game-card",
-        selected && "selected",
-        disabled && "disabled"
-      )}
-      onClick={!disabled ? onClick : undefined}
-    >
-      <div className="card-frame">
+    <div className={mainClass} onClick={disabled ? undefined : onClick}>
+      <div className={`card-frame ${card.class[0]}`}>
         <div className="card-name-box">
-          <h3 className="card-name">{card.name}</h3>
+          <div className="card-name">{card.name}</div>
         </div>
 
-        <div className="card-image-box">
-          <img
-            src={getCardImage()}
-            alt={card.name}
-            className="card-image"
-          />
-          <div className="card-class-box">
-            {card.class.map((c, i) => (
-              <div
-                key={i}
-                className={cn("card-class-icon", getClassColor(c))}
-                title={c}
-              >
-                {c[0]}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="card-effects-box">
-          <div className="card-effect-title">Effects:</div>
-          {getEffectDescription().map((effect, index) => (
-            <div key={index} className="mb-1">
-              • {effect}
+        <div className="card-class-box">
+          {card.class.map((c, i) => (
+            <div key={i} className={`card-class-icon class-${c}`}>
+              {c[0]}
             </div>
           ))}
         </div>
 
+        <div className="card-image-box">
+          {/* Card art would go here */}
+        </div>
+
+        <div className="card-effects-box">
+          <div className="card-effect-title">Effects:</div>
+          <div className="text-gray-600">
+            {card.onAttackEffect !== "NONE" && (
+              <div>• {card.onAttackEffect.replace("_", " ")}</div>
+            )}
+            {card.onDefenseEffect !== "NONE" && (
+              <div>• {card.onDefenseEffect.replace("_", " ")}</div>
+            )}
+            {card.onDeadEffect !== "NONE" && (
+              <div>• {card.onDeadEffect.replace("_", " ")}</div>
+            )}
+          </div>
+        </div>
+
         <div className="card-stats-box">
-          <div className="flex gap-2">
-            <div className="card-stat">
-              <Sword className="card-stat-icon" />
-              <span className="card-stat-value">{card.attack}</span>
-            </div>
-            <div className="card-stat">
-              <Heart className="card-stat-icon" />
-              <span className="card-stat-value">{card.health}</span>
-            </div>
+          <div className="card-stat">
+            <Sword className="card-stat-icon" />
+            <span className="card-stat-value">{card.attack}</span>
+          </div>
+          <div className="card-stat">
+            <Heart className="card-stat-icon" />
+            <span className="card-stat-value">
+              {card.currentHealth ?? card.health}
+            </span>
           </div>
           <div className="card-stat">
             <Zap className="card-stat-icon" />
