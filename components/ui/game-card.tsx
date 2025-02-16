@@ -1,7 +1,7 @@
 "use client";
 
-import { Card, Class } from "@/types/game";
-import { Heart, Sword, Zap, Shield, Bomb, Cog, Leaf, Droplet, Flame, Mountain } from "lucide-react";
+import { Card } from "@/types/game";
+import { Heart, Sword, Zap, Shield, Bomb } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface GameCardProps {
@@ -11,26 +11,10 @@ interface GameCardProps {
   disabled?: boolean;
 }
 
-const CLASS_ICONS = {
-  [Class.METAL]: Cog,
-  [Class.WOOD]: Leaf,
-  [Class.WATER]: Droplet,
-  [Class.FIRE]: Flame,
-  [Class.EARTH]: Mountain,
-};
-
-const CLASS_COLORS = {
-  [Class.METAL]: "from-gray-400 to-gray-600 text-white",
-  [Class.WOOD]: "from-green-500 to-green-700 text-white",
-  [Class.WATER]: "from-blue-400 to-blue-600 text-white",
-  [Class.FIRE]: "from-red-500 to-red-700 text-white",
-  [Class.EARTH]: "from-yellow-600 to-yellow-800 text-white",
-};
-
 export function GameCard({ card, onClick, selected, disabled }: GameCardProps) {
   const getEffectDescription = () => {
     const effects = [];
-
+    
     if (card.onAttackEffect !== 'NONE') {
       effects.push(`Attack Effect: ${card.onAttackEffect.replace(/_/g, ' ')}`);
     }
@@ -45,6 +29,10 @@ export function GameCard({ card, onClick, selected, disabled }: GameCardProps) {
     }
 
     return effects;
+  };
+
+  const getClassColor = (cardClass: string) => {
+    return `class-${cardClass}`;
   };
 
   const getCardImage = () => {
@@ -73,21 +61,15 @@ export function GameCard({ card, onClick, selected, disabled }: GameCardProps) {
             className="card-image"
           />
           <div className="card-class-box">
-            {card.class.map((classType, index) => {
-              const IconComponent = CLASS_ICONS[classType];
-              return (
-                <div
-                  key={index}
-                  className={cn(
-                    "card-class-icon bg-gradient-to-br",
-                    CLASS_COLORS[classType]
-                  )}
-                  title={classType}
-                >
-                  <IconComponent className="w-4 h-4" />
-                </div>
-              );
-            })}
+            {card.class.map((c, i) => (
+              <div
+                key={i}
+                className={cn("card-class-icon", getClassColor(c))}
+                title={c}
+              >
+                {c[0]}
+              </div>
+            ))}
           </div>
         </div>
 

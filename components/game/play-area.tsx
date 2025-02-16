@@ -26,45 +26,34 @@ export function PlayArea({
   onEndTurn,
 }: PlayAreaProps) {
   return (
-    <div className="space-y-8">
-      <div className="bg-card p-6 rounded-lg">
-        <h2 className="text-2xl font-bold mb-4">Cards on Field</h2>
-        <div className="flex gap-4 flex-wrap">
-          {cardsOnField.map((card, index) => (
-            <GameCardComponent
-              key={`field-${index}`}
-              card={card}
-              disabled={true}
-            />
-          ))}
+    <div className="h-full flex flex-col">
+      {/* Field Cards */}
+      <div className="flex-1 relative">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="flex gap-4 flex-wrap justify-center">
+            {cardsOnField.map((card, index) => (
+              <div key={`field-${index}`} style={{ height: '280px' }}>
+                <GameCardComponent
+                  card={card}
+                  disabled={true}
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
-      <div className="bg-card p-6 rounded-lg">
-        <h2 className="text-2xl font-bold mb-4">Your Hand</h2>
-        <div className="flex gap-4 flex-wrap">
-          {deck.map((card, index) => (
-            <GameCardComponent
-              key={`hand-${index}`}
-              card={card}
-              onClick={() => isPlayerTurn && onCardSelect(index)}
-              selected={selectedCard === index}
-              disabled={!isPlayerTurn || playerStamina < card.staminaCost}
-            />
-          ))}
-        </div>
-      </div>
-
-      <div className="flex justify-end gap-4">
+      {/* Action Buttons */}
+      <div className="flex justify-end gap-4 mt-4">
         <Button
-          variant="default"
+          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg transition-colors"
           disabled={!isPlayerTurn || selectedCard === null}
           onClick={onPlayCard}
         >
           Play Selected Card
         </Button>
         <Button 
-          variant="destructive" 
+          className="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-2 rounded-lg transition-colors"
           disabled={!isPlayerTurn}
           onClick={onEndTurn}
         >
