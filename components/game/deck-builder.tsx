@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Card } from "@/types/game";
 import { Button } from "../ui/button";
 import { GameCard as GameCardComponent } from "../ui/game-card";
+import { CardDetails } from "./card-details";
 import { toast } from "sonner";
 import { Sword } from "lucide-react";
 
@@ -17,6 +18,7 @@ export function DeckBuilder({ availableCards, onStartGame, deckSize }: DeckBuild
   const [selectedDeck, setSelectedDeck] = useState<Card[]>([]);
   const [currentRound, setCurrentRound] = useState(1);
   const [currentChoices, setCurrentChoices] = useState<Card[]>([]);
+  const [selectedCard, setSelectedCard] = useState<Card | null>(null);
 
   useEffect(() => {
     const getRandomCards = () => {
@@ -68,6 +70,7 @@ export function DeckBuilder({ availableCards, onStartGame, deckSize }: DeckBuild
         <div className="mb-12">
           <div className="text-center mb-8">
             <h2 className="text-lg font-medium text-gray-400">Choose one card to add to your deck</h2>
+            <p className="text-sm text-gray-500 mt-1">Click to select, right-click to view details</p>
           </div>
 
           <div className="grid grid-cols-5 gap-6 justify-items-center">
@@ -75,6 +78,10 @@ export function DeckBuilder({ availableCards, onStartGame, deckSize }: DeckBuild
               <div
                 key={`choice-${index}`}
                 className="relative group transform transition-all duration-300 hover:scale-105"
+                onContextMenu={(e) => {
+                  e.preventDefault();
+                  setSelectedCard(card);
+                }}
               >
                 <GameCardComponent
                   card={card}
@@ -106,6 +113,10 @@ export function DeckBuilder({ availableCards, onStartGame, deckSize }: DeckBuild
               <div
                 key={`selected-${index}`}
                 className="transform transition-all duration-300"
+                onContextMenu={(e) => {
+                  e.preventDefault();
+                  setSelectedCard(card);
+                }}
               >
                 <GameCardComponent
                   card={card}
@@ -123,6 +134,13 @@ export function DeckBuilder({ availableCards, onStartGame, deckSize }: DeckBuild
           </div>
         </div>
       </div>
+
+      {/* Card Details Dialog */}
+      <CardDetails
+        card={selectedCard!}
+        isOpen={selectedCard !== null}
+        onClose={() => setSelectedCard(null)}
+      />
     </div>
   );
 }
