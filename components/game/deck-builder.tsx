@@ -5,6 +5,7 @@ import { Card } from "@/types/game";
 import { Button } from "../ui/button";
 import { GameCard as GameCardComponent } from "../ui/game-card";
 import { toast } from "sonner";
+import { Sword } from "lucide-react";
 
 interface DeckBuilderProps {
   availableCards: Card[];
@@ -18,7 +19,6 @@ export function DeckBuilder({ availableCards, onStartGame, deckSize }: DeckBuild
   const [currentChoices, setCurrentChoices] = useState<Card[]>([]);
 
   useEffect(() => {
-    // Get 5 random cards for the current round
     const getRandomCards = () => {
       const shuffled = [...availableCards].sort(() => Math.random() - 0.5);
       return shuffled.slice(0, 5);
@@ -34,7 +34,7 @@ export function DeckBuilder({ availableCards, onStartGame, deckSize }: DeckBuild
     }
 
     setSelectedDeck([...selectedDeck, card]);
-    
+
     if (currentRound < deckSize) {
       setCurrentRound(currentRound + 1);
     } else {
@@ -43,48 +43,82 @@ export function DeckBuilder({ availableCards, onStartGame, deckSize }: DeckBuild
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-7xl mx-auto space-y-8">
-        <div className="bg-white rounded-xl shadow-xl p-8 text-center">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+    <div className="min-h-screen bg-black text-white">
+      {/* Header */}
+      <div className="relative h-32 bg-gray-900 border-b border-gray-800">
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1624559888077-1a829f93c9f8?q=80&w=1920&auto=format&fit=crop')] bg-cover bg-center opacity-5" />
+        <div className="relative h-full flex flex-col items-center justify-center">
+          <h1 className="text-3xl font-bold text-white mb-2">
             Build Your Deck
           </h1>
-          <div className="mt-4 text-gray-600 text-lg">
-            Round <span className="font-semibold text-blue-600">{currentRound}</span> / 
-            <span className="font-semibold text-blue-600"> {deckSize}</span>
-          </div>
-          <div className="mt-2 text-sm text-gray-500">
-            Choose one card from the options below
+          <div className="flex items-center gap-4">
+            <div className="px-4 py-1 bg-black/50 border border-gray-800">
+              <span className="text-sm font-medium">Round {currentRound} / {deckSize}</span>
+            </div>
+            <div className="px-4 py-1 bg-black/50 border border-gray-800">
+              <span className="text-sm font-medium">Selected {selectedDeck.length} / {deckSize}</span>
+            </div>
           </div>
         </div>
-        
-        <div className="flex justify-center gap-4">
-          {currentChoices.map((card, index) => (
-            <div key={`choice-${index}`} className="relative group">
-              <GameCardComponent
-                card={card}
-                onClick={() => handleCardSelection(card)}
-                disabled={false}
-              />
-              <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg shadow-lg text-xs">
-                <span className="font-semibold text-blue-600">{selectedDeck.filter(c => c.id === card.id).length}</span>
-                <span className="text-gray-600"> / </span>
-                <span className="font-semibold text-gray-600">{card.maxPerSession}</span>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto p-8">
+        {/* Card Choices */}
+        <div className="mb-12">
+          <div className="text-center mb-8">
+            <h2 className="text-lg font-medium text-gray-400">Choose one card to add to your deck</h2>
+          </div>
+
+          <div className="grid grid-cols-5 gap-6 justify-items-center">
+            {currentChoices.map((card, index) => (
+              <div
+                key={`choice-${index}`}
+                className="relative group transform transition-all duration-300 hover:scale-105"
+              >
+                <GameCardComponent
+                  card={card}
+                  onClick={() => handleCardSelection(card)}
+                  disabled={false}
+                />
+                <div className="absolute top-2 left-2 flex items-center gap-2 bg-black/90 backdrop-blur-sm px-2 py-1 border border-gray-800">
+                  <span className="text-xs font-medium text-white">
+                    {selectedDeck.filter(c => c.id === card.id).length} / {card.maxPerSession}
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-xl p-4 mt-8">
-          <h2 className="text-xl font-semibold mb-4">Selected Cards ({selectedDeck.length})</h2>
-          <div className="flex flex-wrap gap-2 justify-center">
+        {/* Selected Cards */}
+        <div className="relative">
+          <div className="absolute -top-6 left-0 right-0 flex justify-between items-center">
+            <h2 className="text-lg font-medium text-gray-400">Selected Cards</h2>
+            <div className="flex items-center gap-2 px-3 py-1 bg-black/90 border border-gray-800">
+              <Sword className="w-4 h-4 text-red-500" />
+              <span className="text-sm font-medium">Deck Power: {selectedDeck.reduce((sum, card) => sum + card.attack, 0)}</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-8 gap-4 p-6 bg-gray-900/50 border border-gray-800">
             {selectedDeck.map((card, index) => (
-              <div key={`selected-${index}`} style={{ opacity: 0.7 }}>
+              <div
+                key={`selected-${index}`}
+                className="transform transition-all duration-300"
+              >
                 <GameCardComponent
                   card={card}
                   disabled={true}
+                  size="small"
                 />
               </div>
+            ))}
+            {[...Array(deckSize - selectedDeck.length)].map((_, index) => (
+              <div
+                key={`empty-${index}`}
+                className="w-[100px] h-[140px] border border-dashed border-gray-800 rounded-lg bg-black/30"
+              />
             ))}
           </div>
         </div>
