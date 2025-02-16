@@ -9,16 +9,18 @@ interface MonsterDisplayProps {
 
 export function MonsterDisplay({ health, attack }: MonsterDisplayProps) {
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
-      <h2 className="text-2xl font-bold mb-4">Current Monster</h2>
-      <div className="flex items-center gap-4">
-        <div className="flex items-center gap-2 bg-red-50 text-red-600 px-4 py-2 rounded-full">
-          <Heart className="w-5 h-5" />
-          <span className="text-xl font-bold">{health}</span>
+    <div className="flex flex-col items-end gap-2">
+      <div className="text-sm font-medium text-white text-right px-4 py-2 bg-black/50 border border-gray-800">
+        Dark Overlord
+      </div>
+      <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 bg-black/50 px-4 py-2 border border-gray-800">
+          <Heart className="w-4 h-4 text-red-500" />
+          <span className="text-lg font-medium text-red-500">{health}</span>
         </div>
-        <div className="flex items-center gap-2 bg-orange-50 text-orange-600 px-4 py-2 rounded-full">
-          <Sword className="w-5 h-5" />
-          <span className="text-xl font-bold">{attack}</span>
+        <div className="flex items-center gap-2 bg-black/50 px-4 py-2 border border-gray-800">
+          <Sword className="w-4 h-4 text-orange-500" />
+          <span className="text-lg font-medium text-orange-500">{attack}</span>
         </div>
       </div>
     </div>
