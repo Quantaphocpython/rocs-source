@@ -1,11 +1,10 @@
 "use client";
 
-import { Card as CardType } from "@/types/game";
-import { Heart, Shield, Sword, Zap } from "lucide-react";
+import { Card, GameCard as GameCardType } from "@/types/game";
 import { cn } from "@/lib/utils";
 
 interface GameCardProps {
-  card: CardType & { currentHealth?: number };
+  card: GameCardType | Card;
   onClick?: () => void;
   disabled?: boolean;
   selected?: boolean;
@@ -19,24 +18,26 @@ export function GameCard({
   selected = false,
   size = "normal"
 }: GameCardProps) {
+  if (!card) return null;
+
   const mainClass = cn(
     "game-card",
-    size === "small" && "game-card-small",
     disabled && "disabled",
-    selected && "selected"
+    selected && "selected",
+    size === "small" && "game-card-small"
   );
 
   return (
     <div className={mainClass} onClick={disabled ? undefined : onClick}>
-      <div className={`card-frame ${card.class[0]}`}>
+      <div className={cn("card-frame", card.class?.[0])}>
         <div className="card-name-box">
           <div className="card-name">{card.name}</div>
         </div>
 
         <div className="card-class-box">
-          {card.class.map((c, i) => (
-            <div key={i} className={`card-class-icon class-${c}`}>
-              {c[0]}
+          {card.class?.map((cls, index) => (
+            <div key={index} className={cn("card-class-icon", `class-${cls}`)}>
+              {cls.charAt(0)}
             </div>
           ))}
         </div>
@@ -48,31 +49,31 @@ export function GameCard({
         <div className="card-effects-box">
           <div className="card-effect-title">Effects:</div>
           <div className="text-gray-600">
-            {card.onAttackEffect !== "NONE" && (
-              <div>• {card.onAttackEffect.replace("_", " ")}</div>
-            )}
-            {card.onDefenseEffect !== "NONE" && (
-              <div>• {card.onDefenseEffect.replace("_", " ")}</div>
-            )}
-            {card.onDeadEffect !== "NONE" && (
-              <div>• {card.onDeadEffect.replace("_", " ")}</div>
-            )}
+            {card.onAttackEffect !== "NONE" && "⚔️ " + card.onAttackEffect}
+            {card.onDefenseEffect !== "NONE" && " 🛡️ " + card.onDefenseEffect}
           </div>
         </div>
 
         <div className="card-stats-box">
           <div className="card-stat">
-            <Sword className="card-stat-icon" />
+            <svg className="card-stat-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M14 5L21 12M21 12L14 19M21 12H3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
             <span className="card-stat-value">{card.attack}</span>
           </div>
           <div className="card-stat">
-            <Heart className="card-stat-icon" />
+            <svg className="card-stat-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3.34 17C5.56 19.89 8.58 22 12 22C15.42 22 18.44 19.89 20.66 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M12 2V14M12 14L16 10M12 14L8 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
             <span className="card-stat-value">
-              {card.currentHealth ?? card.health}
+              {'currentHealth' in card ? card.currentHealth : card.health}
             </span>
           </div>
           <div className="card-stat">
-            <Zap className="card-stat-icon" />
+            <svg className="card-stat-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
             <span className="card-stat-value">{card.staminaCost}</span>
           </div>
         </div>
