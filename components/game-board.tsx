@@ -56,7 +56,7 @@ export function GameBoard() {
   const handleDefenseEffect = (card: GameState["deck"][0]) => {
     if (card.onDefenseEffect === "THORNS") {
       toast.info(`${card.name}'s thorns activated!`, {
-        icon: <Shield className="w-4 h-4 text-blue-500" />,
+        icon: <Shield className="w-4 h-4 text-yellow-500" />,
       });
       return 2;
     }
@@ -169,7 +169,7 @@ export function GameBoard() {
 
         if (thornsDamage > 0) {
           toast.info(`Monster took ${thornsDamage} thorns damage from defensive cards!`, {
-            icon: <Shield className="w-4 h-4 text-purple-500" />,
+            icon: <Shield className="w-4 h-4 text-yellow-500" />,
           });
         }
 
@@ -260,7 +260,7 @@ export function GameBoard() {
             deckSize={DECK_SIZE}
           />
           <Button
-            className="fixed bottom-4 right-4 bg-blue-900 hover:bg-blue-800 text-white gap-2"
+            className="fixed bottom-4 right-4 bg-yellow-900 hover:bg-yellow-800 text-yellow-400 gap-2 border border-yellow-900"
             onClick={() => setIsTutorialOpen(true)}
           >
             <QuestionMarkCircle className="w-4 h-4" />
@@ -269,11 +269,11 @@ export function GameBoard() {
         </>
       ) : (
         <>
-          {/* Header Area (20%) */}
-          <div className="h-[20%] relative bg-gray-900 p-4">
+          {/* Header Area */}
+          <div className="h-[20%] relative bg-black border-b border-yellow-900 p-6">
             {/* Turn Indicator */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 px-4 py-1 bg-black border-x border-b border-gray-800">
-              <div className="text-sm font-medium text-white">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 px-6 py-2 bg-black border-x border-b border-yellow-900 rounded-b-lg">
+              <div className="text-lg font-medium text-yellow-400">
                 {isPlayerTurn ? "Your Turn" : "Monster's Turn"}
               </div>
             </div>
@@ -286,7 +286,7 @@ export function GameBoard() {
                 stage={gameState.currentStage}
               />
               <Button
-                className="absolute top-4 right-4 bg-blue-900 hover:bg-blue-800 text-white gap-2"
+                className="absolute top-6 right-6 bg-yellow-900 hover:bg-yellow-800 text-yellow-400 gap-2 border border-yellow-900"
                 onClick={() => setIsTutorialOpen(true)}
               >
                 <QuestionMarkCircle className="w-4 h-4" />
@@ -299,22 +299,22 @@ export function GameBoard() {
             </div>
           </div>
 
-          {/* Battle Field (60%) */}
-          <div className="h-[60%] bg-gray-900 relative">
+          {/* Battle Field */}
+          <div className="h-[60%] bg-black relative border-b border-yellow-900">
             {/* Field Background */}
-            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1624559888077-1a829f93c9f8?q=80&w=1920&auto=format&fit=crop')] bg-cover bg-center opacity-10" />
+            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1624559888077-1a829f93c9f8?q=80&w=1920&auto=format&fit=crop')] bg-cover bg-center opacity-5" />
 
             {/* Field Grid Lines */}
             <div className="absolute inset-0 grid grid-cols-5 grid-rows-2 gap-0.5 p-4 pointer-events-none">
               {[...Array(10)].map((_, i) => (
-                <div key={i} className="border border-white/5 rounded-sm" />
+                <div key={i} className="border border-yellow-900/20 rounded-sm" />
               ))}
             </div>
 
             {/* Field Content */}
-            <div className="relative h-full flex flex-col p-4">
+            <div className="relative h-full flex flex-col p-6">
               {/* Cards Area */}
-              <div className="flex-1 grid grid-cols-5 gap-4 p-4">
+              <div className="flex-1 grid grid-cols-5 gap-6 p-6">
                 {gameState.cardsOnField.map((card, index) => (
                   <div
                     key={`field-${index}`}
@@ -332,16 +332,16 @@ export function GameBoard() {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex justify-end gap-2 p-4 bg-black/30 border-t border-white/10">
+              <div className="flex justify-end gap-4 p-4 bg-black/30 border-t border-yellow-900">
                 <Button
-                  className="bg-blue-900 hover:bg-blue-800 text-white text-sm px-4 py-2 border border-blue-800 transition-colors"
+                  className="bg-yellow-900 hover:bg-yellow-800 text-yellow-400 border border-yellow-900 text-lg px-8 py-3"
                   disabled={!isPlayerTurn || selectedCard === null}
                   onClick={() => selectedCard !== null && playCard(selectedCard)}
                 >
                   Play Card
                 </Button>
                 <Button
-                  className="bg-red-900 hover:bg-red-800 text-white text-sm px-4 py-2 border border-red-800 transition-colors"
+                  className="bg-yellow-900 hover:bg-yellow-800 text-yellow-400 border border-yellow-900 text-lg px-8 py-3"
                   disabled={!isPlayerTurn}
                   onClick={endTurn}
                 >
@@ -351,13 +351,13 @@ export function GameBoard() {
             </div>
           </div>
 
-          {/* Hand Area (20%) */}
-          <div className="h-[20%] bg-gray-900 p-4 border-t border-gray-800">
-            <div className="h-full flex items-center justify-center gap-2">
+          {/* Hand Area */}
+          <div className="h-[20%] bg-black p-6">
+            <div className="h-full flex items-center justify-center gap-4">
               {gameState.deck.map((card, index) => (
                 <div
                   key={`hand-${index}`}
-                  className={`transform transition-all duration-300 hover:-translate-y-2 ${selectedCard === index ? '-translate-y-2' : ''
+                  className={`transform transition-all duration-300 hover:-translate-y-4 ${selectedCard === index ? '-translate-y-4' : ''
                     }`}
                 >
                   <GameCardComponent
