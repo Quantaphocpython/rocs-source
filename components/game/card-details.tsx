@@ -58,20 +58,22 @@ export function CardDetails({ card, isOpen, onClose }: CardDetailsProps) {
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="bg-gray-900 border border-gray-800 text-white p-0 max-w-2xl">
-                <DialogHeader className="p-6 border-b border-gray-800">
-                    <DialogTitle className="text-2xl font-bold">{card.name}</DialogTitle>
+            <DialogContent className="bg-black border border-yellow-900 text-yellow-400 p-0 max-w-2xl">
+                <DialogHeader className="p-6 border-b border-yellow-900">
+                    <DialogTitle className="text-2xl font-bold">
+                        {card.name}
+                    </DialogTitle>
                 </DialogHeader>
 
                 <div className="p-6 space-y-6">
                     {/* Classes */}
                     <div className="space-y-2">
-                        <h3 className="text-sm font-medium text-gray-400">Classes</h3>
+                        <h3 className="text-sm font-medium text-yellow-600">Classes</h3>
                         <div className="flex gap-3">
                             {card.class.map((cls, index) => (
                                 <div
                                     key={index}
-                                    className="flex items-center gap-2 bg-black/50 px-3 py-1.5 rounded border border-gray-800"
+                                    className="flex items-center gap-2 px-4 py-2 rounded border border-yellow-900"
                                 >
                                     {getClassIcon(cls)}
                                     <span className="text-sm font-medium">{cls}</span>
@@ -82,27 +84,27 @@ export function CardDetails({ card, isOpen, onClose }: CardDetailsProps) {
 
                     {/* Stats */}
                     <div className="space-y-2">
-                        <h3 className="text-sm font-medium text-gray-400">Stats</h3>
+                        <h3 className="text-sm font-medium text-yellow-600">Stats</h3>
                         <div className="grid grid-cols-3 gap-3">
-                            <div className="flex items-center gap-2 bg-black/50 px-3 py-2 rounded border border-gray-800">
-                                <Sword className="w-5 h-5 text-orange-500" />
+                            <div className="flex items-center gap-3 p-4 rounded border border-yellow-900">
+                                <Sword className="w-5 h-5" />
                                 <div>
                                     <div className="text-sm font-medium">Attack</div>
-                                    <div className="text-lg font-bold text-orange-500">{card.attack}</div>
+                                    <div className="text-lg font-bold">{card.attack}</div>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-2 bg-black/50 px-3 py-2 rounded border border-gray-800">
-                                <Heart className="w-5 h-5 text-red-500" />
+                            <div className="flex items-center gap-3 p-4 rounded border border-yellow-900">
+                                <Heart className="w-5 h-5" />
                                 <div>
                                     <div className="text-sm font-medium">Health</div>
-                                    <div className="text-lg font-bold text-red-500">{card.health}</div>
+                                    <div className="text-lg font-bold">{card.health}</div>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-2 bg-black/50 px-3 py-2 rounded border border-gray-800">
-                                <Zap className="w-5 h-5 text-yellow-500" />
+                            <div className="flex items-center gap-3 p-4 rounded border border-yellow-900">
+                                <Zap className="w-5 h-5" />
                                 <div>
                                     <div className="text-sm font-medium">Cost</div>
-                                    <div className="text-lg font-bold text-yellow-500">{card.staminaCost}</div>
+                                    <div className="text-lg font-bold">{card.staminaCost}</div>
                                 </div>
                             </div>
                         </div>
@@ -111,14 +113,14 @@ export function CardDetails({ card, isOpen, onClose }: CardDetailsProps) {
                     {/* Effects */}
                     {effects.length > 0 && (
                         <div className="space-y-2">
-                            <h3 className="text-sm font-medium text-gray-400">Effects</h3>
+                            <h3 className="text-sm font-medium text-yellow-600">Effects</h3>
                             <div className="space-y-2">
                                 {effects.map((effect, index) => (
                                     <div
                                         key={index}
-                                        className="flex items-center gap-2 bg-black/50 px-3 py-2 rounded border border-gray-800"
+                                        className="flex items-center gap-3 p-4 rounded border border-yellow-900"
                                     >
-                                        <Shield className="w-5 h-5 text-blue-500" />
+                                        <Shield className="w-5 h-5" />
                                         <span className="text-sm">{effect}</span>
                                     </div>
                                 ))}
@@ -127,7 +129,7 @@ export function CardDetails({ card, isOpen, onClose }: CardDetailsProps) {
                     )}
 
                     {/* Deck Limit */}
-                    <div className="flex items-center gap-2 bg-black/50 px-3 py-2 rounded border border-gray-800">
+                    <div className="flex items-center gap-2 px-4 py-3 rounded border border-yellow-900">
                         <span className="text-sm">Maximum {card.maxPerSession} copies per deck</span>
                     </div>
                 </div>
