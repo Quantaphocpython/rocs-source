@@ -14,6 +14,7 @@ import { TutorialDialog } from "./game/tutorial-dialog";
 import { PhaseAnnouncement } from "./game/phase-announcement";
 import { BattleStats } from "./game/battle-stats";
 import { cn } from "@/lib/utils";
+import { GameTutorial } from "./game/game-tutorial";
 
 const DECK_SIZE = 13;
 const INITIAL_HAND_SIZE = 5;
@@ -236,7 +237,6 @@ export function GameBoard() {
       let finalDamage = monsterAttack;
       let healAmount = 0;
 
-      // Monster critical hit chance
       const hasCritical = Math.random() < 0.2;
       if (hasCritical) {
         finalDamage *= 1.5;
@@ -246,7 +246,6 @@ export function GameBoard() {
         });
       }
 
-      // Calculate thorns damage
       const thornsDamage = handleDefenseEffect(targetCard);
       if (thornsDamage > 0) {
         setAnnouncement({
@@ -255,32 +254,31 @@ export function GameBoard() {
         });
       }
 
-      // Update card health
       const newHealth = targetCard.currentHealth - finalDamage;
       const updatedCardsOnField = [...prev.cardsOnField];
 
       if (newHealth <= 0) {
-        // Handle card death
         const deadEffectDamage = handleDeadEffect(targetCard);
         if (deadEffectDamage > 0) {
           const newMonsterHealth = Math.max(0, prev.currentMonster.health - deadEffectDamage);
           prev.currentMonster.health = newMonsterHealth;
         }
-        // Remove dead card
         updatedCardsOnField[cardIndex] = null;
         setAnnouncement({
           message: `${targetCard.name} was destroyed!`,
           type: "damage"
         });
       } else {
-        // Update card health
         updatedCardsOnField[cardIndex] = {
           ...targetCard,
           currentHealth: newHealth
         };
+        setAnnouncement({
+          message: `${targetCard.name} takes ${finalDamage} damage!`,
+          type: "damage"
+        });
       }
 
-      // Apply monster lifesteal
       const hasLifesteal = Math.random() < 0.3;
       if (hasLifesteal) {
         healAmount = Math.floor(finalDamage * 0.3);
@@ -290,7 +288,6 @@ export function GameBoard() {
         });
       }
 
-      // Update monster health from thorns
       const monsterHealthAfterThorns = Math.max(0, prev.currentMonster.health - thornsDamage);
       const finalMonsterHealth = Math.min(monsterHealthAfterThorns + healAmount, 60);
 
@@ -319,31 +316,39 @@ export function GameBoard() {
     if (isPlayerTurn || isDeckBuilding) return;
 
     const monsterTurn = setTimeout(() => {
-      // Get all valid cards on field (non-null)
       const cardsOnField = gameState.cardsOnField
         .map((card, index) => ({ card, index }))
         .filter(({ card }) => card !== null);
 
       if (cardsOnField.length === 0) {
-        // If no cards on field, damage player directly
-        setGameState(prev => ({
-          ...prev,
-          playerHealth: Math.max(0, prev.playerHealth - prev.currentMonster.attack),
-          battleHistory: [
-            ...prev.battleHistory,
-            {
-              turn: prev.battleHistory.length + 1,
-              action: "monster_attack",
-              playerHpLeft: Math.max(0, prev.playerHealth - prev.currentMonster.attack),
-            },
-          ],
-        }));
         setAnnouncement({
-          message: "Direct Attack on Player!",
-          type: "damage"
+          message: "Monster attacks directly!",
+          type: "phase"
         });
+
+        setTimeout(() => {
+          setGameState(prev => {
+            const damage = prev.currentMonster.attack;
+            return {
+              ...prev,
+              playerHealth: Math.max(0, prev.playerHealth - damage),
+              battleHistory: [
+                ...prev.battleHistory,
+                {
+                  turn: prev.battleHistory.length + 1,
+                  action: "monster_attack",
+                  damageDealt: damage,
+                  playerHpLeft: Math.max(0, prev.playerHealth - damage),
+                },
+              ],
+            };
+          });
+          setAnnouncement({
+            message: `Direct Attack: ${gameState.currentMonster.attack} damage!`,
+            type: "damage"
+          });
+        }, 1000);
       } else {
-        // Attack a random card
         const randomIndex = Math.floor(Math.random() * cardsOnField.length);
         const targetCard = cardsOnField[randomIndex];
 
@@ -359,7 +364,6 @@ export function GameBoard() {
         }
       }
 
-      // End monster turn
       setTimeout(() => {
         setAnnouncement({
           message: "Your Turn",
@@ -404,6 +408,7 @@ export function GameBoard() {
 
   return (
     <div className="min-h-screen w-full max-w-[1920px] mx-auto bg-black flex flex-col">
+      <GameTutorial />
       <PhaseAnnouncement
         message={announcement.message}
         type={announcement.type}
@@ -435,11 +440,13 @@ export function GameBoard() {
             </div>
 
             <div className="h-full flex items-center justify-between">
-              <PlayerStats
-                health={gameState.playerHealth}
-                stamina={gameState.playerStamina}
-                stage={gameState.currentStage}
-              />
+              <div id="player-stats">
+                <PlayerStats
+                  health={gameState.playerHealth}
+                  stamina={gameState.playerStamina}
+                  stage={gameState.currentStage}
+                />
+              </div>
               <Button
                 className="absolute top-6 right-6 bg-yellow-900 hover:bg-yellow-800 text-yellow-400 gap-2 border border-yellow-900"
                 onClick={() => setIsTutorialOpen(true)}
@@ -447,14 +454,16 @@ export function GameBoard() {
                 <QuestionMarkCircle className="w-4 h-4" />
                 How to Play
               </Button>
-              <MonsterDisplay
-                health={gameState.currentMonster.health}
-                attack={gameState.currentMonster.attack}
-              />
+              <div id="monster-stats">
+                <MonsterDisplay
+                  health={gameState.currentMonster.health}
+                  attack={gameState.currentMonster.attack}
+                />
+              </div>
             </div>
           </div>
 
-          <div className="h-[65%] bg-black relative border-b border-yellow-900">
+          <div id="battle-field" className="h-[65%] bg-black relative border-b border-yellow-900">
             <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1624559888077-1a829f93c9f8?q=80&w=1920&auto=format&fit=crop')] bg-cover bg-center opacity-5" />
 
             <div className="relative h-full flex flex-col p-6">
@@ -505,7 +514,9 @@ export function GameBoard() {
                 })}
               </div>
 
-              <BattleStats history={gameState.battleHistory} />
+              <div id="battle-log">
+                <BattleStats history={gameState.battleHistory} />
+              </div>
 
               <div className="flex justify-end gap-4 p-6 bg-black/30 border-t border-yellow-900">
                 <Button
@@ -526,7 +537,7 @@ export function GameBoard() {
             </div>
           </div>
 
-          <div className="h-[20%] bg-black p-6">
+          <div id="player-hand" className="h-[20%] bg-black p-6">
             <div className="h-full flex items-center justify-center gap-6">
               {gameState.deck.map((card, index) => (
                 <div
@@ -558,5 +569,5 @@ export function GameBoard() {
   );
 }
 
-export default GameBoard
+export default GameBoard;
 
