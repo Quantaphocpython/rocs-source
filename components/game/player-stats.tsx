@@ -10,20 +10,20 @@ interface PlayerStatsProps {
 
 export function PlayerStats({ health, stamina, stage }: PlayerStatsProps) {
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex items-center gap-2">
-        <div className="flex items-center gap-2 bg-black/50 px-4 py-2 border border-gray-800">
-          <Heart className="w-4 h-4 text-red-500" />
-          <span className="text-lg font-medium text-red-500">{health}</span>
+    <div className="flex flex-col gap-3">
+      <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 px-6 py-3 border border-yellow-900 rounded-lg bg-black">
+          <Heart className="w-5 h-5 text-yellow-400" />
+          <span className="text-xl font-medium text-yellow-400">{health}</span>
         </div>
-        <div className="flex items-center gap-2 bg-black/50 px-4 py-2 border border-gray-800">
-          <Zap className="w-4 h-4 text-yellow-500" />
-          <span className="text-lg font-medium text-yellow-500">{stamina}</span>
+        <div className="flex items-center gap-3 px-6 py-3 border border-yellow-900 rounded-lg bg-black">
+          <Zap className="w-5 h-5 text-yellow-400" />
+          <span className="text-xl font-medium text-yellow-400">{stamina}</span>
         </div>
       </div>
-      <div className="flex items-center gap-2 bg-black/50 px-4 py-2 border border-gray-800">
-        <Trophy className="w-4 h-4 text-blue-500" />
-        <span className="text-sm font-medium text-blue-500">Stage {stage}</span>
+      <div className="flex items-center gap-3 px-6 py-3 border border-yellow-900 rounded-lg bg-black">
+        <Trophy className="w-5 h-5 text-yellow-400" />
+        <span className="text-lg font-medium text-yellow-400">Stage {stage}</span>
       </div>
     </div>
   );
