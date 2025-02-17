@@ -45,99 +45,110 @@ export function DeckBuilder({ availableCards, onStartGame, deckSize }: DeckBuild
   };
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen h-full bg-black text-yellow-400 flex flex-col">
       {/* Header */}
-      <div className="relative h-32 bg-gray-900 border-b border-gray-800">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1624559888077-1a829f93c9f8?q=80&w=1920&auto=format&fit=crop')] bg-cover bg-center opacity-5" />
-        <div className="relative h-full flex flex-col items-center justify-center">
-          <h1 className="text-3xl font-bold text-white mb-2">
+      <div className="h-40 bg-black border-b border-yellow-900 flex-shrink-0">
+        <div className="h-full flex flex-col items-center justify-center">
+          <h1 className="text-4xl font-bold mb-4">
             Build Your Deck
           </h1>
-          <div className="flex items-center gap-4">
-            <div className="px-4 py-1 bg-black/50 border border-gray-800">
-              <span className="text-sm font-medium">Round {currentRound} / {deckSize}</span>
+          <div className="flex items-center gap-8">
+            <div className="px-8 py-3 border border-yellow-900 rounded">
+              <span className="text-lg font-medium">Round {currentRound} / {deckSize}</span>
             </div>
-            <div className="px-4 py-1 bg-black/50 border border-gray-800">
-              <span className="text-sm font-medium">Selected {selectedDeck.length} / {deckSize}</span>
+            <div className="px-8 py-3 border border-yellow-900 rounded">
+              <span className="text-lg font-medium">Selected {selectedDeck.length} / {deckSize}</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto p-8">
-        {/* Card Choices */}
-        <div className="mb-12">
-          <div className="text-center mb-8">
-            <h2 className="text-lg font-medium text-gray-400">Choose one card to add to your deck</h2>
-            <p className="text-sm text-gray-500 mt-1">Click to select, right-click to view details</p>
-          </div>
-
-          <div className="grid grid-cols-5 gap-6 justify-items-center">
-            {currentChoices.map((card, index) => (
-              <div
-                key={`choice-${index}`}
-                className="relative group transform transition-all duration-300 hover:scale-105"
-                onContextMenu={(e) => {
-                  e.preventDefault();
-                  setSelectedCard(card);
-                }}
-              >
-                <GameCardComponent
-                  card={card}
-                  onClick={() => handleCardSelection(card)}
-                  disabled={false}
-                />
-                <div className="absolute top-2 left-2 flex items-center gap-2 bg-black/90 backdrop-blur-sm px-2 py-1 border border-gray-800">
-                  <span className="text-xs font-medium text-white">
-                    {selectedDeck.filter(c => c.id === card.id).length} / {card.maxPerSession}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Selected Cards */}
-        <div className="relative">
-          <div className="absolute -top-6 left-0 right-0 flex justify-between items-center">
-            <h2 className="text-lg font-medium text-gray-400">Selected Cards</h2>
-            <div className="flex items-center gap-2 px-3 py-1 bg-black/90 border border-gray-800">
-              <Sword className="w-4 h-4 text-red-500" />
-              <span className="text-sm font-medium">Deck Power: {selectedDeck.reduce((sum, card) => sum + card.attack, 0)}</span>
+      <div className="flex-1 flex min-h-[calc(100vh-10rem)]">
+        {/* Main Deck Area (70%) */}
+        <div className="w-[70%] border-r border-yellow-900 flex flex-col">
+          <div className="p-8 flex-shrink-0 flex justify-between items-center border-b border-yellow-900">
+            <h2 className="text-2xl font-medium">
+              Your Deck
+            </h2>
+            <div className="flex items-center gap-3 px-6 py-3 border border-yellow-900 rounded">
+              <Sword className="w-5 h-5" />
+              <span className="text-lg font-medium">
+                Deck Power: {selectedDeck.reduce((sum, card) => sum + card.attack, 0)}
+              </span>
             </div>
           </div>
 
-          <div className="grid grid-cols-8 gap-4 p-6 bg-gray-900/50 border border-gray-800">
-            {selectedDeck.map((card, index) => (
-              <div
-                key={`selected-${index}`}
-                className="transform transition-all duration-300"
-                onContextMenu={(e) => {
-                  e.preventDefault();
-                  setSelectedCard(card);
-                }}
-              >
-                <GameCardComponent
-                  card={card}
-                  disabled={true}
-                  size="small"
+          <div className="flex-1 overflow-y-auto p-8">
+            <div className="grid grid-cols-6 gap-6 p-8 border border-yellow-900 rounded min-h-full">
+              {selectedDeck.map((card, index) => (
+                <div
+                  key={`selected-${index}`}
+                  className="transform transition-all duration-300 hover:scale-105"
+                  onContextMenu={(e) => {
+                    e.preventDefault();
+                    setSelectedCard(card);
+                  }}
+                >
+                  <GameCardComponent
+                    card={card}
+                    disabled={true}
+                    size="small"
+                  />
+                </div>
+              ))}
+              {[...Array(deckSize - selectedDeck.length)].map((_, index) => (
+                <div
+                  key={`empty-${index}`}
+                  className="w-[100px] h-[140px] border border-dashed border-yellow-900 rounded"
                 />
-              </div>
-            ))}
-            {[...Array(deckSize - selectedDeck.length)].map((_, index) => (
-              <div
-                key={`empty-${index}`}
-                className="w-[100px] h-[140px] border border-dashed border-gray-800 rounded-lg bg-black/30"
-              />
-            ))}
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Card Choices Sidebar (30%) */}
+        <div className="w-[30%] flex flex-col">
+          <div className="p-8 flex-shrink-0 border-b border-yellow-900">
+            <h2 className="text-2xl font-medium text-center">
+              Available Cards
+            </h2>
+            <p className="text-sm text-center text-yellow-600 mt-3">Click to select, right-click to view details</p>
+          </div>
+
+          <div className="flex-1 overflow-y-auto">
+            <div className="min-h-full flex flex-col items-center justify-center gap-8 py-8">
+              {currentChoices.map((card, index) => (
+                <div
+                  key={`choice-${index}`}
+                  className="relative"
+                  onContextMenu={(e) => {
+                    e.preventDefault();
+                    setSelectedCard(card);
+                  }}
+                >
+                  <div className="transform transition-all duration-300 hover:scale-105">
+                    <GameCardComponent
+                      card={card}
+                      onClick={() => handleCardSelection(card)}
+                      disabled={false}
+                    />
+                    <div className="absolute top-2 left-2 px-4 py-2 border border-yellow-900 rounded">
+                      <span className="text-sm font-medium">
+                        {selectedDeck.filter(c => c.id === card.id).length} / {card.maxPerSession}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
 
       {/* Card Details Dialog */}
       <CardDetails
-        card={selectedCard!}
+        card={selectedCard}
         isOpen={selectedCard !== null}
         onClose={() => setSelectedCard(null)}
       />
