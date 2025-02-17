@@ -1,30 +1,30 @@
 export enum OnAttackEffect {
-  NONE = 'NONE',
-  LIFESTEAL = 'LIFESTEAL',
-  CRITICAL_STRIKE = 'CRITICAL_STRIKE'
+  NONE = "NONE",
+  LIFESTEAL = "LIFESTEAL",
+  CRITICAL_STRIKE = "CRITICAL_STRIKE",
 }
 
 export enum OnDeadEffect {
-  NONE = 'NONE',
-  EXPLODE = 'EXPLODE'
+  NONE = "NONE",
+  EXPLODE = "EXPLODE",
 }
 
 export enum OnDefenseEffect {
-  NONE = 'NONE',
-  THORNS = 'THORNS'
+  NONE = "NONE",
+  THORNS = "THORNS",
 }
 
 export enum ActiveSkill {
-  NONE = 'NONE',
-  SACRIFICE = 'SACRIFICE'
+  NONE = "NONE",
+  SACRIFICE = "SACRIFICE",
 }
 
 export enum Class {
-  METAL = 'METAL',
-  WOOD = 'WOOD',
-  WATER = 'WATER',
-  FIRE = 'FIRE',
-  EARTH = 'EARTH'
+  METAL = "METAL",
+  WOOD = "WOOD",
+  WATER = "WATER",
+  FIRE = "FIRE",
+  EARTH = "EARTH",
 }
 
 export interface Card {
@@ -41,15 +41,15 @@ export interface Card {
   activeSkill: ActiveSkill;
 }
 
+export interface GameCard extends Omit<Card, "maxPerSession"> {
+  currentHealth: number;
+}
+
 export interface Monster {
   id: number;
   health: number;
   attack: number;
   class: Class[];
-}
-
-export interface GameCard extends Omit<Card, 'maxPerSession' | 'class'> {
-  currentHealth: number;
 }
 
 export interface GameState {
@@ -68,7 +68,7 @@ export interface GameState {
   cardsOnField: GameCard[];
   battleHistory: {
     turn: number;
-    action: 'play_card' | 'monster_attack';
+    action: "play_card" | "monster_attack";
     cardId?: number;
     damageDealt?: number;
     monsterHpLeft?: number;
