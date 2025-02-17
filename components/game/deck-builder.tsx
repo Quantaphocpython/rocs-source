@@ -53,10 +53,10 @@ export function DeckBuilder({ availableCards, onStartGame, deckSize }: DeckBuild
             Build Your Deck
           </h1>
           <div className="flex items-center gap-8">
-            <div className="px-8 py-3 border border-yellow-900 rounded">
+            <div className="px-8 py-3 border border-yellow-900 rounded-lg">
               <span className="text-lg font-medium">Round {currentRound} / {deckSize}</span>
             </div>
-            <div className="px-8 py-3 border border-yellow-900 rounded">
+            <div className="px-8 py-3 border border-yellow-900 rounded-lg">
               <span className="text-lg font-medium">Selected {selectedDeck.length} / {deckSize}</span>
             </div>
           </div>
@@ -71,7 +71,7 @@ export function DeckBuilder({ availableCards, onStartGame, deckSize }: DeckBuild
             <h2 className="text-2xl font-medium">
               Your Deck
             </h2>
-            <div className="flex items-center gap-3 px-6 py-3 border border-yellow-900 rounded">
+            <div className="flex items-center gap-3 px-6 py-3 border border-yellow-900 rounded-lg">
               <Sword className="w-5 h-5" />
               <span className="text-lg font-medium">
                 Deck Power: {selectedDeck.reduce((sum, card) => sum + card.attack, 0)}
@@ -80,7 +80,7 @@ export function DeckBuilder({ availableCards, onStartGame, deckSize }: DeckBuild
           </div>
 
           <div className="flex-1 overflow-y-auto p-8">
-            <div className="grid grid-cols-6 gap-6 p-8 border border-yellow-900 rounded min-h-full">
+            <div className="grid grid-cols-6 gap-6 p-8 border border-yellow-900 rounded-lg min-h-full">
               {selectedDeck.map((card, index) => (
                 <div
                   key={`selected-${index}`}
@@ -100,7 +100,7 @@ export function DeckBuilder({ availableCards, onStartGame, deckSize }: DeckBuild
               {[...Array(deckSize - selectedDeck.length)].map((_, index) => (
                 <div
                   key={`empty-${index}`}
-                  className="w-[100px] h-[140px] border border-dashed border-yellow-900 rounded"
+                  className="w-[100px] h-[140px] border border-dashed border-yellow-900 rounded-lg bg-black/20"
                 />
               ))}
             </div>
@@ -121,7 +121,7 @@ export function DeckBuilder({ availableCards, onStartGame, deckSize }: DeckBuild
               {currentChoices.map((card, index) => (
                 <div
                   key={`choice-${index}`}
-                  className="relative"
+                  className="relative group"
                   onContextMenu={(e) => {
                     e.preventDefault();
                     setSelectedCard(card);
@@ -133,7 +133,7 @@ export function DeckBuilder({ availableCards, onStartGame, deckSize }: DeckBuild
                       onClick={() => handleCardSelection(card)}
                       disabled={false}
                     />
-                    <div className="absolute top-2 left-2 px-4 py-2 border border-yellow-900 rounded">
+                    <div className="absolute top-2 left-2 px-4 py-2 bg-black/90 border border-yellow-900 rounded-lg">
                       <span className="text-sm font-medium">
                         {selectedDeck.filter(c => c.id === card.id).length} / {card.maxPerSession}
                       </span>
