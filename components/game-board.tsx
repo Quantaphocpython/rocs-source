@@ -13,12 +13,13 @@ import { Button } from "./ui/button";
 import { TutorialDialog } from "./game/tutorial-dialog";
 import { PhaseAnnouncement } from "./game/phase-announcement";
 import { BattleStats } from "./game/battle-stats";
-import { cn } from "@/lib/utils";
 import { GameTutorial } from "./game/game-tutorial";
+import { cn } from "@/lib/utils";
 
-const DECK_SIZE = 13;
 const INITIAL_HAND_SIZE = 5;
 const CARDS_TO_SHOW = 40;
+const BASE_STAMINA_GAIN = 1;
+const STAMINA_SCALING_FACTOR = 0.5;
 
 const CARD_SLOT = {
   width: 100,
@@ -40,6 +41,7 @@ export function GameBoard() {
   const [remainingDeck, setRemainingDeck] = useState<GameCard[]>([]);
   const [isTutorialOpen, setIsTutorialOpen] = useState(false);
   const [targetSlot, setTargetSlot] = useState<number | null>(null);
+  const [roundCounter, setRoundCounter] = useState(1);
   const [announcement, setAnnouncement] = useState<{
     message: string | null;
     type: "phase" | "effect" | "damage" | "heal";
@@ -51,6 +53,10 @@ export function GameBoard() {
       .slice(0, CARDS_TO_SHOW);
     setAvailableCards(shuffledCards);
   }, []);
+
+  const calculateStaminaGain = (round: number) => {
+    return Math.floor(BASE_STAMINA_GAIN + (round - 1) * STAMINA_SCALING_FACTOR);
+  };
 
   const handleCardEffect = (card: GameCard, damage: number) => {
     let finalDamage = damage;
@@ -112,6 +118,7 @@ export function GameBoard() {
 
     setRemainingDeck(remaining);
     setIsDeckBuilding(false);
+    setRoundCounter(1);
     setAnnouncement({
       message: "Battle Start!",
       type: "phase"
@@ -210,7 +217,7 @@ export function GameBoard() {
       }, 3000);
     }, 1000);
   };
-
+  const DECK_SIZE = 20;
   const endTurn = () => {
     if (!isPlayerTurn) return;
     setAnnouncement({
@@ -218,6 +225,7 @@ export function GameBoard() {
       type: "phase"
     });
     drawCard();
+    setRoundCounter(prev => prev + 1);
     setTimeout(() => {
       setAnnouncement({
         message: "Monster's Turn",
@@ -369,16 +377,17 @@ export function GameBoard() {
           message: "Your Turn",
           type: "phase"
         });
+        const staminaGain = calculateStaminaGain(roundCounter);
         setGameState(prev => ({
           ...prev,
-          playerStamina: Math.min(5, prev.playerStamina + 1),
+          playerStamina: Math.min(10, prev.playerStamina + staminaGain),
         }));
         setIsPlayerTurn(true);
       }, 2500);
     }, 1000);
 
     return () => clearTimeout(monsterTurn);
-  }, [isPlayerTurn, isDeckBuilding]);
+  }, [isPlayerTurn, isDeckBuilding, roundCounter]);
 
   useEffect(() => {
     if (isDeckBuilding) return;
@@ -392,6 +401,7 @@ export function GameBoard() {
         setIsDeckBuilding(true);
         setGameState(mockGameState);
         setIsPlayerTurn(true);
+        setRoundCounter(1);
       }, 2000);
     } else if (gameState.currentMonster.health <= 0) {
       setAnnouncement({
@@ -402,12 +412,13 @@ export function GameBoard() {
         setIsDeckBuilding(true);
         setGameState(mockGameState);
         setIsPlayerTurn(true);
+        setRoundCounter(1);
       }, 2000);
     }
   }, [gameState.playerHealth, gameState.currentMonster.health, isDeckBuilding]);
 
   return (
-    <div className="min-h-screen w-full max-w-[1920px] mx-auto bg-black flex flex-col">
+    <div className="game-board">
       <GameTutorial />
       <PhaseAnnouncement
         message={announcement.message}
@@ -423,7 +434,7 @@ export function GameBoard() {
             deckSize={DECK_SIZE}
           />
           <Button
-            className="fixed bottom-4 right-4 bg-yellow-900 hover:bg-yellow-800 text-yellow-400 gap-2 border border-yellow-900"
+            className="fixed bottom-4 right-4 action-button"
             onClick={() => setIsTutorialOpen(true)}
           >
             <QuestionMarkCircle className="w-4 h-4" />
@@ -432,8 +443,8 @@ export function GameBoard() {
         </>
       ) : (
         <>
-          <div className="h-[15%] relative bg-black border-b border-yellow-900 p-6">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 px-8 py-2 bg-black border-x border-b border-yellow-900 rounded-b-lg">
+          <div className="game-header">
+            <div className="turn-indicator">
               <div className="text-lg font-medium text-yellow-400">
                 {isPlayerTurn ? "Your Turn" : "Monster's Turn"}
               </div>
@@ -445,10 +456,12 @@ export function GameBoard() {
                   health={gameState.playerHealth}
                   stamina={gameState.playerStamina}
                   stage={gameState.currentStage}
+                  round={roundCounter}
+                  nextStaminaGain={calculateStaminaGain(roundCounter)}
                 />
               </div>
               <Button
-                className="absolute top-6 right-6 bg-yellow-900 hover:bg-yellow-800 text-yellow-400 gap-2 border border-yellow-900"
+                className="absolute top-6 right-6 action-button"
                 onClick={() => setIsTutorialOpen(true)}
               >
                 <QuestionMarkCircle className="w-4 h-4" />
@@ -463,9 +476,7 @@ export function GameBoard() {
             </div>
           </div>
 
-          <div id="battle-field" className="h-[65%] bg-black relative border-b border-yellow-900">
-            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1624559888077-1a829f93c9f8?q=80&w=1920&auto=format&fit=crop')] bg-cover bg-center opacity-5" />
-
+          <div id="battle-field" className="battle-field">
             <div className="relative h-full flex flex-col p-6">
               <div className="flex-1 grid grid-cols-5 grid-rows-2 gap-4 p-8">
                 {[...Array(10)].map((_, index) => {
@@ -474,10 +485,8 @@ export function GameBoard() {
                     <div
                       key={`slot-${index}`}
                       className={cn(
-                        "relative flex items-center justify-center",
-                        "border border-yellow-900/20 rounded-lg transition-all duration-300",
-                        targetSlot === index && "border-yellow-400 border-2",
-                        !card && "hover:border-yellow-900/40",
+                        "card-slot",
+                        targetSlot === index && "targetable",
                         selectedCard !== null && !card && "cursor-pointer"
                       )}
                       style={{
@@ -518,16 +527,16 @@ export function GameBoard() {
                 <BattleStats history={gameState.battleHistory} />
               </div>
 
-              <div className="flex justify-end gap-4 p-6 bg-black/30 border-t border-yellow-900">
+              <div className="flex justify-end gap-4 p-6 bg-black/30 border-t border-yellow-900/50">
                 <Button
-                  className="bg-yellow-900 hover:bg-yellow-800 text-yellow-400 border border-yellow-900 text-lg px-8 py-3"
+                  className="action-button"
                   disabled={!isPlayerTurn || selectedCard === null}
                   onClick={() => selectedCard !== null && targetSlot !== null && playCard(selectedCard, targetSlot)}
                 >
                   Play Card
                 </Button>
                 <Button
-                  className="bg-yellow-900 hover:bg-yellow-800 text-yellow-400 border border-yellow-900 text-lg px-8 py-3"
+                  className="action-button"
                   disabled={!isPlayerTurn}
                   onClick={endTurn}
                 >
@@ -537,7 +546,7 @@ export function GameBoard() {
             </div>
           </div>
 
-          <div id="player-hand" className="h-[20%] bg-black p-6">
+          <div id="player-hand" className="player-hand">
             <div className="h-full flex items-center justify-center gap-6">
               {gameState.deck.map((card, index) => (
                 <div
