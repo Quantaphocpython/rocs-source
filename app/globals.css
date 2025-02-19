@@ -83,7 +83,7 @@
   }
 
   .game-card.disabled {
-    @apply opacity-50 cursor-not-allowed hover:scale-100;
+    @apply opacity-80 cursor-not-allowed hover:scale-100;
   }
 
   .game-card.selected {
@@ -92,29 +92,65 @@
   }
 
   .card-frame {
-    @apply w-full h-full relative rounded-lg overflow-hidden bg-white shadow-xl;
-    background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
-    border: 2px solid rgba(0, 0, 0, 0.1);
+    @apply w-full h-full relative rounded-lg overflow-hidden;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0.05) 100%
+    );
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    backdrop-filter: blur(4px);
   }
 
   .card-frame.METAL {
     background: linear-gradient(135deg, #718096 0%, #4a5568 100%);
+    border-color: #a0aec0;
   }
 
   .card-frame.WOOD {
     background: linear-gradient(135deg, #48bb78 0%, #2f855a 100%);
+    border-color: #68d391;
   }
 
   .card-frame.WATER {
     background: linear-gradient(135deg, #4299e1 0%, #2b6cb0 100%);
+    border-color: #63b3ed;
   }
 
   .card-frame.FIRE {
     background: linear-gradient(135deg, #f56565 0%, #c53030 100%);
+    border-color: #fc8181;
   }
 
   .card-frame.EARTH {
     background: linear-gradient(135deg, #d69e2e 0%, #975a16 100%);
+    border-color: #f6ad55;
+  }
+
+  .class-METAL {
+    @apply bg-gradient-to-br from-gray-400 to-gray-700;
+    box-shadow: 0 0 10px rgba(113, 128, 150, 0.5);
+  }
+
+  .class-WOOD {
+    @apply bg-gradient-to-br from-green-400 to-green-700;
+    box-shadow: 0 0 10px rgba(72, 187, 120, 0.5);
+  }
+
+  .class-WATER {
+    @apply bg-gradient-to-br from-blue-400 to-blue-700;
+    box-shadow: 0 0 10px rgba(66, 153, 225, 0.5);
+  }
+
+  .class-FIRE {
+    @apply bg-gradient-to-br from-red-400 to-red-700;
+    box-shadow: 0 0 10px rgba(245, 101, 101, 0.5);
+  }
+
+  .class-EARTH {
+    @apply bg-gradient-to-br from-yellow-500 to-yellow-700;
+    box-shadow: 0 0 10px rgba(214, 158, 46, 0.5);
   }
 
   .card-name-box {
@@ -237,5 +273,178 @@
 
   .game-card-small .card-stat-value {
     @apply text-[10px];
+  }
+
+  /* Enhanced Game Board Styles */
+  .game-board {
+    @apply min-h-screen w-full max-w-[1920px] mx-auto bg-black flex flex-col;
+    background-image: radial-gradient(
+      circle at center,
+      rgba(45, 55, 72, 0.3) 0%,
+      rgba(17, 24, 39, 0.4) 100%
+    );
+  }
+
+  .game-header {
+    @apply h-[15%] relative bg-black/80 border-b border-yellow-900/50 p-6;
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.9),
+      rgba(0, 0, 0, 0.7)
+    );
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+  }
+
+  .turn-indicator {
+    @apply absolute top-0 left-1/2 -translate-x-1/2 px-8 py-2 bg-black border-x border-b border-yellow-900/50 rounded-b-lg;
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.95),
+      rgba(0, 0, 0, 0.8)
+    );
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  }
+
+  .battle-field {
+    @apply h-[65%] bg-black/60 relative border-b border-yellow-900/50;
+    background-image: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.7),
+        rgba(0, 0, 0, 0.5)
+      ),
+      url("https://images.unsplash.com/photo-1624559888077-1a829f93c9f8?q=80&w=1920&auto=format&fit=crop");
+    background-size: cover;
+    background-position: center;
+  }
+
+  .card-slot {
+    @apply relative flex items-center justify-center border border-yellow-900/20 rounded-lg transition-all duration-300;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(4px);
+  }
+
+  .card-slot:hover {
+    @apply border-yellow-900/40;
+    box-shadow: 0 0 20px rgba(234, 179, 8, 0.1);
+  }
+
+  .card-slot.targetable {
+    @apply border-yellow-400 border-2;
+    box-shadow: 0 0 30px rgba(234, 179, 8, 0.2);
+    animation: pulse 2s infinite;
+  }
+
+  .player-hand {
+    @apply h-[20%] bg-black/80 p-6;
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.95),
+      rgba(0, 0, 0, 0.8)
+    );
+    box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.3);
+  }
+
+  .stat-display {
+    @apply flex items-center gap-3 px-6 py-3 bg-black/90 border border-yellow-900/50 rounded-lg;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .action-button {
+    @apply bg-yellow-900/90 hover:bg-yellow-800 text-yellow-400 border border-yellow-900/50 text-lg px-8 py-3 rounded-lg transition-all duration-300;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .action-button:hover {
+    @apply transform -translate-y-1;
+    box-shadow: 0 8px 30px rgba(234, 179, 8, 0.2);
+  }
+
+  .action-button:disabled {
+    @apply opacity-50 cursor-not-allowed transform-none;
+    box-shadow: none;
+  }
+
+  /* Enhanced Deck Builder Styles */
+  .stat-card {
+    @apply px-8 py-3 bg-black/80 border border-yellow-900/50 rounded-lg;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .filter-button {
+    @apply bg-black/80 hover:bg-yellow-900/30 text-yellow-400 border border-yellow-900/50 p-2 rounded-lg transition-all duration-300;
+    backdrop-filter: blur(8px);
+  }
+
+  .filter-button-active {
+    @apply bg-yellow-900/80 border-yellow-400;
+    box-shadow: 0 0 20px rgba(234, 179, 8, 0.2);
+  }
+
+  .sort-button {
+    @apply bg-black/80 hover:bg-yellow-900/30 text-yellow-400 border border-yellow-900/50 px-4 py-2 rounded-lg transition-all duration-300;
+    backdrop-filter: blur(8px);
+  }
+
+  .sort-button-active {
+    @apply bg-yellow-900/80 border-yellow-400;
+    box-shadow: 0 0 20px rgba(234, 179, 8, 0.2);
+  }
+
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.4);
+    }
+    70% {
+      box-shadow: 0 0 0 10px rgba(234, 179, 8, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(234, 179, 8, 0);
+    }
+  }
+
+  /* Enhanced Battle Stats */
+  .battle-stats {
+    @apply fixed bottom-4 left-4 z-50;
+  }
+
+  .battle-stats-content {
+    @apply w-96 bg-black/95 border border-yellow-900/50 rounded-lg overflow-hidden shadow-2xl;
+    backdrop-filter: blur(12px);
+  }
+
+  .battle-stats-header {
+    @apply flex items-center justify-between gap-2 px-4 py-3 border-b border-yellow-900/50 bg-yellow-950/50;
+  }
+
+  .battle-stats-entry {
+    @apply px-4 py-3 border-b border-yellow-900/30 last:border-b-0 hover:bg-yellow-950/30 transition-colors;
+  }
+
+  /* Enhanced Phase Announcement */
+  .phase-announcement {
+    @apply fixed inset-0 flex items-center justify-center pointer-events-none z-50;
+  }
+
+  .announcement-content {
+    @apply px-12 py-6 rounded-lg font-bold text-center backdrop-blur-sm flex flex-col items-center gap-4;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.3);
+  }
+
+  .announcement-phase {
+    @apply bg-yellow-950/90 text-yellow-400 border-2 border-yellow-400;
+  }
+
+  .announcement-effect {
+    @apply bg-blue-950/90 text-blue-400 border-2 border-blue-400;
+  }
+
+  .announcement-damage {
+    @apply bg-red-950/90 text-red-400 border-2 border-red-400;
+  }
+
+  .announcement-heal {
+    @apply bg-green-950/90 text-green-400 border-2 border-green-400;
   }
 }
