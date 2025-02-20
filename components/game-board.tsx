@@ -1,51 +1,39 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { GameState, Card, GameCard } from "@/types/game";
-import { mockGameState, cardPool } from "@/lib/mock-data";
-import { Heart, Sword, Shield, Zap, HelpCircle as QuestionMarkCircle } from "lucide-react";
-import { toast } from "sonner";
-import { PlayerStats } from "./game/player-stats";
-import { MonsterDisplay } from "./game/monster-display";
-import { DeckBuilder } from "./game/deck-builder";
-import { GameCard as GameCardComponent } from "./ui/game-card";
-import { Button } from "./ui/button";
-import { TutorialDialog } from "./game/tutorial-dialog";
-import { PhaseAnnouncement } from "./game/phase-announcement";
-import { BattleStats } from "./game/battle-stats";
-import { GameTutorial } from "./game/game-tutorial";
-import { cn } from "@/lib/utils";
-
-const INITIAL_HAND_SIZE = 5;
-const CARDS_TO_SHOW = 40;
-const BASE_STAMINA_GAIN = 1;
-const STAMINA_SCALING_FACTOR = 0.5;
-
-const CARD_SLOT = {
-  width: 100,
-  height: 140,
-  gap: 16
-};
-
-const convertToGameCard = (card: Card): GameCard => ({
-  ...card,
-  currentHealth: card.health
-});
+import { CARDS_TO_SHOW, DECK_SIZE } from '@/constants/game';
+import { useGameLogic } from '@/hooks/useGameLogic';
+import { cardPool } from '@/lib/mock-data';
+import type { Card } from '@/types/game';
+import { MessageCircleQuestionIcon as QuestionMarkCircle } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { DeckBuilder } from './game/deck-builder';
+import { GameField } from './game/GameField';
+import { GameHeader } from './game/GameHeader';
+import { PhaseAnnouncement } from './game/phase-announcement';
+import { PlayerHand } from './game/player-hand';
+import { TutorialDialog } from './game/tutorial-dialog';
+import { Button } from './ui/button';
 
 export function GameBoard() {
-  const [gameState, setGameState] = useState<GameState>(mockGameState);
-  const [selectedCard, setSelectedCard] = useState<number | null>(null);
-  const [isPlayerTurn, setIsPlayerTurn] = useState(true);
-  const [isDeckBuilding, setIsDeckBuilding] = useState(true);
   const [availableCards, setAvailableCards] = useState<Card[]>([]);
-  const [remainingDeck, setRemainingDeck] = useState<GameCard[]>([]);
   const [isTutorialOpen, setIsTutorialOpen] = useState(false);
-  const [targetSlot, setTargetSlot] = useState<number | null>(null);
-  const [roundCounter, setRoundCounter] = useState(1);
-  const [announcement, setAnnouncement] = useState<{
-    message: string | null;
-    type: "phase" | "effect" | "damage" | "heal";
-  }>({ message: null, type: "phase" });
+
+  const {
+    isPlayerTurn,
+    selectedCard,
+    targetSlot,
+    roundCounter,
+    startGame,
+    playCard,
+    endTurn,
+    setSelectedCard,
+    setTargetSlot,
+    gameState,
+    setGameState,
+    isDeckBuilding,
+    announcement,
+    setAnnouncement,
+  } = useGameLogic();
 
   useEffect(() => {
     const shuffledCards = [...cardPool]
@@ -54,376 +42,12 @@ export function GameBoard() {
     setAvailableCards(shuffledCards);
   }, []);
 
-  const calculateStaminaGain = (round: number) => {
-    return Math.floor(BASE_STAMINA_GAIN + (round - 1) * STAMINA_SCALING_FACTOR);
-  };
-
-  const handleCardEffect = (card: GameCard, damage: number) => {
-    let finalDamage = damage;
-    let healAmount = 0;
-
-    if (card.onAttackEffect === "CRITICAL_STRIKE") {
-      if (Math.random() < 0.3) {
-        finalDamage *= 2;
-        setAnnouncement({
-          message: "Critical Strike!",
-          type: "effect"
-        });
-      }
-    } else if (card.onAttackEffect === "LIFESTEAL") {
-      healAmount = Math.floor(damage * 0.5);
-      setAnnouncement({
-        message: `Lifesteal: +${healAmount} HP`,
-        type: "heal"
-      });
-    }
-
-    return { finalDamage, healAmount };
-  };
-
-  const handleDefenseEffect = (card: GameCard | undefined) => {
-    if (!card) return 0;
-
-    if (card.onDefenseEffect === "THORNS") {
-      setAnnouncement({
-        message: "Thorns Activated!",
-        type: "effect"
-      });
-      return 2;
-    }
-    return 0;
-  };
-
-  const handleDeadEffect = (card: GameCard) => {
-    if (card.onDeadEffect === "EXPLODE") {
-      const explodeDamage = 3;
-      setAnnouncement({
-        message: "Card Explodes!",
-        type: "effect"
-      });
-      return explodeDamage;
-    }
-    return 0;
-  };
-
-  const startGame = (selectedDeck: Card[]) => {
-    const shuffledDeck = [...selectedDeck].sort(() => Math.random() - 0.5);
-    const initialHand = shuffledDeck.slice(0, INITIAL_HAND_SIZE).map(convertToGameCard);
-    const remaining = shuffledDeck.slice(INITIAL_HAND_SIZE).map(convertToGameCard);
-
-    setGameState(prev => ({
-      ...prev,
-      deck: initialHand
-    }));
-
-    setRemainingDeck(remaining);
-    setIsDeckBuilding(false);
-    setRoundCounter(1);
-    setAnnouncement({
-      message: "Battle Start!",
-      type: "phase"
-    });
-  };
-
-  const drawCard = () => {
-    if (remainingDeck.length === 0) {
-      toast.error("No more cards to draw!");
-      return;
-    }
-
-    const [newCard, ...restDeck] = remainingDeck;
-    setGameState(prev => ({
-      ...prev,
-      deck: [...prev.deck, newCard]
-    }));
-    setRemainingDeck(restDeck);
-  };
-
-  const playCard = (cardIndex: number, slotIndex: number) => {
-    if (!isPlayerTurn) return;
-    if (gameState.playerStamina < gameState.deck[cardIndex].staminaCost) {
-      toast.error("Not enough stamina!");
-      return;
-    }
-
-    const card = gameState.deck[cardIndex];
-    setAnnouncement({
-      message: `Playing ${card.name}`,
-      type: "phase"
-    });
-
-    setTimeout(() => {
-      setGameState((prev) => {
-        const newDeck = [...prev.deck];
-        newDeck.splice(cardIndex, 1);
-
-        const { finalDamage, healAmount } = handleCardEffect(card, card.attack);
-
-        setTimeout(() => {
-          setAnnouncement({
-            message: `Dealing ${finalDamage} Damage!`,
-            type: "damage"
-          });
-        }, 1000);
-
-        if (healAmount > 0) {
-          setTimeout(() => {
-            setAnnouncement({
-              message: `Healing for ${healAmount}!`,
-              type: "heal"
-            });
-          }, 2000);
-        }
-
-        const newMonsterHealth = Math.max(0, prev.currentMonster.health - finalDamage);
-        const deadEffectDamage = card.currentHealth <= 0 ? handleDeadEffect(card) : 0;
-        const finalMonsterHealth = Math.max(0, newMonsterHealth - deadEffectDamage);
-
-        const newCardsOnField = [...prev.cardsOnField];
-        newCardsOnField[slotIndex] = card;
-
-        return {
-          ...prev,
-          deck: newDeck,
-          cardsOnField: newCardsOnField,
-          playerStamina: prev.playerStamina - card.staminaCost,
-          playerHealth: Math.min(40, prev.playerHealth + healAmount),
-          battleHistory: [
-            ...prev.battleHistory,
-            {
-              turn: prev.battleHistory.length + 1,
-              action: "play_card",
-              cardId: card.id,
-              damageDealt: finalDamage + deadEffectDamage,
-              monsterHpLeft: finalMonsterHealth,
-            },
-          ],
-          currentMonster: {
-            ...prev.currentMonster,
-            health: finalMonsterHealth,
-          },
-        };
-      });
-
-      setSelectedCard(null);
-      setTargetSlot(null);
-
-      setTimeout(() => {
-        setAnnouncement({
-          message: "Monster's Turn",
-          type: "phase"
-        });
-        setIsPlayerTurn(false);
-      }, 3000);
-    }, 1000);
-  };
-  const DECK_SIZE = 20;
-  const endTurn = () => {
-    if (!isPlayerTurn) return;
-    setAnnouncement({
-      message: "Ending Turn...",
-      type: "phase"
-    });
-    drawCard();
-    setRoundCounter(prev => prev + 1);
-    setTimeout(() => {
-      setAnnouncement({
-        message: "Monster's Turn",
-        type: "phase"
-      });
-      setIsPlayerTurn(false);
-      setSelectedCard(null);
-    }, 1500);
-  };
-
-  const handleMonsterAttack = (cardIndex: number) => {
-    setGameState(prev => {
-      const targetCard = prev.cardsOnField[cardIndex];
-      if (!targetCard) return prev;
-
-      const monsterAttack = prev.currentMonster.attack;
-      let finalDamage = monsterAttack;
-      let healAmount = 0;
-
-      const hasCritical = Math.random() < 0.2;
-      if (hasCritical) {
-        finalDamage *= 1.5;
-        setAnnouncement({
-          message: "Monster Critical Hit!",
-          type: "effect"
-        });
-      }
-
-      const thornsDamage = handleDefenseEffect(targetCard);
-      if (thornsDamage > 0) {
-        setAnnouncement({
-          message: `Thorns Damage: ${thornsDamage}!`,
-          type: "effect"
-        });
-      }
-
-      const newHealth = targetCard.currentHealth - finalDamage;
-      const updatedCardsOnField = [...prev.cardsOnField];
-
-      if (newHealth <= 0) {
-        const deadEffectDamage = handleDeadEffect(targetCard);
-        if (deadEffectDamage > 0) {
-          const newMonsterHealth = Math.max(0, prev.currentMonster.health - deadEffectDamage);
-          prev.currentMonster.health = newMonsterHealth;
-        }
-        updatedCardsOnField[cardIndex] = null;
-        setAnnouncement({
-          message: `${targetCard.name} was destroyed!`,
-          type: "damage"
-        });
-      } else {
-        updatedCardsOnField[cardIndex] = {
-          ...targetCard,
-          currentHealth: newHealth
-        };
-        setAnnouncement({
-          message: `${targetCard.name} takes ${finalDamage} damage!`,
-          type: "damage"
-        });
-      }
-
-      const hasLifesteal = Math.random() < 0.3;
-      if (hasLifesteal) {
-        healAmount = Math.floor(finalDamage * 0.3);
-        setAnnouncement({
-          message: `Monster Heals for ${healAmount}!`,
-          type: "heal"
-        });
-      }
-
-      const monsterHealthAfterThorns = Math.max(0, prev.currentMonster.health - thornsDamage);
-      const finalMonsterHealth = Math.min(monsterHealthAfterThorns + healAmount, 60);
-
-      return {
-        ...prev,
-        cardsOnField: updatedCardsOnField,
-        currentMonster: {
-          ...prev.currentMonster,
-          health: finalMonsterHealth,
-        },
-        battleHistory: [
-          ...prev.battleHistory,
-          {
-            turn: prev.battleHistory.length + 1,
-            action: "monster_attack",
-            cardId: targetCard.id,
-            damageDealt: finalDamage,
-            monsterHpLeft: finalMonsterHealth,
-          },
-        ],
-      };
-    });
-  };
-
-  useEffect(() => {
-    if (isPlayerTurn || isDeckBuilding) return;
-
-    const monsterTurn = setTimeout(() => {
-      const cardsOnField = gameState.cardsOnField
-        .map((card, index) => ({ card, index }))
-        .filter(({ card }) => card !== null);
-
-      if (cardsOnField.length === 0) {
-        setAnnouncement({
-          message: "Monster attacks directly!",
-          type: "phase"
-        });
-
-        setTimeout(() => {
-          setGameState(prev => {
-            const damage = prev.currentMonster.attack;
-            return {
-              ...prev,
-              playerHealth: Math.max(0, prev.playerHealth - damage),
-              battleHistory: [
-                ...prev.battleHistory,
-                {
-                  turn: prev.battleHistory.length + 1,
-                  action: "monster_attack",
-                  damageDealt: damage,
-                  playerHpLeft: Math.max(0, prev.playerHealth - damage),
-                },
-              ],
-            };
-          });
-          setAnnouncement({
-            message: `Direct Attack: ${gameState.currentMonster.attack} damage!`,
-            type: "damage"
-          });
-        }, 1000);
-      } else {
-        const randomIndex = Math.floor(Math.random() * cardsOnField.length);
-        const targetCard = cardsOnField[randomIndex];
-
-        if (targetCard && targetCard.card) {
-          setAnnouncement({
-            message: `Monster attacks ${targetCard.card.name}!`,
-            type: "phase"
-          });
-
-          setTimeout(() => {
-            handleMonsterAttack(targetCard.index);
-          }, 1000);
-        }
-      }
-
-      setTimeout(() => {
-        setAnnouncement({
-          message: "Your Turn",
-          type: "phase"
-        });
-        const staminaGain = calculateStaminaGain(roundCounter);
-        setGameState(prev => ({
-          ...prev,
-          playerStamina: Math.min(10, prev.playerStamina + staminaGain),
-        }));
-        setIsPlayerTurn(true);
-      }, 2500);
-    }, 1000);
-
-    return () => clearTimeout(monsterTurn);
-  }, [isPlayerTurn, isDeckBuilding, roundCounter]);
-
-  useEffect(() => {
-    if (isDeckBuilding) return;
-
-    if (gameState.playerHealth <= 0) {
-      setAnnouncement({
-        message: "Game Over!",
-        type: "phase"
-      });
-      setTimeout(() => {
-        setIsDeckBuilding(true);
-        setGameState(mockGameState);
-        setIsPlayerTurn(true);
-        setRoundCounter(1);
-      }, 2000);
-    } else if (gameState.currentMonster.health <= 0) {
-      setAnnouncement({
-        message: "Victory!",
-        type: "phase"
-      });
-      setTimeout(() => {
-        setIsDeckBuilding(true);
-        setGameState(mockGameState);
-        setIsPlayerTurn(true);
-        setRoundCounter(1);
-      }, 2000);
-    }
-  }, [gameState.playerHealth, gameState.currentMonster.health, isDeckBuilding]);
-
   return (
     <div className="game-board">
-      <GameTutorial />
       <PhaseAnnouncement
         message={announcement.message}
         type={announcement.type}
-        onComplete={() => setAnnouncement({ message: null, type: "phase" })}
+        onComplete={() => setAnnouncement({ message: null, type: 'phase' })}
       />
 
       {isDeckBuilding ? (
@@ -443,129 +67,54 @@ export function GameBoard() {
         </>
       ) : (
         <>
-          <div className="game-header">
-            <div className="turn-indicator">
-              <div className="text-lg font-medium text-yellow-400">
-                {isPlayerTurn ? "Your Turn" : "Monster's Turn"}
-              </div>
-            </div>
+          <GameHeader
+            isPlayerTurn={isPlayerTurn}
+            playerHealth={gameState.playerHealth}
+            playerStamina={gameState.playerStamina}
+            currentStage={gameState.currentStage}
+            roundCounter={roundCounter}
+            monsterHealth={gameState.currentMonster.health}
+            monsterAttack={gameState.currentMonster.attack}
+            onTutorialOpen={() => setIsTutorialOpen(true)}
+          />
 
-            <div className="h-full flex items-center justify-between">
-              <div id="player-stats">
-                <PlayerStats
-                  health={gameState.playerHealth}
-                  stamina={gameState.playerStamina}
-                  stage={gameState.currentStage}
-                  round={roundCounter}
-                  nextStaminaGain={calculateStaminaGain(roundCounter)}
-                />
-              </div>
-              <Button
-                className="absolute top-6 right-6 action-button"
-                onClick={() => setIsTutorialOpen(true)}
-              >
-                <QuestionMarkCircle className="w-4 h-4" />
-                How to Play
-              </Button>
-              <div id="monster-stats">
-                <MonsterDisplay
-                  health={gameState.currentMonster.health}
-                  attack={gameState.currentMonster.attack}
-                />
-              </div>
-            </div>
-          </div>
+          <GameField
+            cardsOnField={gameState.cardsOnField}
+            selectedCard={selectedCard}
+            targetSlot={targetSlot}
+            isPlayerTurn={isPlayerTurn}
+            onCardPlay={playCard}
+            onTargetSlotChange={setTargetSlot}
+            battleHistory={gameState.battleHistory}
+          />
 
-          <div id="battle-field" className="battle-field">
-            <div className="relative h-full flex flex-col p-6">
-              <div className="flex-1 grid grid-cols-5 grid-rows-2 gap-4 p-8">
-                {[...Array(10)].map((_, index) => {
-                  const card = gameState.cardsOnField[index];
-                  return (
-                    <div
-                      key={`slot-${index}`}
-                      className={cn(
-                        "card-slot",
-                        targetSlot === index && "targetable",
-                        selectedCard !== null && !card && "cursor-pointer"
-                      )}
-                      style={{
-                        width: CARD_SLOT.width,
-                        height: CARD_SLOT.height,
-                      }}
-                      onClick={() => {
-                        if (selectedCard !== null && !card) {
-                          playCard(selectedCard, index);
-                        }
-                      }}
-                      onMouseEnter={() => {
-                        if (selectedCard !== null && !card) {
-                          setTargetSlot(index);
-                        }
-                      }}
-                      onMouseLeave={() => {
-                        if (targetSlot === index) {
-                          setTargetSlot(null);
-                        }
-                      }}
-                    >
-                      {card && (
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <GameCardComponent
-                            card={card}
-                            disabled={true}
-                            size="small"
-                          />
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
+          <PlayerHand
+            deck={gameState.deck}
+            selectedCard={selectedCard}
+            isPlayerTurn={isPlayerTurn}
+            playerStamina={gameState.playerStamina}
+            onCardSelect={setSelectedCard}
+          />
 
-              <div id="battle-log">
-                <BattleStats history={gameState.battleHistory} />
-              </div>
-
-              <div className="flex justify-end gap-4 p-6 bg-black/30 border-t border-yellow-900/50">
-                <Button
-                  className="action-button"
-                  disabled={!isPlayerTurn || selectedCard === null}
-                  onClick={() => selectedCard !== null && targetSlot !== null && playCard(selectedCard, targetSlot)}
-                >
-                  Play Card
-                </Button>
-                <Button
-                  className="action-button"
-                  disabled={!isPlayerTurn}
-                  onClick={endTurn}
-                >
-                  End Turn
-                </Button>
-              </div>
-            </div>
-          </div>
-
-          <div id="player-hand" className="player-hand">
-            <div className="h-full flex items-center justify-center gap-6">
-              {gameState.deck.map((card, index) => (
-                <div
-                  key={`hand-${index}`}
-                  className={cn(
-                    "transform transition-all duration-300 hover:-translate-y-4",
-                    selectedCard === index && "-translate-y-4 ring-2 ring-yellow-400"
-                  )}
-                >
-                  <GameCardComponent
-                    card={card}
-                    onClick={() => isPlayerTurn && setSelectedCard(index)}
-                    selected={selectedCard === index}
-                    disabled={!isPlayerTurn || gameState.playerStamina < card.staminaCost}
-                    size="small"
-                  />
-                </div>
-              ))}
-            </div>
+          <div className="flex justify-end gap-4 p-6 bg-black/30 border-t border-yellow-900/50">
+            <Button
+              className="action-button"
+              disabled={!isPlayerTurn || selectedCard === null}
+              onClick={() =>
+                selectedCard !== null &&
+                targetSlot !== null &&
+                playCard(selectedCard, targetSlot)
+              }
+            >
+              Play Card
+            </Button>
+            <Button
+              className="action-button"
+              disabled={!isPlayerTurn}
+              onClick={endTurn}
+            >
+              End Turn
+            </Button>
           </div>
         </>
       )}
@@ -579,4 +128,3 @@ export function GameBoard() {
 }
 
 export default GameBoard;
-

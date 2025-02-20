@@ -1,11 +1,9 @@
-"use client";
-
-import { GameCard } from "@/types/game";
-import { GameCard as GameCardComponent } from "../ui/game-card";
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
+import type { GameCard } from '@/types/game';
+import { GameCard as GameCardComponent } from '../ui/game-card';
 
 interface PlayerHandProps {
-  cards: GameCard[];
+  deck: GameCard[];
   selectedCard: number | null;
   isPlayerTurn: boolean;
   playerStamina: number;
@@ -13,21 +11,21 @@ interface PlayerHandProps {
 }
 
 export function PlayerHand({
-  cards,
+  deck,
   selectedCard,
   isPlayerTurn,
   playerStamina,
-  onCardSelect
+  onCardSelect,
 }: PlayerHandProps) {
   return (
     <div id="player-hand" className="player-hand">
       <div className="h-full flex items-center justify-center gap-6">
-        {cards.map((card, index) => (
+        {deck.map((card, index) => (
           <div
             key={`hand-${index}`}
             className={cn(
-              "transform transition-all duration-300 hover:-translate-y-4",
-              selectedCard === index && "-translate-y-4 ring-2 ring-yellow-400"
+              'transform transition-all duration-300 hover:-translate-y-4',
+              selectedCard === index && '-translate-y-4 ring-2 ring-yellow-400'
             )}
           >
             <GameCardComponent

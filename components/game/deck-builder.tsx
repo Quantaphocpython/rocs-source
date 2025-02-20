@@ -1,14 +1,23 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { Card, Class } from "@/types/game";
-import { Button } from "../ui/button";
-import { GameCard as GameCardComponent } from "../ui/game-card";
-import { CardDetails } from "./card-details";
-import { toast } from "sonner";
-import { Sword, Filter, Sparkles, Flame, Droplet, Trees, Mountain, Cog } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { useState, useEffect } from 'react';
+import { Card, Class } from '@/types/game';
+import { Button } from '../ui/button';
+import { GameCard as GameCardComponent } from '../ui/game-card';
+import { CardDetails } from './card-details';
+import { toast } from 'sonner';
+import {
+  Sword,
+  Filter,
+  Sparkles,
+  Flame,
+  Droplet,
+  Trees,
+  Mountain,
+  Cog,
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
 interface DeckBuilderProps {
   availableCards: Card[];
@@ -16,7 +25,11 @@ interface DeckBuilderProps {
   deckSize: number;
 }
 
-export function DeckBuilder({ availableCards, onStartGame, deckSize }: DeckBuilderProps) {
+export function DeckBuilder({
+  availableCards,
+  onStartGame,
+  deckSize,
+}: DeckBuilderProps) {
   const [selectedDeck, setSelectedDeck] = useState<Card[]>([]);
   const [currentRound, setCurrentRound] = useState(1);
   const [currentChoices, setCurrentChoices] = useState<Card[]>([]);
@@ -28,7 +41,9 @@ export function DeckBuilder({ availableCards, onStartGame, deckSize }: DeckBuild
     const getRandomCards = () => {
       let filteredCards = [...availableCards];
       if (activeFilter) {
-        filteredCards = filteredCards.filter(card => card.class.includes(activeFilter));
+        filteredCards = filteredCards.filter((card) =>
+          card.class.includes(activeFilter)
+        );
       }
       const shuffled = filteredCards.sort(() => Math.random() - 0.5);
       return shuffled.slice(0, 5);
@@ -37,7 +52,7 @@ export function DeckBuilder({ availableCards, onStartGame, deckSize }: DeckBuild
   }, [currentRound, availableCards, activeFilter]);
 
   const handleCardSelection = (card: Card) => {
-    const cardCount = selectedDeck.filter(c => c.id === card.id).length;
+    const cardCount = selectedDeck.filter((c) => c.id === card.id).length;
     if (cardCount >= card.maxPerSession) {
       toast.error(`Can't add more copies of ${card.name}`);
       return;
@@ -62,7 +77,10 @@ export function DeckBuilder({ availableCards, onStartGame, deckSize }: DeckBuild
 
   const getAverageStamina = () => {
     if (selectedDeck.length === 0) return 0;
-    return (selectedDeck.reduce((sum, card) => sum + card.staminaCost, 0) / selectedDeck.length).toFixed(1);
+    return (
+      selectedDeck.reduce((sum, card) => sum + card.staminaCost, 0) /
+      selectedDeck.length
+    ).toFixed(1);
   };
 
   const sortCards = (cards: Card[]) => {
@@ -100,7 +118,9 @@ export function DeckBuilder({ availableCards, onStartGame, deckSize }: DeckBuild
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <span className="text-lg font-medium">Round {currentRound} / {deckSize}</span>
+              <span className="text-lg font-medium">
+                Round {currentRound} / {deckSize}
+              </span>
             </motion.div>
             <motion.div
               className="stat-card"
@@ -108,7 +128,9 @@ export function DeckBuilder({ availableCards, onStartGame, deckSize }: DeckBuild
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: 0.4 }}
             >
-              <span className="text-lg font-medium">Selected {selectedDeck.length} / {deckSize}</span>
+              <span className="text-lg font-medium">
+                Selected {selectedDeck.length} / {deckSize}
+              </span>
             </motion.div>
           </div>
         </div>
@@ -119,9 +141,7 @@ export function DeckBuilder({ availableCards, onStartGame, deckSize }: DeckBuild
         {/* Main Deck Area (70%) */}
         <div className="w-[70%] border-r border-yellow-900/50 flex flex-col">
           <div className="p-8 flex-shrink-0 flex justify-between items-center border-b border-yellow-900/50">
-            <h2 className="text-2xl font-medium">
-              Your Deck
-            </h2>
+            <h2 className="text-2xl font-medium">Your Deck</h2>
             <div className="flex items-center gap-4">
               <div className="stat-card">
                 <Sword className="w-5 h-5" />
@@ -193,15 +213,23 @@ export function DeckBuilder({ availableCards, onStartGame, deckSize }: DeckBuild
                   <Button
                     key={classType}
                     className={cn(
-                      "filter-button",
-                      activeFilter === classType && "filter-button-active"
+                      'filter-button',
+                      activeFilter === classType && 'filter-button-active'
                     )}
-                    onClick={() => setActiveFilter(activeFilter === classType ? null : classType)}
+                    onClick={() =>
+                      setActiveFilter(
+                        activeFilter === classType ? null : classType
+                      )
+                    }
                   >
                     {classType === Class.FIRE && <Flame className="w-4 h-4" />}
-                    {classType === Class.WATER && <Droplet className="w-4 h-4" />}
+                    {classType === Class.WATER && (
+                      <Droplet className="w-4 h-4" />
+                    )}
                     {classType === Class.WOOD && <Trees className="w-4 h-4" />}
-                    {classType === Class.EARTH && <Mountain className="w-4 h-4" />}
+                    {classType === Class.EARTH && (
+                      <Mountain className="w-4 h-4" />
+                    )}
                     {classType === Class.METAL && <Cog className="w-4 h-4" />}
                   </Button>
                 ))}
@@ -210,8 +238,8 @@ export function DeckBuilder({ availableCards, onStartGame, deckSize }: DeckBuild
               <div className="flex items-center justify-center gap-2">
                 <Button
                   className={cn(
-                    "sort-button",
-                    sortBy === 'attack' && "sort-button-active"
+                    'sort-button',
+                    sortBy === 'attack' && 'sort-button-active'
                   )}
                   onClick={() => setSortBy('attack')}
                 >
@@ -220,8 +248,8 @@ export function DeckBuilder({ availableCards, onStartGame, deckSize }: DeckBuild
                 </Button>
                 <Button
                   className={cn(
-                    "sort-button",
-                    sortBy === 'health' && "sort-button-active"
+                    'sort-button',
+                    sortBy === 'health' && 'sort-button-active'
                   )}
                   onClick={() => setSortBy('health')}
                 >
@@ -230,8 +258,8 @@ export function DeckBuilder({ availableCards, onStartGame, deckSize }: DeckBuild
                 </Button>
                 <Button
                   className={cn(
-                    "sort-button",
-                    sortBy === 'cost' && "sort-button-active"
+                    'sort-button',
+                    sortBy === 'cost' && 'sort-button-active'
                   )}
                   onClick={() => setSortBy('cost')}
                 >
@@ -266,7 +294,8 @@ export function DeckBuilder({ availableCards, onStartGame, deckSize }: DeckBuild
                       />
                       <div className="absolute top-2 left-2 px-4 py-2 bg-black/90 border border-yellow-900/50 rounded-lg">
                         <span className="text-sm font-medium">
-                          {selectedDeck.filter(c => c.id === card.id).length} / {card.maxPerSession}
+                          {selectedDeck.filter((c) => c.id === card.id).length}{' '}
+                          / {card.maxPerSession}
                         </span>
                       </div>
                     </div>
