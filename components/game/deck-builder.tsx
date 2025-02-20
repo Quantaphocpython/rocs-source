@@ -1,14 +1,16 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { Card, Class } from "@/types/game";
-import { Button } from "../ui/button";
-import { GameCard as GameCardComponent } from "../ui/game-card";
-import { CardDetails } from "./card-details";
-import { toast } from "sonner";
-import { Sword, Filter, Sparkles, Flame, Droplet, Trees, Mountain, Cog } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import type { Card, Class } from '@/types/game';
+import { Button } from '../ui/button';
+import { GameCard as GameCardComponent } from '../ui/game-card';
+import { CardDetails } from './card-details';
+import { ClassFilter } from './ClassFilter';
+import { SortOptions } from './SortOptions';
+import { DeckStats } from './DeckStats';
+import { toast } from 'sonner';
+import { Play } from 'lucide-react';
 
 interface DeckBuilderProps {
   availableCards: Card[];
@@ -16,7 +18,11 @@ interface DeckBuilderProps {
   deckSize: number;
 }
 
-export function DeckBuilder({ availableCards, onStartGame, deckSize }: DeckBuilderProps) {
+export function DeckBuilder({
+  availableCards,
+  onStartGame,
+  deckSize,
+}: DeckBuilderProps) {
   const [selectedDeck, setSelectedDeck] = useState<Card[]>([]);
   const [currentRound, setCurrentRound] = useState(1);
   const [currentChoices, setCurrentChoices] = useState<Card[]>([]);
@@ -28,16 +34,18 @@ export function DeckBuilder({ availableCards, onStartGame, deckSize }: DeckBuild
     const getRandomCards = () => {
       let filteredCards = [...availableCards];
       if (activeFilter) {
-        filteredCards = filteredCards.filter(card => card.class.includes(activeFilter));
+        filteredCards = filteredCards.filter((card) =>
+          card.class.includes(activeFilter)
+        );
       }
       const shuffled = filteredCards.sort(() => Math.random() - 0.5);
       return shuffled.slice(0, 5);
     };
     setCurrentChoices(getRandomCards());
-  }, [currentRound, availableCards, activeFilter]);
+  }, [availableCards, activeFilter]);
 
   const handleCardSelection = (card: Card) => {
-    const cardCount = selectedDeck.filter(c => c.id === card.id).length;
+    const cardCount = selectedDeck.filter((c) => c.id === card.id).length;
     if (cardCount >= card.maxPerSession) {
       toast.error(`Can't add more copies of ${card.name}`);
       return;
@@ -52,231 +60,202 @@ export function DeckBuilder({ availableCards, onStartGame, deckSize }: DeckBuild
     }
   };
 
-  const getDeckPower = () => {
-    return selectedDeck.reduce((sum, card) => sum + card.attack, 0);
-  };
+  const sortCards = useCallback(
+    (cards: Card[]) => {
+      return [...cards].sort((a, b) => {
+        switch (sortBy) {
+          case 'attack':
+            return b.attack - a.attack;
+          case 'health':
+            return b.health - a.health;
+          case 'cost':
+            return a.staminaCost - b.staminaCost;
+        }
+      });
+    },
+    [sortBy]
+  );
 
-  const getDeckHealth = () => {
-    return selectedDeck.reduce((sum, card) => sum + card.health, 0);
-  };
-
-  const getAverageStamina = () => {
-    if (selectedDeck.length === 0) return 0;
-    return (selectedDeck.reduce((sum, card) => sum + card.staminaCost, 0) / selectedDeck.length).toFixed(1);
-  };
-
-  const sortCards = (cards: Card[]) => {
-    return [...cards].sort((a, b) => {
-      switch (sortBy) {
-        case 'attack':
-          return b.attack - a.attack;
-        case 'health':
-          return b.health - a.health;
-        case 'cost':
-          return a.staminaCost - b.staminaCost;
-      }
+  const sortedAndFilteredCards = useMemo(() => {
+    const sorted = sortCards(currentChoices);
+    return sorted.sort((a, b) => {
+      const aCount = selectedDeck.filter((c) => c.id === a.id).length;
+      const bCount = selectedDeck.filter((c) => c.id === b.id).length;
+      if (aCount >= a.maxPerSession && bCount < b.maxPerSession) return 1;
+      if (bCount >= b.maxPerSession && aCount < a.maxPerSession) return -1;
+      return 0;
     });
-  };
+  }, [currentChoices, selectedDeck, sortCards]);
 
   return (
-    <div className="min-h-screen h-full bg-black text-yellow-400 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-yellow-400">
       {/* Header */}
-      <div className="relative h-40 bg-black border-b border-yellow-900/50 flex-shrink-0 overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1519120944692-1a8d8cfc107f?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-10" />
-
-        <div className="relative h-full flex flex-col items-center justify-center">
+      <header className="relative h-64 overflow-hidden">
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1519120944692-1a8d8cfc107f?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-20" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-gray-900" />
+        <div className="relative h-full flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
           <motion.h1
-            className="text-4xl font-bold mb-4"
+            className="text-5xl font-bold mb-4 text-yellow-300"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            Build Your Deck
+            Forge Your Destiny
           </motion.h1>
+          <motion.p
+            className="text-xl text-yellow-200 mb-6 text-center max-w-2xl"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            Choose your cards wisely, for they shall shape the fate of your
+            journey
+          </motion.p>
           <div className="flex items-center gap-8">
             <motion.div
-              className="stat-card"
+              className="stat-card bg-black/50 backdrop-blur-sm border border-yellow-600/30 rounded-lg px-6 py-3"
               initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              <span className="text-lg font-medium">Round {currentRound} / {deckSize}</span>
-            </motion.div>
-            <motion.div
-              className="stat-card"
-              initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: 0.4 }}
             >
-              <span className="text-lg font-medium">Selected {selectedDeck.length} / {deckSize}</span>
+              <span className="text-lg font-medium">
+                Round {currentRound} / {deckSize}
+              </span>
+            </motion.div>
+            <motion.div
+              className="stat-card bg-black/50 backdrop-blur-sm border border-yellow-600/30 rounded-lg px-6 py-3"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+            >
+              <span className="text-lg font-medium">
+                Selected {selectedDeck.length} / {deckSize}
+              </span>
             </motion.div>
           </div>
         </div>
-      </div>
+      </header>
 
       {/* Main Content */}
-      <div className="flex-1 flex min-h-[calc(100vh-10rem)]">
-        {/* Main Deck Area (70%) */}
-        <div className="w-[70%] border-r border-yellow-900/50 flex flex-col">
-          <div className="p-8 flex-shrink-0 flex justify-between items-center border-b border-yellow-900/50">
-            <h2 className="text-2xl font-medium">
-              Your Deck
-            </h2>
-            <div className="flex items-center gap-4">
-              <div className="stat-card">
-                <Sword className="w-5 h-5" />
-                <span className="text-lg font-medium">
-                  Power: {getDeckPower()}
-                </span>
-              </div>
-              <div className="stat-card">
-                <Sparkles className="w-5 h-5" />
-                <span className="text-lg font-medium">
-                  Health: {getDeckHealth()}
-                </span>
-              </div>
-              <div className="stat-card">
-                <Sword className="w-5 h-5" />
-                <span className="text-lg font-medium">
-                  Avg Cost: {getAverageStamina()}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex-1 overflow-y-auto p-8">
-            <div className="grid grid-cols-6 gap-6 p-8 border border-yellow-900/50 rounded-lg bg-black/30 backdrop-blur-sm min-h-full">
-              <AnimatePresence>
-                {selectedDeck.map((card, index) => (
-                  <motion.div
-                    key={`selected-${index}`}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.8 }}
-                    className="transform transition-all duration-300 hover:scale-105"
-                    onContextMenu={(e) => {
-                      e.preventDefault();
-                      setSelectedCard(card);
-                    }}
-                  >
-                    <GameCardComponent
-                      card={card}
-                      disabled={true}
-                      size="small"
-                    />
-                  </motion.div>
-                ))}
-                {[...Array(deckSize - selectedDeck.length)].map((_, index) => (
-                  <motion.div
-                    key={`empty-${index}`}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="w-[100px] h-[140px] border border-dashed border-yellow-900/30 rounded-lg bg-black/20"
-                  />
-                ))}
-              </AnimatePresence>
-            </div>
-          </div>
-        </div>
-
-        {/* Card Choices Sidebar (30%) */}
-        <div className="w-[30%] flex flex-col">
-          <div className="p-8 flex-shrink-0 border-b border-yellow-900/50">
-            <h2 className="text-2xl font-medium text-center mb-4">
-              Available Cards
-            </h2>
-
-            {/* Filters */}
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center justify-center gap-2">
-                {Object.values(Class).map((classType) => (
-                  <Button
-                    key={classType}
-                    className={cn(
-                      "filter-button",
-                      activeFilter === classType && "filter-button-active"
-                    )}
-                    onClick={() => setActiveFilter(activeFilter === classType ? null : classType)}
-                  >
-                    {classType === Class.FIRE && <Flame className="w-4 h-4" />}
-                    {classType === Class.WATER && <Droplet className="w-4 h-4" />}
-                    {classType === Class.WOOD && <Trees className="w-4 h-4" />}
-                    {classType === Class.EARTH && <Mountain className="w-4 h-4" />}
-                    {classType === Class.METAL && <Cog className="w-4 h-4" />}
-                  </Button>
-                ))}
-              </div>
-
-              <div className="flex items-center justify-center gap-2">
-                <Button
-                  className={cn(
-                    "sort-button",
-                    sortBy === 'attack' && "sort-button-active"
-                  )}
-                  onClick={() => setSortBy('attack')}
-                >
-                  <Sword className="w-4 h-4 mr-2" />
-                  Attack
-                </Button>
-                <Button
-                  className={cn(
-                    "sort-button",
-                    sortBy === 'health' && "sort-button-active"
-                  )}
-                  onClick={() => setSortBy('health')}
-                >
-                  <Sparkles className="w-4 h-4 mr-2" />
-                  Health
-                </Button>
-                <Button
-                  className={cn(
-                    "sort-button",
-                    sortBy === 'cost' && "sort-button-active"
-                  )}
-                  onClick={() => setSortBy('cost')}
-                >
-                  <Filter className="w-4 h-4 mr-2" />
-                  Cost
-                </Button>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex-1 overflow-y-auto">
-            <div className="min-h-full flex flex-col items-center justify-center gap-8 py-8">
-              <AnimatePresence mode="wait">
-                {sortCards(currentChoices).map((card, index) => (
-                  <motion.div
-                    key={`choice-${card.id}-${index}`}
-                    initial={{ opacity: 0, x: 50 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -50 }}
-                    transition={{ duration: 0.3, delay: index * 0.1 }}
-                    className="relative group"
-                    onContextMenu={(e) => {
-                      e.preventDefault();
-                      setSelectedCard(card);
-                    }}
-                  >
-                    <div className="transform transition-all duration-300 hover:scale-105">
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Main Deck Area */}
+          <div className="w-full lg:w-2/3">
+            <div className="bg-black/30 backdrop-blur-sm border border-yellow-900/50 rounded-lg p-6">
+              <h2 className="text-2xl font-medium text-yellow-300 mb-4">
+                Your Arsenal
+              </h2>
+              <DeckStats selectedDeck={selectedDeck} />
+              <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                <AnimatePresence>
+                  {selectedDeck.map((card, index) => (
+                    <motion.div
+                      key={`selected-${index}`}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      className="transform transition-all duration-300 hover:scale-105"
+                      onContextMenu={(e) => {
+                        e.preventDefault();
+                        setSelectedCard(card);
+                      }}
+                    >
                       <GameCardComponent
                         card={card}
-                        onClick={() => handleCardSelection(card)}
-                        disabled={false}
+                        disabled={true}
+                        size="small"
                       />
-                      <div className="absolute top-2 left-2 px-4 py-2 bg-black/90 border border-yellow-900/50 rounded-lg">
-                        <span className="text-sm font-medium">
-                          {selectedDeck.filter(c => c.id === card.id).length} / {card.maxPerSession}
-                        </span>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
+                    </motion.div>
+                  ))}
+                  {[...Array(deckSize - selectedDeck.length)].map(
+                    (_, index) => (
+                      <motion.div
+                        key={`empty-${index}`}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="w-full aspect-[2/3] border border-dashed border-yellow-900/30 rounded-lg bg-black/20"
+                      />
+                    )
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
+          </div>
+
+          {/* Card Choices Sidebar */}
+          <div className="w-full lg:w-1/3">
+            <div className="bg-black/30 backdrop-blur-sm border border-yellow-900/50 rounded-lg p-6">
+              <h2 className="text-2xl font-medium text-center mb-6 text-yellow-300">
+                Mystic Offerings
+              </h2>
+              <ClassFilter
+                activeFilter={activeFilter}
+                setActiveFilter={setActiveFilter}
+              />
+              <SortOptions sortBy={sortBy} setSortBy={setSortBy} />
+              <div className="mt-8">
+                <AnimatePresence mode="wait">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    {sortedAndFilteredCards.map((card, index) => (
+                      <motion.div
+                        key={`choice-${card.id}-${index}`}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.3, delay: index * 0.1 }}
+                        className="relative group"
+                        onContextMenu={(e) => {
+                          e.preventDefault();
+                          setSelectedCard(card);
+                        }}
+                      >
+                        <div className="transform transition-all duration-300 hover:scale-105">
+                          <GameCardComponent
+                            card={card}
+                            onClick={() => handleCardSelection(card)}
+                            disabled={
+                              selectedDeck.filter((c) => c.id === card.id)
+                                .length >= card.maxPerSession
+                            }
+                            size="normal"
+                          />
+                          <div className="absolute top-2 left-2 px-3 py-1 bg-black/90 border border-yellow-900/50 rounded-md">
+                            <span className="text-sm font-medium">
+                              {
+                                selectedDeck.filter((c) => c.id === card.id)
+                                  .length
+                              }{' '}
+                              / {card.maxPerSession}
+                            </span>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </AnimatePresence>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </main>
+
+      {/* Start Game Button */}
+      {selectedDeck.length === deckSize && (
+        <motion.div
+          className="fixed bottom-8 right-8"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Button
+            className="start-game-button bg-yellow-600 hover:bg-yellow-700 text-black font-bold py-3 px-6 rounded-lg text-lg flex items-center"
+            onClick={() => onStartGame(selectedDeck)}
+          >
+            <Play className="w-6 h-6 mr-2" />
+            Begin Your Quest
+          </Button>
+        </motion.div>
+      )}
 
       {/* Card Details Dialog */}
       <CardDetails
