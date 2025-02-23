@@ -1,69 +1,124 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { useState, useCallback, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import useEmblaCarousel from 'embla-carousel-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { PrebuiltDeck } from "@/types/game";
-import { GameCard } from "@/components/ui/game-card";
-import { cn } from "@/lib/utils";
-import { DeckStats } from "./DeckStats";
-import { convertToGameCard } from "@/utils/gameLogic";
 
-interface PrebuiltDeckCardProps {
-  deck: PrebuiltDeck;
-  isSelected: boolean;
-  onSelect: (deck: PrebuiltDeck) => void;
+import { cn } from '@/lib/utils';
+import { PrebuiltDeckCard } from './PreviewDeckCard';
+
+interface PrebuiltDeckListProps {
+  decks: PrebuiltDeck[];
+  selectedDeck: PrebuiltDeck | null;
+  onDeckSelect: (deck: PrebuiltDeck) => void;
 }
 
-export function PrebuiltDeckCard({ deck, isSelected, onSelect }: PrebuiltDeckCardProps) {
+export function PrebuiltDeckList({ decks, selectedDeck, onDeckSelect }: PrebuiltDeckListProps) {
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: true,
+    align: 'center',
+    skipSnaps: false,
+    dragFree: true,
+  });
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
+  const [prevBtnDisabled, setPrevBtnDisabled] = useState(true);
+  const [nextBtnDisabled, setNextBtnDisabled] = useState(true);
+
+  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
+  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
+
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setSelectedIndex(emblaApi.selectedScrollSnap());
+    setPrevBtnDisabled(!emblaApi.canScrollPrev());
+    setNextBtnDisabled(!emblaApi.canScrollNext());
+  }, [emblaApi]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+
+    onSelect();
+    setScrollSnaps(emblaApi.scrollSnapList());
+    emblaApi.on('select', onSelect);
+    emblaApi.on('reInit', onSelect);
+
+    return () => {
+      emblaApi.off('select', onSelect);
+      emblaApi.off('reInit', onSelect);
+    };
+  }, [emblaApi, onSelect]);
+
   return (
-    <motion.div
-      className={cn(
-        'relative rounded-lg overflow-hidden cursor-pointer transition-all duration-300',
-        isSelected ? 'ring-4 ring-yellow-400 transform scale-105' : 'hover:scale-105'
-      )}
-      onClick={() => onSelect(deck)}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-    >
-      <div className="absolute inset-0">
-        <img
-          src={deck.coverImage}
-          alt={deck.name}
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
-      </div>
-
-      <div className="relative p-6 min-h-[400px] flex flex-col">
-        <h3 className="text-2xl font-bold text-yellow-400 mb-2">{deck.name}</h3>
-        <p className="text-yellow-200/80 mb-6">{deck.description}</p>
-
-        <div className="mt-auto">
-          <DeckStats cards={deck.cards} />
-
-          <div className="flex gap-2 overflow-x-auto pb-4">
-            {deck.cards.slice(0, 5).map((card, index) => (
-              <div key={index} className="flex-shrink-0 w-20">
-                <GameCard
-                  card={convertToGameCard(card)}
-                  disabled={true}
-                  size="small"
+    <div className="relative">
+      {/* Carousel Container */}
+      <div className="overflow-hidden" ref={emblaRef}>
+        <div className="flex">
+          {decks.map((deck) => (
+            <div key={deck.id} className="flex-[0_0_100%] min-w-0 pl-4 first:pl-0">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4 }}
+              >
+                <PrebuiltDeckCard
+                  deck={deck}
+                  isSelected={selectedDeck?.id === deck.id}
+                  onSelect={onDeckSelect}
                 />
-              </div>
-            ))}
-            {deck.cards.length > 5 && (
-              <div className="flex-shrink-0 w-20 h-28 flex items-center justify-center bg-black/40 rounded-lg">
-                <span className="text-yellow-400">+{deck.cards.length - 5}</span>
-              </div>
-            )}
-          </div>
+              </motion.div>
+            </div>
+          ))}
         </div>
-
-        {isSelected && (
-          <div className="absolute top-4 right-4 bg-yellow-400 text-black px-3 py-1 rounded-full text-sm font-medium">
-            Selected
-          </div>
-        )}
       </div>
-    </motion.div>
+
+      {/* Navigation Buttons */}
+      <div className="absolute inset-y-0 left-0 flex items-center">
+        <button
+          className={cn(
+            "w-12 h-12 -ml-6 flex items-center justify-center rounded-full",
+            "bg-black/60 text-yellow-400 hover:bg-black/80 transition-all",
+            "transform hover:scale-110 hover:-translate-x-1",
+            "disabled:opacity-50 disabled:cursor-not-allowed"
+          )}
+          onClick={scrollPrev}
+          disabled={prevBtnDisabled}
+        >
+          <ChevronLeft className="w-8 h-8" />
+        </button>
+      </div>
+      <div className="absolute inset-y-0 right-0 flex items-center">
+        <button
+          className={cn(
+            "w-12 h-12 -mr-6 flex items-center justify-center rounded-full",
+            "bg-black/60 text-yellow-400 hover:bg-black/80 transition-all",
+            "transform hover:scale-110 hover:translate-x-1",
+            "disabled:opacity-50 disabled:cursor-not-allowed"
+          )}
+          onClick={scrollNext}
+          disabled={nextBtnDisabled}
+        >
+          <ChevronRight className="w-8 h-8" />
+        </button>
+      </div>
+
+      {/* Dots Navigation */}
+      <div className="flex justify-center gap-2 mt-8">
+        {scrollSnaps.map((_, index) => (
+          <button
+            key={index}
+            className={cn(
+              "w-2 h-2 rounded-full transition-all duration-300",
+              index === selectedIndex
+                ? "w-8 bg-yellow-400"
+                : "bg-yellow-400/30 hover:bg-yellow-400/50"
+            )}
+            onClick={() => emblaApi?.scrollTo(index)}
+          />
+        ))}
+      </div>
+    </div>
   );
 }

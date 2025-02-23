@@ -7,14 +7,13 @@ import { prebuiltDecks, cardPool } from '@/lib/mock-data';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-
 import { CardFilters } from './CardFilters';
 import { CardGrid } from './CardGrid';
 import { DeckPreview } from './DeckPreview';
+import { PrebuiltDeckList } from './PrebuiltDeckList';
 import type { PrebuiltDeck, Card } from '@/types/game';
 import { Class } from '@/types/game';
 import { DECK_SIZE } from '@/constants/game';
-import { PrebuiltDeckCard } from './PrebuiltDeckList';
 
 export function DeckBuilder() {
   const router = useRouter();
@@ -71,8 +70,13 @@ export function DeckBuilder() {
           id: 'custom-deck',
           name: 'Custom Deck',
           description: 'Your personally crafted deck',
+          difficulty: 'Medium',
+          playstyle: 'Versatile',
+          strengths: ['Customized strategy', 'Personal playstyle'],
+          weaknesses: ['Untested combinations'],
           cards: customDeck,
           coverImage: 'https://images.unsplash.com/photo-1635859890085-ec9e0c90f072',
+          strategy: 'Use your custom combination of cards to develop your own unique strategy.',
         };
         saveDeck(customPrebuiltDeck);
       }
@@ -82,19 +86,6 @@ export function DeckBuilder() {
     } catch (error) {
       toast.error('Failed to save deck. Please try again.');
     }
-  };
-
-  const sortCards = (cards: Card[]) => {
-    return [...cards].sort((a, b) => {
-      switch (sortBy) {
-        case 'attack':
-          return b.attack - a.attack;
-        case 'health':
-          return b.health - a.health;
-        case 'cost':
-          return a.staminaCost - b.staminaCost;
-      }
-    });
   };
 
   const filteredCards = cardPool.filter(
@@ -117,16 +108,11 @@ export function DeckBuilder() {
           </TabsList>
 
           <TabsContent value="prebuilt">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {prebuiltDecks.map((deck) => (
-                <PrebuiltDeckCard
-                  key={deck.id}
-                  deck={deck}
-                  isSelected={selectedDeck?.id === deck.id}
-                  onSelect={handleDeckSelect}
-                />
-              ))}
-            </div>
+            <PrebuiltDeckList
+              decks={prebuiltDecks}
+              selectedDeck={selectedDeck}
+              onDeckSelect={handleDeckSelect}
+            />
           </TabsContent>
 
           <TabsContent value="custom">
@@ -142,7 +128,7 @@ export function DeckBuilder() {
                 />
 
                 <CardGrid
-                  cards={sortCards(filteredCards)}
+                  cards={filteredCards}
                   customDeck={customDeck}
                   onCardSelect={handleCardSelect}
                 />

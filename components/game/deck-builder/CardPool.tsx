@@ -43,7 +43,7 @@ export function CardPool({
   return (
     <div className="bg-black/30 border border-yellow-900/50 rounded-lg p-6">
       <h3 className="text-xl font-bold text-yellow-400 mb-4">Available Cards</h3>
-      
+
       <div className="flex flex-col gap-4 mb-6">
         <div className="flex items-center gap-2">
           {Object.values(Class).map((classType) => (
@@ -63,7 +63,7 @@ export function CardPool({
             </Button>
           ))}
         </div>
-        
+
         <div className="flex items-center gap-2">
           <Button
             className={cn(
