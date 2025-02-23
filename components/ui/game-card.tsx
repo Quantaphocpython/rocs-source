@@ -1,184 +1,184 @@
-"use client";
+'use client';
 
-import { GameCard } from "@/types/game";
-import { cn } from "@/lib/utils";
-import { Heart, Sword, Zap, Shield, Flame, Droplet, Trees, Mountain, Cog } from "lucide-react";
-import { motion } from "framer-motion";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
+import { GameCard as GameCardType, Card } from '@/types/game';
+import { cn } from '@/lib/utils';
+import { Heart, Sword, Zap } from 'lucide-react';
+import { useState } from 'react';
+import { CardDetails } from '../game/card/CardDetails';
+import { convertToGameCard } from '@/utils/gameLogic';
 
 interface GameCardProps {
-  card: GameCard;
+  card: GameCardType | Card;
   onClick?: () => void;
   selected?: boolean;
   disabled?: boolean;
-  size?: "normal" | "small";
+  size?: 'small' | 'normal';
+  className?: string;
 }
 
-export function GameCard({ card, onClick, selected, disabled, size = "normal" }: GameCardProps) {
-  const getClassIcon = (className: string) => {
-    switch (className) {
-      case "FIRE":
-        return <Flame className="w-3 h-3" />;
-      case "WATER":
-        return <Droplet className="w-3 h-3" />;
-      case "WOOD":
-        return <Trees className="w-3 h-3" />;
-      case "EARTH":
-        return <Mountain className="w-3 h-3" />;
-      case "METAL":
-        return <Cog className="w-3 h-3" />;
-    }
+export function GameCard({
+  card: initialCard,
+  onClick,
+  selected = false,
+  disabled = false,
+  size = 'normal',
+  className,
+}: GameCardProps) {
+  const [showDetails, setShowDetails] = useState(false);
+
+  // Convert Card to GameCard if needed
+  const card = 'currentHealth' in initialCard ? initialCard : convertToGameCard(initialCard);
+
+  const handleContextMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setShowDetails(true);
   };
 
-  const getEffectIcons = () => {
-    const effects = [];
+  const getClassGradient = () => {
+    const classColors = {
+      FIRE: 'from-red-500/20 to-orange-700/20 border-red-500/50',
+      WATER: 'from-blue-500/20 to-cyan-700/20 border-blue-500/50',
+      WOOD: 'from-green-500/20 to-emerald-700/20 border-green-500/50',
+      EARTH: 'from-yellow-500/20 to-amber-700/20 border-yellow-500/50',
+      METAL: 'from-gray-400/20 to-slate-700/20 border-gray-400/50',
+    };
 
-    if (card.onAttackEffect === "CRITICAL_STRIKE") {
-      effects.push({ icon: "⚡", tooltip: "30% Critical Strike" });
-    }
-    if (card.onAttackEffect === "LIFESTEAL") {
-      effects.push({ icon: "💫", tooltip: "Lifesteal" });
-    }
-    if (card.onDeadEffect === "EXPLODE") {
-      effects.push({ icon: "💥", tooltip: "Explode on Death" });
-    }
-    if (card.onDefenseEffect === "THORNS") {
-      effects.push({ icon: "🛡️", tooltip: "Thorns" });
+    if (card.class.length === 1) {
+      return classColors[card.class[0]];
     }
 
-    return effects;
+    // For dual-class cards, create a diagonal gradient
+    const [primary, secondary] = card.class;
+    const [primaryColor, secondaryColor] = [classColors[primary], classColors[secondary]];
+    return `${primaryColor} via-transparent ${secondaryColor}`;
   };
 
-  const healthPercentage = (card.currentHealth / card.health) * 100;
-  const isHealthy = healthPercentage > 66;
-  const isDamaged = healthPercentage <= 66 && healthPercentage > 33;
-  const isCritical = healthPercentage <= 33;
+  const getClassOverlay = () => {
+    const overlayStyles = card.class.map(cls => {
+      switch (cls) {
+        case 'FIRE':
+          return 'after:bg-[radial-gradient(circle_at_center,rgba(239,68,68,0.1)_0%,transparent_70%)]';
+        case 'WATER':
+          return 'after:bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.1)_0%,transparent_70%)]';
+        case 'WOOD':
+          return 'after:bg-[radial-gradient(circle_at_center,rgba(34,197,94,0.1)_0%,transparent_70%)]';
+        case 'EARTH':
+          return 'after:bg-[radial-gradient(circle_at_center,rgba(234,179,8,0.1)_0%,transparent_70%)]';
+        case 'METAL':
+          return 'after:bg-[radial-gradient(circle_at_center,rgba(148,163,184,0.1)_0%,transparent_70%)]';
+        default:
+          return '';
+      }
+    });
+    return overlayStyles.join(' ');
+  };
 
   return (
-    <motion.div
-      className={cn(
-        "game-card",
-        size === "small" && "game-card-small",
-        disabled && "disabled",
-        selected && "selected"
-      )}
-      onClick={disabled ? undefined : onClick}
-      whileHover={disabled ? {} : { scale: 1.05 }}
-      transition={{ type: "spring", stiffness: 300, damping: 15 }}
-    >
-      <div className={cn("card-frame", card.class[0])}>
-        {/* Top Bar with Name and Classes */}
-        <div className="absolute top-0 left-0 right-0 h-7 flex items-center justify-between px-2 py-1 bg-black/80 backdrop-blur-sm border-b border-yellow-900/50">
-          <div className="flex items-center gap-1.5">
+    <>
+      <div
+        className={cn(
+          'game-card relative group',
+          size === 'small' && 'game-card-small',
+          disabled && 'disabled',
+          selected && 'selected',
+          className
+        )}
+        onClick={!disabled ? onClick : undefined}
+        onContextMenu={handleContextMenu}
+      >
+        <div
+          className={cn(
+            'card-frame relative overflow-hidden transition-all duration-300',
+            'bg-gradient-to-br backdrop-blur-sm',
+            getClassGradient(),
+            'after:absolute after:inset-0 after:opacity-0 after:transition-opacity after:duration-300',
+            'group-hover:after:opacity-100',
+            getClassOverlay(),
+            // Glowing border effect
+            'before:absolute before:inset-0 before:p-[2px]',
+            'before:bg-gradient-to-br before:from-white/20 before:to-transparent',
+            'before:rounded-lg before:-z-10',
+            // Inner shadow
+            'shadow-[inset_0_0_15px_rgba(0,0,0,0.4)]'
+          )}
+        >
+          {/* Card Name */}
+          <div className="card-name-box">
+            <h3 className="card-name">{card.name}</h3>
+          </div>
+
+          {/* Card Classes */}
+          <div className="card-class-box">
             {card.class.map((cls, index) => (
-              <Tooltip key={index}>
-                <TooltipTrigger>
-                  <div className={cn("w-4 h-4 rounded-full flex items-center justify-center", `class-${cls}`)}>
-                    {getClassIcon(cls)}
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{cls}</p>
-                </TooltipContent>
-              </Tooltip>
+              <div
+                key={index}
+                className={cn(
+                  'card-class-icon',
+                  `class-${cls}`
+                )}
+              >
+                {cls.charAt(0)}
+              </div>
             ))}
           </div>
-          <div className="text-xs font-bold text-white truncate ml-1">
-            {card.name}
-          </div>
-        </div>
 
-        {/* Effects Icons */}
-        <div className="absolute top-8 left-0 right-0 flex justify-center gap-1 px-1">
-          {getEffectIcons().map((effect, index) => (
-            <Tooltip key={index}>
-              <TooltipTrigger>
-                <div className="w-5 h-5 flex items-center justify-center text-xs bg-black/60 rounded-full backdrop-blur-sm border border-yellow-900/50">
-                  {effect.icon}
-                </div>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{effect.tooltip}</p>
-              </TooltipContent>
-            </Tooltip>
-          ))}
-        </div>
-
-        {/* Card Image */}
-        <div className="flex justify-center mt-2">
-          <img
-            src={card.image}
-            alt={card.name}
-            className={cn(
-              "object-cover",
-              size === "small" ? "w-24 h-24" : "w-48 h-48"
-            )}
-          />
-        </div>
-
-
-        {/* Stats */}
-        <div className="absolute bottom-0 left-0 right-0">
-          {/* Health Bar */}
-          <div className="h-1 bg-black/30">
-            <div
-              className={cn(
-                "h-full transition-all duration-300",
-                isHealthy && "bg-green-500",
-                isDamaged && "bg-yellow-500",
-                isCritical && "bg-red-500"
-              )}
-              style={{ width: `${healthPercentage}%` }}
+          {/* Card Image */}
+          <div className="card-image-box">
+            <img
+              src={card.image}
+              alt={card.name}
+              className="w-full h-full object-cover"
             />
           </div>
 
-          {/* Stats Bar */}
-          <div className="h-7 bg-black/80 backdrop-blur-sm flex items-center justify-between px-2 py-1 border-t border-yellow-900/50">
-            <Tooltip>
-              <TooltipTrigger>
-                <div className="flex items-center gap-1">
-                  <Sword className="w-3 h-3 text-orange-400" />
-                  <span className="text-xs font-bold text-orange-400">{card.attack}</span>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Attack</p>
-              </TooltipContent>
-            </Tooltip>
+          {/* Card Effects */}
+          <div className="card-effects-box">
+            <div className="card-effect-title">Effects:</div>
+            <div className="text-gray-700">
+              {card.onAttackEffect !== 'NONE' && (
+                <span className="text-red-600">
+                  {card.onAttackEffect === 'CRITICAL_STRIKE'
+                    ? '30% Critical'
+                    : 'Lifesteal'}
+                </span>
+              )}
+              {card.onDefenseEffect === 'THORNS' && (
+                <span className="text-yellow-600"> Thorns</span>
+              )}
+              {card.onDeadEffect === 'EXPLODE' && (
+                <span className="text-orange-600"> Explode</span>
+              )}
+            </div>
+          </div>
 
-            <Tooltip>
-              <TooltipTrigger>
-                <div className="flex items-center gap-1">
-                  <Heart className="w-3 h-3 text-red-400" />
-                  <span className={cn(
-                    "text-xs font-bold",
-                    isHealthy && "text-green-400",
-                    isDamaged && "text-yellow-400",
-                    isCritical && "text-red-400"
-                  )}>
-                    {card.currentHealth}/{card.health}
-                  </span>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Health</p>
-              </TooltipContent>
-            </Tooltip>
+          {/* Card Stats */}
+          <div className="card-stats-box">
+            <div className="card-stat">
+              <Sword className="card-stat-icon" />
+              <span className="card-stat-value">{card.attack}</span>
+            </div>
+            <div className="card-stat">
+              <Heart className="card-stat-icon" />
+              <span className="card-stat-value">{card.currentHealth}</span>
+            </div>
+            <div className="card-stat">
+              <Zap className="card-stat-icon" />
+              <span className="card-stat-value">{card.staminaCost}</span>
+            </div>
+          </div>
 
-            <Tooltip>
-              <TooltipTrigger>
-                <div className="flex items-center gap-1">
-                  <Zap className="w-3 h-3 text-yellow-400" />
-                  <span className="text-xs font-bold text-yellow-400">{card.staminaCost}</span>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Stamina Cost</p>
-              </TooltipContent>
-            </Tooltip>
+          {/* Hover Effects */}
+          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
           </div>
         </div>
       </div>
-    </motion.div>
+
+      <CardDetails
+        card={card}
+        isOpen={showDetails}
+        onClose={() => setShowDetails(false)}
+      />
+    </>
   );
 }
