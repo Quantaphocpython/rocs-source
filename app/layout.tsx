@@ -3,7 +3,8 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { ThemeProvider } from 'next-themes';
-import ContextProvider from '@/providers/ContextProvider';
+import ContextProvider from '@/components/providers/ContextProvider';
+
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -26,9 +27,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <TooltipProvider>
-            <ContextProvider>{children}</ContextProvider>
-          </TooltipProvider>
+          <ContextProvider>
+            <TooltipProvider>{children}</TooltipProvider>
+          </ContextProvider>
         </ThemeProvider>
       </body>
     </html>
