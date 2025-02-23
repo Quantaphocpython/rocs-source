@@ -8,7 +8,7 @@ import {
   ActiveSkill,
   GameState,
   PrebuiltDeck,
-} from "@/types/game";
+} from '@/types/game';
 
 // Base card pool (40 cards)
 export const cardPool: Card[] = [
@@ -18,8 +18,7 @@ export const cardPool: Card[] = [
     attack: 8,
     health: 6,
     maxPerSession: 2,
-    image:
-      "https://res.cloudinary.com/dlotuochc/image/upload/v1739797748/TCG%20Battle%20Adventure/jzm1wj6kzrekhu3zq8an.png",
+    image: "https://res.cloudinary.com/dlotuochc/image/upload/v1739797748/TCG%20Battle%20Adventure/jzm1wj6kzrekhu3zq8an.png",
     class: [Class.FIRE],
     staminaCost: 3,
     onAttackEffect: OnAttackEffect.CRITICAL_STRIKE,
@@ -33,8 +32,7 @@ export const cardPool: Card[] = [
     attack: 4,
     health: 10,
     maxPerSession: 3,
-    image:
-      "https://res.cloudinary.com/dlotuochc/image/upload/v1740049298/TCG%20Battle%20Adventure/r9ahkormzgxdmlfwuj9s.png",
+    image: "https://res.cloudinary.com/dlotuochc/image/upload/v1740049298/TCG%20Battle%20Adventure/r9ahkormzgxdmlfwuj9s.png",
     class: [Class.EARTH],
     staminaCost: 2,
     onAttackEffect: OnAttackEffect.NONE,
@@ -48,8 +46,7 @@ export const cardPool: Card[] = [
     attack: 6,
     health: 6,
     maxPerSession: 2,
-    image:
-      "https://res.cloudinary.com/dlotuochc/image/upload/v1740049294/TCG%20Battle%20Adventure/vgsemseiixtxtyjjfo1v.png",
+    image: "https://res.cloudinary.com/dlotuochc/image/upload/v1740049294/TCG%20Battle%20Adventure/vgsemseiixtxtyjjfo1v.png",
     class: [Class.WATER],
     staminaCost: 2,
     onAttackEffect: OnAttackEffect.LIFESTEAL,
@@ -63,8 +60,7 @@ export const cardPool: Card[] = [
     attack: 7,
     health: 8,
     maxPerSession: 2,
-    image:
-      "https://res.cloudinary.com/dlotuochc/image/upload/v1740049296/TCG%20Battle%20Adventure/bwmtrdybdv8wnz3zycg7.png",
+    image: "https://res.cloudinary.com/dlotuochc/image/upload/v1740049296/TCG%20Battle%20Adventure/bwmtrdybdv8wnz3zycg7.png",
     class: [Class.METAL],
     staminaCost: 3,
     onAttackEffect: OnAttackEffect.CRITICAL_STRIKE,
@@ -78,8 +74,7 @@ export const cardPool: Card[] = [
     attack: 5,
     health: 4,
     maxPerSession: 3,
-    image:
-      "https://res.cloudinary.com/dlotuochc/image/upload/v1740049289/TCG%20Battle%20Adventure/hwa5oiqezmwdiid5gaci.jpg",
+    image: "https://res.cloudinary.com/dlotuochc/image/upload/v1740049289/TCG%20Battle%20Adventure/hwa5oiqezmwdiid5gaci.jpg",
     class: [Class.WOOD],
     staminaCost: 1,
     onAttackEffect: OnAttackEffect.LIFESTEAL,
@@ -93,8 +88,7 @@ export const cardPool: Card[] = [
     attack: 9,
     health: 4,
     maxPerSession: 2,
-    image:
-      "https://res.cloudinary.com/dlotuochc/image/upload/v1740049293/TCG%20Battle%20Adventure/vnwlzhguts8rfc7jkhnp.png",
+    image: "https://res.cloudinary.com/dlotuochc/image/upload/v1740049293/TCG%20Battle%20Adventure/vnwlzhguts8rfc7jkhnp.png",
     class: [Class.FIRE],
     staminaCost: 3,
     onAttackEffect: OnAttackEffect.CRITICAL_STRIKE,
@@ -108,8 +102,7 @@ export const cardPool: Card[] = [
     attack: 3,
     health: 12,
     maxPerSession: 2,
-    image:
-      "https://res.cloudinary.com/dlotuochc/image/upload/v1740049294/TCG%20Battle%20Adventure/pmvgcr6abzs1p2d8yarx.png",
+    image: "https://res.cloudinary.com/dlotuochc/image/upload/v1740049294/TCG%20Battle%20Adventure/pmvgcr6abzs1p2d8yarx.png",
     class: [Class.EARTH],
     staminaCost: 3,
     onAttackEffect: OnAttackEffect.NONE,
@@ -123,8 +116,7 @@ export const cardPool: Card[] = [
     attack: 4,
     health: 6,
     maxPerSession: 2,
-    image:
-      "https://res.cloudinary.com/dlotuochc/image/upload/v1740049289/TCG%20Battle%20Adventure/hwa5oiqezmwdiid5gaci.jpg",
+    image: "https://res.cloudinary.com/dlotuochc/image/upload/v1740049289/TCG%20Battle%20Adventure/hwa5oiqezmwdiid5gaci.jpg",
     class: [Class.WATER],
     staminaCost: 2,
     onAttackEffect: OnAttackEffect.LIFESTEAL,
@@ -138,8 +130,7 @@ export const cardPool: Card[] = [
     attack: 8,
     health: 5,
     maxPerSession: 2,
-    image:
-      "https://res.cloudinary.com/dlotuochc/image/upload/v1740049295/TCG%20Battle%20Adventure/qpfcfs8vffnipuicubrn.png",
+    image: "https://res.cloudinary.com/dlotuochc/image/upload/v1740049295/TCG%20Battle%20Adventure/qpfcfs8vffnipuicubrn.png",
     class: [Class.METAL],
     staminaCost: 3,
     onAttackEffect: OnAttackEffect.CRITICAL_STRIKE,
@@ -153,8 +144,7 @@ export const cardPool: Card[] = [
     attack: 5,
     health: 7,
     maxPerSession: 2,
-    image:
-      "https://res.cloudinary.com/dlotuochc/image/upload/v1740049296/TCG%20Battle%20Adventure/lm03b601m6xeobc7wczu.png",
+    image: "https://res.cloudinary.com/dlotuochc/image/upload/v1740049296/TCG%20Battle%20Adventure/lm03b601m6xeobc7wczu.png",
     class: [Class.WOOD],
     staminaCost: 2,
     onAttackEffect: OnAttackEffect.LIFESTEAL,
@@ -168,8 +158,7 @@ export const cardPool: Card[] = [
     attack: 10,
     health: 8,
     maxPerSession: 1,
-    image:
-      "https://res.cloudinary.com/dlotuochc/image/upload/v1740049291/TCG%20Battle%20Adventure/nonfpunalm20kyfl6jxe.png",
+    image: "https://res.cloudinary.com/dlotuochc/image/upload/v1740049291/TCG%20Battle%20Adventure/nonfpunalm20kyfl6jxe.png",
     class: [Class.FIRE, Class.EARTH],
     staminaCost: 4,
     onAttackEffect: OnAttackEffect.CRITICAL_STRIKE,
@@ -183,8 +172,7 @@ export const cardPool: Card[] = [
     attack: 7,
     health: 5,
     maxPerSession: 2,
-    image:
-      "https://res.cloudinary.com/dlotuochc/image/upload/v1740049291/TCG%20Battle%20Adventure/zfna0w9d2ndjyyyjbmph.png",
+    image: "https://res.cloudinary.com/dlotuochc/image/upload/v1740049291/TCG%20Battle%20Adventure/zfna0w9d2ndjyyyjbmph.png",
     class: [Class.WATER, Class.METAL],
     staminaCost: 3,
     onAttackEffect: OnAttackEffect.CRITICAL_STRIKE,
@@ -198,8 +186,7 @@ export const cardPool: Card[] = [
     attack: 6,
     health: 8,
     maxPerSession: 2,
-    image:
-      "https://res.cloudinary.com/dlotuochc/image/upload/v1740049294/TCG%20Battle%20Adventure/aeklge0zyujx8ikxcryz.png",
+    image: "https://res.cloudinary.com/dlotuochc/image/upload/v1740049294/TCG%20Battle%20Adventure/aeklge0zyujx8ikxcryz.png",
     class: [Class.WOOD, Class.EARTH],
     staminaCost: 3,
     onAttackEffect: OnAttackEffect.LIFESTEAL,
@@ -213,8 +200,7 @@ export const cardPool: Card[] = [
     attack: 8,
     health: 6,
     maxPerSession: 2,
-    image:
-      "https://res.cloudinary.com/dlotuochc/image/upload/v1740049291/TCG%20Battle%20Adventure/vhdctqr1lot3u202xthg.png",
+    image: "https://res.cloudinary.com/dlotuochc/image/upload/v1740049291/TCG%20Battle%20Adventure/vhdctqr1lot3u202xthg.png",
     class: [Class.METAL],
     staminaCost: 3,
     onAttackEffect: OnAttackEffect.CRITICAL_STRIKE,
@@ -228,8 +214,7 @@ export const cardPool: Card[] = [
     attack: 4,
     health: 12,
     maxPerSession: 1,
-    image:
-      "https://res.cloudinary.com/dlotuochc/image/upload/v1740049291/TCG%20Battle%20Adventure/wqujynso8o9akodknazz.png",
+    image: "https://res.cloudinary.com/dlotuochc/image/upload/v1740049291/TCG%20Battle%20Adventure/wqujynso8o9akodknazz.png",
     class: [Class.WOOD],
     staminaCost: 3,
     onAttackEffect: OnAttackEffect.NONE,
@@ -243,8 +228,7 @@ export const cardPool: Card[] = [
     attack: 7,
     health: 5,
     maxPerSession: 2,
-    image:
-      "https://res.cloudinary.com/dlotu ochc/image/upload/v1740049291/TCG%20Battle%20Adventure/sgpqtvvxsop5g9x04wa4.png",
+    image: "https://res.cloudinary.com/dlotuochc/image/upload/v1740049291/TCG%20Battle%20Adventure/sgpqtvvxsop5g9x04wa4.png",
     class: [Class.FIRE],
     staminaCost: 3,
     onAttackEffect: OnAttackEffect.LIFESTEAL,
@@ -258,8 +242,7 @@ export const cardPool: Card[] = [
     attack: 5,
     health: 9,
     maxPerSession: 2,
-    image:
-      "https://res.cloudinary.com/dlotuochc/image/upload/v1740049328/TCG%20Battle%20Adventure/vi2awomtpdu6bwzt9vgg.png",
+    image: "https://res.cloudinary.com/dlotuochc/image/upload/v1740049328/TCG%20Battle%20Adventure/vi2awomtpdu6bwzt9vgg.png",
     class: [Class.EARTH, Class.METAL],
     staminaCost: 3,
     onAttackEffect: OnAttackEffect.NONE,
@@ -273,7 +256,7 @@ export const cardPool: Card[] = [
     attack: 6,
     health: 6,
     maxPerSession: 2,
-    image: "https://example.com/tide_caller.png",
+    image: "https://res.cloudinary.com/dlotuochc/image/upload/v1740049294/TCG%20Battle%20Adventure/vgsemseiixtxtyjjfo1v.png",
     class: [Class.WATER],
     staminaCost: 2,
     onAttackEffect: OnAttackEffect.LIFESTEAL,
@@ -287,7 +270,7 @@ export const cardPool: Card[] = [
     attack: 6,
     health: 8,
     maxPerSession: 2,
-    image: "https://example.com/steel_sentinel.png",
+    image: "https://res.cloudinary.com/dlotuochc/image/upload/v1740049296/TCG%20Battle%20Adventure/bwmtrdybdv8wnz3zycg7.png",
     class: [Class.METAL],
     staminaCost: 3,
     onAttackEffect: OnAttackEffect.NONE,
@@ -301,7 +284,7 @@ export const cardPool: Card[] = [
     attack: 4,
     health: 4,
     maxPerSession: 3,
-    image: "https://example.com/forest_scout.png",
+    image: "https://res.cloudinary.com/dlotuochc/image/upload/v1740049289/TCG%20Battle%20Adventure/hwa5oiqezmwdiid5gaci.jpg",
     class: [Class.WOOD],
     staminaCost: 1,
     onAttackEffect: OnAttackEffect.CRITICAL_STRIKE,
@@ -316,21 +299,21 @@ export const monsters: Monster[] = [
     id: 1,
     health: 40,
     attack: 5,
-    image: "",
+    image: "https://res.cloudinary.com/dlotuochc/image/upload/v1739797748/TCG%20Battle%20Adventure/jzm1wj6kzrekhu3zq8an.png",
     class: [Class.FIRE, Class.EARTH],
   },
   {
     id: 2,
     health: 50,
     attack: 6,
-    image: "",
+    image: "https://res.cloudinary.com/dlotuochc/image/upload/v1740049294/TCG%20Battle%20Adventure/vgsemseiixtxtyjjfo1v.png",
     class: [Class.WATER, Class.METAL],
   },
   {
     id: 3,
     health: 60,
     attack: 7,
-    image: "",
+    image: "https://res.cloudinary.com/dlotuochc/image/upload/v1740049291/TCG%20Battle%20Adventure/wqujynso8o9akodknazz.png",
     class: [Class.WOOD, Class.FIRE],
   },
 ];
@@ -356,9 +339,9 @@ export const mockGameState: GameState = {
 
 export const prebuiltDecks: PrebuiltDeck[] = [
   {
-    id: "fire-aggro",
-    name: "Fire Aggro",
-    description: "Aggressive deck focused on dealing high damage quickly",
+    id: 'fire-aggro',
+    name: 'Fire Aggro',
+    description: 'Aggressive deck focused on dealing high damage quickly',
     cards: [
       cardPool[0], // Fire Dragon
       cardPool[0], // Fire Dragon
@@ -374,12 +357,12 @@ export const prebuiltDecks: PrebuiltDeck[] = [
       cardPool[11], // Storm Mage
       cardPool[11], // Storm Mage
     ],
-    coverImage: "https://images.unsplash.com/photo-1635859890085-ec9e0c90f072",
+    coverImage: 'https://res.cloudinary.com/dlotuochc/image/upload/v1739797748/TCG%20Battle%20Adventure/jzm1wj6kzrekhu3zq8an.png',
   },
   {
-    id: "earth-defense",
-    name: "Earth Defense",
-    description: "Defensive deck with high health and thorns effects",
+    id: 'earth-defense',
+    name: 'Earth Defense',
+    description: 'Defensive deck with high health and thorns effects',
     cards: [
       cardPool[1], // Earth Golem
       cardPool[1], // Earth Golem
@@ -395,12 +378,12 @@ export const prebuiltDecks: PrebuiltDeck[] = [
       cardPool[9], // Forest Druid
       cardPool[19], // Forest Scout
     ],
-    coverImage: "https://images.unsplash.com/photo-1589802829985-817e51171b92",
+    coverImage: 'https://res.cloudinary.com/dlotuochc/image/upload/v1740049298/TCG%20Battle%20Adventure/r9ahkormzgxdmlfwuj9s.png',
   },
   {
-    id: "metal-control",
-    name: "Metal Control",
-    description: "Control deck with strong armor and critical strikes",
+    id: 'metal-control',
+    name: 'Metal Control',
+    description: 'Control deck with strong armor and critical strikes',
     cards: [
       cardPool[3], // Metal Knight
       cardPool[3], // Metal Knight
@@ -416,6 +399,6 @@ export const prebuiltDecks: PrebuiltDeck[] = [
       cardPool[16], // Crystal Golem
       cardPool[10], // Volcanic Giant
     ],
-    coverImage: "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d",
+    coverImage: 'https://res.cloudinary.com/dlotuochc/image/upload/v1740049296/TCG%20Battle%20Adventure/bwmtrdybdv8wnz3zycg7.png',
   },
 ];
