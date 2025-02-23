@@ -1,18 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import type { GameState, Card, GameCard } from "@/types/game";
-import { cardPool, mockGameState } from "@/lib/mock-data";
-import { CARDS_TO_SHOW, INITIAL_HAND_SIZE } from "@/constants/game";
+import { mockGameState } from "@/lib/mock-data";
+import { INITIAL_HAND_SIZE } from "@/constants/game";
 import { calculateStaminaGain, convertToGameCard } from "@/utils/gameLogic";
 
 export function useGameLogic() {
+  const router = useRouter();
   const [gameState, setGameState] = useState<GameState>(mockGameState);
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
   const [isPlayerTurn, setIsPlayerTurn] = useState(true);
-  const [isDeckBuilding, setIsDeckBuilding] = useState(true);
-  const [availableCards, setAvailableCards] = useState<Card[]>([]);
   const [remainingDeck, setRemainingDeck] = useState<GameCard[]>([]);
   const [targetSlot, setTargetSlot] = useState<number | null>(null);
   const [roundCounter, setRoundCounter] = useState(1);
@@ -21,15 +21,20 @@ export function useGameLogic() {
     type: "phase" | "effect" | "damage" | "heal";
   }>({ message: null, type: "phase" });
 
+  // Use refs for values that shouldn't trigger re-renders
+  const gameStateRef = useRef(gameState);
+  const isPlayerTurnRef = useRef(isPlayerTurn);
+  const roundCounterRef = useRef(roundCounter);
+
+  // Update refs when state changes
   useEffect(() => {
-    const shuffledCards = [...cardPool]
-      .sort(() => Math.random() - 0.5)
-      .slice(0, CARDS_TO_SHOW);
-    setAvailableCards(shuffledCards);
-  }, []);
+    gameStateRef.current = gameState;
+    isPlayerTurnRef.current = isPlayerTurn;
+    roundCounterRef.current = roundCounter;
+  }, [gameState, isPlayerTurn, roundCounter]);
 
   useEffect(() => {
-    if (isPlayerTurn || isDeckBuilding) return;
+    if (isPlayerTurn) return;
 
     const monsterTurn = setTimeout(() => {
       const cardsOnField = gameState.cardsOnField
@@ -95,21 +100,16 @@ export function useGameLogic() {
     }, 1000);
 
     return () => clearTimeout(monsterTurn);
-  }, [isPlayerTurn, isDeckBuilding, roundCounter, gameState]);
+  }, [isPlayerTurn, roundCounter, gameState]);
 
   useEffect(() => {
-    if (isDeckBuilding) return;
-
     if (gameState.playerHealth <= 0) {
       setAnnouncement({
         message: "Game Over!",
         type: "phase",
       });
       setTimeout(() => {
-        setIsDeckBuilding(true);
-        setGameState(mockGameState);
-        setIsPlayerTurn(true);
-        setRoundCounter(1);
+        router.push("/deck");
       }, 2000);
     } else if (gameState.currentMonster.health <= 0) {
       setAnnouncement({
@@ -117,15 +117,12 @@ export function useGameLogic() {
         type: "phase",
       });
       setTimeout(() => {
-        setIsDeckBuilding(true);
-        setGameState(mockGameState);
-        setIsPlayerTurn(true);
-        setRoundCounter(1);
+        router.push("/deck");
       }, 2000);
     }
-  }, [gameState.playerHealth, gameState.currentMonster.health, isDeckBuilding]);
+  }, [gameState.playerHealth, gameState.currentMonster.health, router]);
 
-  const handleCardEffect = (card: GameCard, damage: number) => {
+  const handleCardEffect = useCallback((card: GameCard, damage: number) => {
     let finalDamage = damage;
     let healAmount = 0;
 
@@ -146,9 +143,9 @@ export function useGameLogic() {
     }
 
     return { finalDamage, healAmount };
-  };
+  }, []);
 
-  const handleDefenseEffect = (card: GameCard | undefined) => {
+  const handleDefenseEffect = useCallback((card: GameCard | undefined) => {
     if (!card) return 0;
 
     if (card.onDefenseEffect === "THORNS") {
@@ -159,9 +156,9 @@ export function useGameLogic() {
       return 2;
     }
     return 0;
-  };
+  }, []);
 
-  const handleDeadEffect = (card: GameCard) => {
+  const handleDeadEffect = useCallback((card: GameCard) => {
     if (card.onDeadEffect === "EXPLODE") {
       const explodeDamage = 3;
       setAnnouncement({
@@ -171,9 +168,9 @@ export function useGameLogic() {
       return explodeDamage;
     }
     return 0;
-  };
+  }, []);
 
-  const startGame = (selectedDeck: Card[]) => {
+  const startGame = useCallback((selectedDeck: Card[]) => {
     const shuffledDeck = [...selectedDeck].sort(() => Math.random() - 0.5);
     const initialHand = shuffledDeck
       .slice(0, INITIAL_HAND_SIZE)
@@ -182,21 +179,25 @@ export function useGameLogic() {
       .slice(INITIAL_HAND_SIZE)
       .map(convertToGameCard);
 
-    setGameState((prev) => ({
-      ...prev,
+    setGameState({
+      ...mockGameState,
       deck: initialHand,
-    }));
+      cardsOnField: Array(10).fill(null),
+    });
 
     setRemainingDeck(remaining);
-    setIsDeckBuilding(false);
     setRoundCounter(1);
+    setIsPlayerTurn(true);
+    setSelectedCard(null);
+    setTargetSlot(null);
+
     setAnnouncement({
       message: "Battle Start!",
       type: "phase",
     });
-  };
+  }, []);
 
-  const drawCard = () => {
+  const drawCard = useCallback(() => {
     if (remainingDeck.length === 0) {
       toast.error("No more cards to draw!");
       return;
@@ -208,43 +209,32 @@ export function useGameLogic() {
       deck: [...prev.deck, newCard],
     }));
     setRemainingDeck(restDeck);
-  };
+  }, [remainingDeck]);
 
-  const playCard = (cardIndex: number, slotIndex: number) => {
-    if (!isPlayerTurn) return;
-    if (gameState.playerStamina < gameState.deck[cardIndex].staminaCost) {
-      toast.error("Not enough stamina!");
-      return;
-    }
+  const playCard = useCallback(
+    (cardIndex: number, slotIndex: number) => {
+      if (!isPlayerTurnRef.current) return;
 
-    const card = gameState.deck[cardIndex];
-    setAnnouncement({
-      message: `Playing ${card.name}`,
-      type: "phase",
-    });
+      const currentGameState = gameStateRef.current;
+      if (
+        currentGameState.playerStamina <
+        currentGameState.deck[cardIndex].staminaCost
+      ) {
+        toast.error("Not enough stamina!");
+        return;
+      }
 
-    setTimeout(() => {
+      const card = currentGameState.deck[cardIndex];
+      setAnnouncement({
+        message: `Playing ${card.name}`,
+        type: "phase",
+      });
+
       setGameState((prev) => {
         const newDeck = [...prev.deck];
         newDeck.splice(cardIndex, 1);
 
         const { finalDamage, healAmount } = handleCardEffect(card, card.attack);
-
-        setTimeout(() => {
-          setAnnouncement({
-            message: `Dealing ${finalDamage} Damage!`,
-            type: "damage",
-          });
-        }, 1000);
-
-        if (healAmount > 0) {
-          setTimeout(() => {
-            setAnnouncement({
-              message: `Healing for ${healAmount}!`,
-              type: "heal",
-            });
-          }, 2000);
-        }
 
         const newMonsterHealth = Math.max(
           0,
@@ -266,6 +256,10 @@ export function useGameLogic() {
           cardsOnField: newCardsOnField,
           playerStamina: prev.playerStamina - card.staminaCost,
           playerHealth: Math.min(40, prev.playerHealth + healAmount),
+          currentMonster: {
+            ...prev.currentMonster,
+            health: finalMonsterHealth,
+          },
           battleHistory: [
             ...prev.battleHistory,
             {
@@ -276,10 +270,6 @@ export function useGameLogic() {
               monsterHpLeft: finalMonsterHealth,
             },
           ],
-          currentMonster: {
-            ...prev.currentMonster,
-            health: finalMonsterHealth,
-          },
         };
       });
 
@@ -292,18 +282,22 @@ export function useGameLogic() {
           type: "phase",
         });
         setIsPlayerTurn(false);
-      }, 3000);
-    }, 1000);
-  };
+      }, 1000);
+    },
+    [handleCardEffect, handleDeadEffect]
+  );
 
-  const endTurn = () => {
-    if (!isPlayerTurn) return;
+  const endTurn = useCallback(() => {
+    if (!isPlayerTurnRef.current) return;
+
     setAnnouncement({
       message: "Ending Turn...",
       type: "phase",
     });
+
     drawCard();
     setRoundCounter((prev) => prev + 1);
+
     setTimeout(() => {
       setAnnouncement({
         message: "Monster's Turn",
@@ -311,8 +305,8 @@ export function useGameLogic() {
       });
       setIsPlayerTurn(false);
       setSelectedCard(null);
-    }, 1500);
-  };
+    }, 1000);
+  }, [drawCard]);
 
   const handleMonsterAttack = (cardIndex: number) => {
     setGameState((prev) => {
@@ -409,24 +403,16 @@ export function useGameLogic() {
 
   return {
     gameState,
-    setGameState,
     selectedCard,
-    setSelectedCard,
     isPlayerTurn,
-    setIsPlayerTurn,
-    isDeckBuilding,
-    setIsDeckBuilding,
-    availableCards,
-    remainingDeck,
     targetSlot,
-    setTargetSlot,
     roundCounter,
     announcement,
+    setSelectedCard,
+    setTargetSlot,
     setAnnouncement,
     startGame,
-    drawCard,
     playCard,
     endTurn,
-    handleMonsterAttack,
   };
 }

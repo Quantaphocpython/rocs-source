@@ -7,6 +7,7 @@ import {
   OnDefenseEffect,
   ActiveSkill,
   GameState,
+  PrebuiltDeck,
 } from "@/types/game";
 
 // Base card pool (40 cards)
@@ -272,7 +273,7 @@ export const cardPool: Card[] = [
     attack: 6,
     health: 6,
     maxPerSession: 2,
-    image: "https://example.com/tide_caller.png", // Thay thế bằng liên kết hình ảnh thực tế
+    image: "https://example.com/tide_caller.png",
     class: [Class.WATER],
     staminaCost: 2,
     onAttackEffect: OnAttackEffect.LIFESTEAL,
@@ -286,7 +287,7 @@ export const cardPool: Card[] = [
     attack: 6,
     health: 8,
     maxPerSession: 2,
-    image: "https://example.com/steel_sentinel.png", // Thay thế bằng liên kết hình ảnh thực tế
+    image: "https://example.com/steel_sentinel.png",
     class: [Class.METAL],
     staminaCost: 3,
     onAttackEffect: OnAttackEffect.NONE,
@@ -300,7 +301,7 @@ export const cardPool: Card[] = [
     attack: 4,
     health: 4,
     maxPerSession: 3,
-    image: "https://example.com/forest_scout.png", // Thay thế bằng liên kết hình ảnh thực tế
+    image: "https://example.com/forest_scout.png",
     class: [Class.WOOD],
     staminaCost: 1,
     onAttackEffect: OnAttackEffect.CRITICAL_STRIKE,
@@ -352,3 +353,69 @@ export const mockGameState: GameState = {
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
 };
+
+export const prebuiltDecks: PrebuiltDeck[] = [
+  {
+    id: "fire-aggro",
+    name: "Fire Aggro",
+    description: "Aggressive deck focused on dealing high damage quickly",
+    cards: [
+      cardPool[0], // Fire Dragon
+      cardPool[0], // Fire Dragon
+      cardPool[5], // Flame Assassin
+      cardPool[5], // Flame Assassin
+      cardPool[15], // Phoenix Warrior
+      cardPool[15], // Phoenix Warrior
+      cardPool[10], // Volcanic Giant
+      cardPool[2], // Water Elemental
+      cardPool[2], // Water Elemental
+      cardPool[7], // Water Healer
+      cardPool[7], // Water Healer
+      cardPool[11], // Storm Mage
+      cardPool[11], // Storm Mage
+    ],
+    coverImage: "https://images.unsplash.com/photo-1635859890085-ec9e0c90f072",
+  },
+  {
+    id: "earth-defense",
+    name: "Earth Defense",
+    description: "Defensive deck with high health and thorns effects",
+    cards: [
+      cardPool[1], // Earth Golem
+      cardPool[1], // Earth Golem
+      cardPool[1], // Earth Golem
+      cardPool[6], // Stone Guardian
+      cardPool[6], // Stone Guardian
+      cardPool[16], // Crystal Golem
+      cardPool[16], // Crystal Golem
+      cardPool[12], // Nature's Warden
+      cardPool[12], // Nature's Warden
+      cardPool[14], // Ancient Treant
+      cardPool[9], // Forest Druid
+      cardPool[9], // Forest Druid
+      cardPool[19], // Forest Scout
+    ],
+    coverImage: "https://images.unsplash.com/photo-1589802829985-817e51171b92",
+  },
+  {
+    id: "metal-control",
+    name: "Metal Control",
+    description: "Control deck with strong armor and critical strikes",
+    cards: [
+      cardPool[3], // Metal Knight
+      cardPool[3], // Metal Knight
+      cardPool[8], // Metal Berserker
+      cardPool[8], // Metal Berserker
+      cardPool[13], // Blade Master
+      cardPool[13], // Blade Master
+      cardPool[18], // Steel Sentinel
+      cardPool[18], // Steel Sentinel
+      cardPool[11], // Storm Mage
+      cardPool[11], // Storm Mage
+      cardPool[16], // Crystal Golem
+      cardPool[16], // Crystal Golem
+      cardPool[10], // Volcanic Giant
+    ],
+    coverImage: "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d",
+  },
+];
