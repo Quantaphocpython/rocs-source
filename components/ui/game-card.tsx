@@ -104,6 +104,19 @@ export function GameCard({ card, onClick, selected, disabled, size = "normal" }:
           ))}
         </div>
 
+        {/* Card Image */}
+        <div className="flex justify-center mt-2">
+          <img
+            src={card.image}
+            alt={card.name}
+            className={cn(
+              "object-cover",
+              size === "small" ? "w-24 h-24" : "w-48 h-48"
+            )}
+          />
+        </div>
+
+
         {/* Stats */}
         <div className="absolute bottom-0 left-0 right-0">
           {/* Health Bar */}
