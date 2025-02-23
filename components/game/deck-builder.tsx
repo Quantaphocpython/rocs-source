@@ -39,7 +39,7 @@ export function DeckBuilder({
         );
       }
       const shuffled = filteredCards.sort(() => Math.random() - 0.5);
-      return shuffled.slice(0, 5);
+      return shuffled.slice(0, 20);
     };
     setCurrentChoices(getRandomCards());
   }, [availableCards, activeFilter]);
