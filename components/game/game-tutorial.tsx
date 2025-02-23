@@ -5,11 +5,11 @@ import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 
 const TUTORIAL_STEPS = [
-    {
-        element: '#player-stats',
-        popover: {
-            title: '💫 Player Stats',
-            description: `
+  {
+    element: '#player-stats',
+    popover: {
+      title: '💫 Player Stats',
+      description: `
         <div class="space-y-2">
           <p>Monitor your vital stats:</p>
           <ul class="list-disc pl-4 space-y-1">
@@ -19,15 +19,15 @@ const TUTORIAL_STEPS = [
           </ul>
         </div>
       `,
-            side: "right",
-            align: 'start'
-        }
-    },
-    {
-        element: '#monster-stats',
-        popover: {
-            title: '👿 Monster Stats',
-            description: `
+      side: "right",
+      align: 'start'
+    }
+  },
+  {
+    element: '#monster-stats',
+    popover: {
+      title: '👿 Monster Stats',
+      description: `
         <div class="space-y-2">
           <p>Know your enemy:</p>
           <ul class="list-disc pl-4 space-y-1">
@@ -37,15 +37,15 @@ const TUTORIAL_STEPS = [
           </ul>
         </div>
       `,
-            side: "left",
-            align: 'start'
-        }
-    },
-    {
-        element: '#battle-field',
-        popover: {
-            title: '⚔️ Battle Field',
-            description: `
+      side: "left",
+      align: 'start'
+    }
+  },
+  {
+    element: '#battle-field',
+    popover: {
+      title: '⚔️ Battle Field',
+      description: `
         <div class="space-y-2">
           <p>Your cards fight here:</p>
           <ul class="list-disc pl-4 space-y-1">
@@ -56,15 +56,15 @@ const TUTORIAL_STEPS = [
           </ul>
         </div>
       `,
-            side: "bottom",
-            align: 'center'
-        }
-    },
-    {
-        element: '#player-hand',
-        popover: {
-            title: '🎴 Your Hand',
-            description: `
+      side: "bottom",
+      align: 'center'
+    }
+  },
+  {
+    element: '#player-hand',
+    popover: {
+      title: '🎴 Your Hand',
+      description: `
         <div class="space-y-2">
           <p>Manage your cards:</p>
           <ul class="list-disc pl-4 space-y-1">
@@ -75,15 +75,15 @@ const TUTORIAL_STEPS = [
           </ul>
         </div>
       `,
-            side: "top",
-            align: 'center'
-        }
-    },
-    {
-        element: '#battle-log',
-        popover: {
-            title: '📜 Battle Log',
-            description: `
+      side: "top",
+      align: 'center'
+    }
+  },
+  {
+    element: '#battle-log',
+    popover: {
+      title: '📜 Battle Log',
+      description: `
         <div class="space-y-2">
           <p>Track the battle:</p>
           <ul class="list-disc pl-4 space-y-1">
@@ -94,15 +94,15 @@ const TUTORIAL_STEPS = [
           </ul>
         </div>
       `,
-            side: "right",
-            align: 'start'
-        }
-    },
-    {
-        element: '#action-buttons',
-        popover: {
-            title: '⚡ Action Buttons',
-            description: `
+      side: "right",
+      align: 'start'
+    }
+  },
+  {
+    element: '#action-buttons',
+    popover: {
+      title: '⚡ Action Buttons',
+      description: `
         <div class="space-y-2">
           <p>Control the game flow:</p>
           <ul class="list-disc pl-4 space-y-1">
@@ -112,10 +112,10 @@ const TUTORIAL_STEPS = [
           </ul>
         </div>
       `,
-            side: "top",
-            align: 'end'
-        }
+      side: "top",
+      align: 'end'
     }
+  }
 ];
 
 // Custom styles for driver.js
@@ -194,50 +194,50 @@ const CUSTOM_STYLES = `
 `;
 
 export function GameTutorial() {
-    const [driverObj, setDriverObj] = useState<any>(null);
+  const [driverObj, setDriverObj] = useState<any>(null);
 
-    useEffect(() => {
-        // Add custom styles
-        const styleSheet = document.createElement("style");
-        styleSheet.textContent = CUSTOM_STYLES;
-        document.head.appendChild(styleSheet);
+  useEffect(() => {
+    // Add custom styles
+    const styleSheet = document.createElement("style");
+    styleSheet.textContent = CUSTOM_STYLES;
+    document.head.appendChild(styleSheet);
 
-        const driverInstance = driver({
-            showProgress: true,
-            animate: true,
-            allowClose: true,
-            overlayClickNext: false,
-            stagePadding: 10,
-            steps: TUTORIAL_STEPS,
-            nextBtnText: 'Next →',
-            prevBtnText: '← Back',
-            doneBtnText: 'Got it!',
-            onDestroyed: () => {
-                localStorage.setItem('tutorial-completed', 'true');
-            },
-            onHighlighted: (element) => {
-                element.style.transition = 'all 0.3s ease-in-out';
-                element.style.transform = 'scale(1.05)';
-            },
-            onDeselected: (element) => {
-                if (element) {
-                    element.style.transform = 'scale(1)';
-                }
-            }
-        });
-
-        setDriverObj(driverInstance);
-
-        // Only show tutorial if it hasn't been completed before
-        if (!localStorage.getItem('tutorial-completed')) {
-            driverInstance.drive();
+    const driverInstance = driver({
+      showProgress: true,
+      animate: true,
+      allowClose: true,
+      overlayClickNext: false,
+      stagePadding: 10,
+      steps: TUTORIAL_STEPS,
+      nextBtnText: 'Next →',
+      prevBtnText: '← Back',
+      doneBtnText: 'Got it!',
+      onDestroyed: () => {
+        localStorage.setItem('tutorial-completed', 'true');
+      },
+      onHighlighted: (element) => {
+        element.style.transition = 'all 0.3s ease-in-out';
+        element.style.transform = 'scale(1.05)';
+      },
+      onDeselected: (element) => {
+        if (element) {
+          element.style.transform = 'scale(1)';
         }
+      }
+    });
 
-        return () => {
-            driverInstance.destroy();
-            document.head.removeChild(styleSheet);
-        };
-    }, []);
+    setDriverObj(driverInstance);
 
-    return null;
+    // Only show tutorial if it hasn't been completed before
+    if (!localStorage.getItem('tutorial-completed')) {
+      driverInstance.drive();
+    }
+
+    return () => {
+      driverInstance.destroy();
+      document.head.removeChild(styleSheet);
+    };
+  }, []);
+
+  return null;
 }
