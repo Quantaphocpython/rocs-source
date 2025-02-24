@@ -11,6 +11,7 @@ import { PhaseAnnouncement } from './PhaseAnnouncement';
 import { PlayerHand } from './PlayerHand';
 import { TutorialDialog } from '../tutorial/TutorialDialog';
 import type { Card } from '@/types/game';
+import { cn } from '@/lib/utils';
 
 interface GameBoardProps {
   initialDeck: Card[];
@@ -34,6 +35,7 @@ export function GameBoard({ initialDeck }: GameBoardProps) {
     gameState,
     announcement,
     setAnnouncement,
+    canPlayAnyCard,
   } = useGameLogic();
 
   useEffect(() => {
@@ -101,7 +103,10 @@ export function GameBoard({ initialDeck }: GameBoardProps) {
           Play Card
         </Button>
         <Button
-          className="action-button"
+          className={cn(
+            "action-button",
+            !canPlayAnyCard() && isPlayerTurn && "animate-pulse ring-2 ring-yellow-400"
+          )}
           disabled={!isPlayerTurn}
           onClick={endTurn}
         >
