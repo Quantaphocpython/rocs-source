@@ -27,7 +27,10 @@ export function GameCard({
   const [showDetails, setShowDetails] = useState(false);
 
   // Convert Card to GameCard if needed
-  const card = 'currentHealth' in initialCard ? initialCard : convertToGameCard(initialCard);
+  const card =
+    'currentHealth' in initialCard
+      ? initialCard
+      : convertToGameCard(initialCard);
 
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -49,12 +52,15 @@ export function GameCard({
 
     // For dual-class cards, create a diagonal gradient
     const [primary, secondary] = card.class;
-    const [primaryColor, secondaryColor] = [classColors[primary], classColors[secondary]];
+    const [primaryColor, secondaryColor] = [
+      classColors[primary],
+      classColors[secondary],
+    ];
     return `${primaryColor} via-transparent ${secondaryColor}`;
   };
 
   const getClassOverlay = () => {
-    const overlayStyles = card.class.map(cls => {
+    const overlayStyles = card.class.map((cls) => {
       switch (cls) {
         case 'FIRE':
           return 'after:bg-[radial-gradient(circle_at_center,rgba(239,68,68,0.1)_0%,transparent_70%)]';
@@ -112,10 +118,7 @@ export function GameCard({
             {card.class.map((cls, index) => (
               <div
                 key={index}
-                className={cn(
-                  'card-class-icon',
-                  `class-${cls}`
-                )}
+                className={cn('card-class-icon', `class-${cls}`)}
               >
                 {cls.charAt(0)}
               </div>
