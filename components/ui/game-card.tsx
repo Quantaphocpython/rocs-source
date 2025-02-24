@@ -1,14 +1,13 @@
 'use client';
 
-import { GameCard as GameCardType, Card } from '@/types/game';
-import { cn } from '@/lib/utils';
-import { Heart, Sword, Zap } from 'lucide-react';
 import { useState } from 'react';
+import { GameCard as GameCardType, Class } from '@/types/game';
+import { Heart, Zap } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { CardDetails } from '../game/card/CardDetails';
-import { convertToGameCard } from '@/utils/gameLogic';
 
 interface GameCardProps {
-  card: GameCardType | Card;
+  card: GameCardType;
   onClick?: () => void;
   selected?: boolean;
   disabled?: boolean;
@@ -16,164 +15,140 @@ interface GameCardProps {
   className?: string;
 }
 
+function getClassColors(classes: Class[]) {
+  if (classes.length === 1) {
+    switch (classes[0]) {
+      case Class.FIRE:
+        return 'border-red-500/50 hover:border-red-400 hover:shadow-red-500/20';
+      case Class.WATER:
+        return 'border-blue-500/50 hover:border-blue-400 hover:shadow-blue-500/20';
+      case Class.WOOD:
+        return 'border-green-500/50 hover:border-green-400 hover:shadow-green-500/20';
+      case Class.EARTH:
+        return 'border-yellow-500/50 hover:border-yellow-400 hover:shadow-yellow-500/20';
+      case Class.METAL:
+        return 'border-gray-400/50 hover:border-gray-300 hover:shadow-gray-400/20';
+    }
+  }
+  return 'border-[3px] border-transparent bg-gradient-to-br from-yellow-400/50 via-red-400/50 to-blue-400/50 hover:from-yellow-400 hover:via-red-400 hover:to-blue-400';
+}
+
+function getClassBadgeColor(cls: Class) {
+  switch (cls) {
+    case Class.FIRE:
+      return 'bg-red-500/20 text-red-400';
+    case Class.WATER:
+      return 'bg-blue-500/20 text-blue-400';
+    case Class.WOOD:
+      return 'bg-green-500/20 text-green-400';
+    case Class.EARTH:
+      return 'bg-yellow-500/20 text-yellow-400';
+    case Class.METAL:
+      return 'bg-gray-400/20 text-gray-400';
+  }
+}
+
 export function GameCard({
-  card: initialCard,
+  card,
   onClick,
   selected = false,
   disabled = false,
   size = 'normal',
-  className,
+  className
 }: GameCardProps) {
   const [showDetails, setShowDetails] = useState(false);
-
-  // Convert Card to GameCard if needed
-  const card =
-    'currentHealth' in initialCard
-      ? initialCard
-      : convertToGameCard(initialCard);
-
-  const handleContextMenu = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setShowDetails(true);
-  };
-
-  const getClassGradient = () => {
-    const classColors = {
-      FIRE: 'from-red-500/20 to-orange-700/20 border-red-500/50',
-      WATER: 'from-blue-500/20 to-cyan-700/20 border-blue-500/50',
-      WOOD: 'from-green-500/20 to-emerald-700/20 border-green-500/50',
-      EARTH: 'from-yellow-500/20 to-amber-700/20 border-yellow-500/50',
-      METAL: 'from-gray-400/20 to-slate-700/20 border-gray-400/50',
-    };
-
-    if (card.class.length === 1) {
-      return classColors[card.class[0]];
-    }
-
-    // For dual-class cards, create a diagonal gradient
-    const [primary, secondary] = card.class;
-    const [primaryColor, secondaryColor] = [
-      classColors[primary],
-      classColors[secondary],
-    ];
-    return `${primaryColor} via-transparent ${secondaryColor}`;
-  };
-
-  const getClassOverlay = () => {
-    const overlayStyles = card.class.map((cls) => {
-      switch (cls) {
-        case 'FIRE':
-          return 'after:bg-[radial-gradient(circle_at_center,rgba(239,68,68,0.1)_0%,transparent_70%)]';
-        case 'WATER':
-          return 'after:bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.1)_0%,transparent_70%)]';
-        case 'WOOD':
-          return 'after:bg-[radial-gradient(circle_at_center,rgba(34,197,94,0.1)_0%,transparent_70%)]';
-        case 'EARTH':
-          return 'after:bg-[radial-gradient(circle_at_center,rgba(234,179,8,0.1)_0%,transparent_70%)]';
-        case 'METAL':
-          return 'after:bg-[radial-gradient(circle_at_center,rgba(148,163,184,0.1)_0%,transparent_70%)]';
-        default:
-          return '';
-      }
-    });
-    return overlayStyles.join(' ');
-  };
+  const classColors = getClassColors(card.class);
 
   return (
     <>
       <div
         className={cn(
-          'game-card relative group',
-          size === 'small' && 'game-card-small',
-          disabled && 'disabled',
-          selected && 'selected',
+          'relative rounded-lg overflow-hidden transition-all duration-300',
+          'border-2',
+          classColors,
+          selected && 'ring-2 ring-white/30 shadow-lg scale-105',
+          disabled && 'opacity-50 cursor-not-allowed grayscale',
+          size === 'small' ? 'w-[160px] h-[220px]' : 'w-[200px] h-[280px]',
+          'cursor-pointer transform hover:scale-105',
+          'backdrop-blur-sm',
           className
         )}
-        onClick={!disabled ? onClick : undefined}
-        onContextMenu={handleContextMenu}
+        onClick={disabled ? undefined : onClick}
+        onContextMenu={(e) => {
+          e.preventDefault();
+          setShowDetails(true);
+        }}
       >
-        <div
-          className={cn(
-            'card-frame relative overflow-hidden transition-all duration-300',
-            'bg-gradient-to-br backdrop-blur-sm',
-            getClassGradient(),
-            'after:absolute after:inset-0 after:opacity-0 after:transition-opacity after:duration-300',
-            'group-hover:after:opacity-100',
-            getClassOverlay(),
-            // Glowing border effect
-            'before:absolute before:inset-0 before:p-[2px]',
-            'before:bg-gradient-to-br before:from-white/20 before:to-transparent',
-            'before:rounded-lg before:-z-10',
-            // Inner shadow
-            'shadow-[inset_0_0_15px_rgba(0,0,0,0.4)]'
-          )}
-        >
-          {/* Card Name */}
-          <div className="card-name-box">
-            <h3 className="card-name">{card.name}</h3>
-          </div>
+        {/* Card Image */}
+        <img
+          src={card.image}
+          alt={card.name}
+          className="w-full h-full object-cover"
+        />
 
-          {/* Card Classes */}
-          <div className="card-class-box">
-            {card.class.map((cls, index) => (
-              <div
-                key={index}
-                className={cn('card-class-icon', `class-${cls}`)}
-              >
+        {/* Overlay Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/80" />
+
+        {/* Card Name */}
+        <div className="absolute top-2 left-2 right-2">
+          <h3 className="text-white font-bold text-lg truncate drop-shadow-lg">
+            {card.name}
+          </h3>
+        </div>
+
+        {/* Element Indicators */}
+        <div className="absolute top-2 right-2 flex gap-1">
+          {card.class.map((cls, index) => (
+            <div
+              key={index}
+              className={cn(
+                "w-6 h-6 rounded-full flex items-center justify-center",
+                getClassBadgeColor(cls)
+              )}
+            >
+              <span className="text-xs font-bold drop-shadow-lg">
                 {cls.charAt(0)}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* Stats */}
+        <div className="absolute bottom-2 left-2 right-2 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1 text-red-400">
+              <div className="w-4 h-4 relative">
+                <img
+                  src="https://png.pngtree.com/png-clipart/20210309/original/pngtree-sword-mascot-logo-png-image_5901932.jpg"
+                  alt="Attack"
+                  className="w-full h-full object-contain drop-shadow-lg"
+                />
               </div>
-            ))}
-          </div>
-
-          {/* Card Image */}
-          <div className="card-image-box">
-            <img
-              src={card.image}
-              alt={card.name}
-              className="w-full h-full object-cover"
-            />
-          </div>
-
-          {/* Card Effects */}
-          <div className="card-effects-box">
-            <div className="card-effect-title">Effects:</div>
-            <div className="text-gray-700">
-              {card.onAttackEffect !== 'NONE' && (
-                <span className="text-red-600">
-                  {card.onAttackEffect === 'CRITICAL_STRIKE'
-                    ? '30% Critical'
-                    : 'Lifesteal'}
-                </span>
-              )}
-              {card.onDefenseEffect === 'THORNS' && (
-                <span className="text-yellow-600"> Thorns</span>
-              )}
-              {card.onDeadEffect === 'EXPLODE' && (
-                <span className="text-orange-600"> Explode</span>
-              )}
+              <span className="font-bold text-sm drop-shadow-lg">{card.attack}</span>
+            </div>
+            <div className="flex items-center gap-1 text-green-400">
+              <Heart className="w-4 h-4" />
+              <span className="font-bold text-sm drop-shadow-lg">
+                {card.currentHealth}/{card.health}
+              </span>
             </div>
           </div>
-
-          {/* Card Stats */}
-          <div className="card-stats-box">
-            <div className="card-stat">
-              <Sword className="card-stat-icon" />
-              <span className="card-stat-value">{card.attack}</span>
-            </div>
-            <div className="card-stat">
-              <Heart className="card-stat-icon" />
-              <span className="card-stat-value">{card.currentHealth}</span>
-            </div>
-            <div className="card-stat">
-              <Zap className="card-stat-icon" />
-              <span className="card-stat-value">{card.staminaCost}</span>
-            </div>
+          <div className="flex items-center gap-1 text-yellow-400">
+            <Zap className="w-4 h-4" />
+            <span className="font-bold text-sm drop-shadow-lg">{card.staminaCost}</span>
           </div>
+        </div>
 
-          {/* Hover Effects */}
-          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-          </div>
+        {/* Hover Glow Effect */}
+        <div className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+          <div className={cn(
+            "absolute inset-0 blur-xl",
+            card.class[0] === Class.FIRE && "bg-red-500/10",
+            card.class[0] === Class.WATER && "bg-blue-500/10",
+            card.class[0] === Class.WOOD && "bg-green-500/10",
+            card.class[0] === Class.EARTH && "bg-yellow-500/10",
+            card.class[0] === Class.METAL && "bg-gray-400/10"
+          )} />
         </div>
       </div>
 
