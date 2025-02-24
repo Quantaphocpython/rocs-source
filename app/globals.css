@@ -2,20 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -39,6 +25,7 @@
     --ring: 0 0% 3.9%;
     --radius: 0.5rem;
   }
+
   .dark {
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
@@ -112,45 +99,185 @@
   }
 
   .game-header {
-    @apply h-[15%] relative bg-black/80 border-b border-yellow-900/50 p-6;
-    background: linear-gradient(
-      to bottom,
-      rgba(0, 0, 0, 0.9),
-      rgba(0, 0, 0, 0.7)
-    );
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+    @apply relative p-6 bg-black/30 border-b border-yellow-900/50;
   }
 
   .turn-indicator {
-    @apply absolute top-0 left-1/2 -translate-x-1/2 px-8 py-2 bg-black border-x border-b border-yellow-900/50 rounded-b-lg;
-    background: linear-gradient(
-      to bottom,
-      rgba(0, 0, 0, 0.95),
-      rgba(0, 0, 0, 0.8)
-    );
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    @apply absolute top-0 left-1/2 -translate-x-1/2 px-6 py-2 bg-black/60 rounded-b-lg border-x border-b border-yellow-900/50;
   }
 
   .battle-field {
-    @apply h-[65%] bg-black/60 relative border-b border-yellow-900/50;
-    background-image: linear-gradient(
-        to bottom,
-        rgba(0, 0, 0, 0.7),
-        rgba(0, 0, 0, 0.5)
-      ),
-      url("https://images.unsplash.com/photo-1624559888077-1a829f93c9f8?q=80&w=1920&auto=format&fit=crop");
-    background-size: cover;
-    background-position: center;
+    @apply flex-1 relative;
   }
 
   .player-hand {
-    @apply h-[20%] bg-black/80 p-6;
-    background: linear-gradient(
-      to top,
-      rgba(0, 0, 0, 0.95),
-      rgba(0, 0, 0, 0.8)
-    );
-    box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.3);
+    @apply p-6 bg-black/30 border-t border-yellow-900/50;
+  }
+
+  .card-slot {
+    @apply relative aspect-[3/4] bg-black/20 rounded-lg border border-yellow-900/30 transition-all duration-300;
+  }
+
+  .card-slot.targetable {
+    @apply border-yellow-400 ring-2 ring-yellow-400/50;
+  }
+
+  .stat-display {
+    @apply flex items-center gap-3 px-6 py-3 bg-black border border-yellow-900 rounded-lg;
+  }
+
+  .action-button {
+    @apply bg-yellow-900/90 hover:bg-yellow-800 text-yellow-400 transition-all duration-300;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* Card Animation Classes */
+  .card-attack-animation {
+    animation: cardAttack 0.5s ease-in-out;
+  }
+
+  @keyframes cardAttack {
+    0% {
+      transform: translateY(0) scale(1);
+    }
+    50% {
+      transform: translateY(-50%) scale(1.2);
+    }
+    100% {
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .card-damage-animation {
+    animation: cardDamage 0.3s ease-in-out;
+  }
+
+  @keyframes cardDamage {
+    0% {
+      transform: scale(1);
+      filter: brightness(1);
+    }
+    50% {
+      transform: scale(0.9);
+      filter: brightness(1.5) sepia(1) hue-rotate(-50deg);
+    }
+    100% {
+      transform: scale(1);
+      filter: brightness(1);
+    }
+  }
+
+  .card-heal-animation {
+    animation: cardHeal 0.5s ease-in-out;
+  }
+
+  @keyframes cardHeal {
+    0% {
+      filter: brightness(1);
+    }
+    50% {
+      filter: brightness(1.5) sepia(1) hue-rotate(90deg);
+    }
+    100% {
+      filter: brightness(1);
+    }
+  }
+
+  /* Boss Animation Classes */
+  .boss-attack-animation {
+    animation: bossAttack 0.6s ease-in-out;
+  }
+
+  @keyframes bossAttack {
+    0% {
+      transform: translateX(0) scale(1);
+    }
+    40% {
+      transform: translateX(-10%) scale(1.1);
+    }
+    60% {
+      transform: translateX(5%) scale(0.95);
+    }
+    100% {
+      transform: translateX(0) scale(1);
+    }
+  }
+
+  .boss-damage-animation {
+    animation: bossDamage 0.4s ease-in-out;
+  }
+
+  @keyframes bossDamage {
+    0% {
+      transform: scale(1);
+      filter: brightness(1);
+    }
+    50% {
+      transform: scale(0.95) rotate(-2deg);
+      filter: brightness(1.3) sepia(1) hue-rotate(-50deg);
+    }
+    100% {
+      transform: scale(1) rotate(0);
+      filter: brightness(1);
+    }
+  }
+
+  /* Card Movement Animation */
+  .card-movement {
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .card-movement:hover {
+    transform: translateY(-1rem) scale(1.05);
+  }
+
+  /* Combat Effect Animations */
+  .effect-critical {
+    animation: criticalEffect 0.4s ease-in-out;
+  }
+
+  @keyframes criticalEffect {
+    0% {
+      filter: brightness(1);
+    }
+    50% {
+      filter: brightness(1.5) sepia(1) hue-rotate(-90deg);
+    }
+    100% {
+      filter: brightness(1);
+    }
+  }
+
+  .effect-lifesteal {
+    animation: lifestealEffect 0.5s ease-in-out;
+  }
+
+  @keyframes lifestealEffect {
+    0% {
+      filter: brightness(1);
+    }
+    50% {
+      filter: brightness(1.3) sepia(1) hue-rotate(120deg);
+    }
+    100% {
+      filter: brightness(1);
+    }
+  }
+
+  .effect-thorns {
+    animation: thornsEffect 0.3s ease-in-out;
+  }
+
+  @keyframes thornsEffect {
+    0% {
+      filter: brightness(1);
+    }
+    50% {
+      filter: brightness(1.4) sepia(1) hue-rotate(45deg);
+    }
+    100% {
+      filter: brightness(1);
+    }
   }
 
   /* Card Slots */
@@ -352,46 +479,6 @@
 
   .game-card-small .card-stat-value {
     @apply text-[10px];
-  }
-
-  /* UI Elements */
-  .stat-display {
-    @apply flex items-center gap-3 px-6 py-3 bg-black/90 border border-yellow-900/50 rounded-lg;
-    backdrop-filter: blur(8px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  }
-
-  .action-button {
-    @apply bg-yellow-900/90 hover:bg-yellow-800 text-yellow-400 border border-yellow-900/50 text-lg px-8 py-3 rounded-lg transition-all duration-300;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  }
-
-  .action-button:hover {
-    @apply transform -translate-y-1;
-    box-shadow: 0 8px 30px rgba(234, 179, 8, 0.2);
-  }
-
-  .action-button:disabled {
-    @apply opacity-50 cursor-not-allowed transform-none;
-    box-shadow: none;
-  }
-
-  /* Battle Stats */
-  .battle-stats {
-    @apply fixed bottom-4 left-4 z-50;
-  }
-
-  .battle-stats-content {
-    @apply w-96 bg-black/95 border border-yellow-900/50 rounded-lg overflow-hidden shadow-2xl;
-    backdrop-filter: blur(12px);
-  }
-
-  .battle-stats-header {
-    @apply flex items-center justify-between gap-2 px-4 py-3 border-b border-yellow-900/50 bg-yellow-950/50;
-  }
-
-  .battle-stats-entry {
-    @apply px-4 py-3 border-b border-yellow-900/30 last:border-b-0 hover:bg-yellow-950/30 transition-colors;
   }
 
   /* Pre-built Deck Card Styles */
