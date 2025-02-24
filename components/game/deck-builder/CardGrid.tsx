@@ -10,11 +10,12 @@ interface CardGridProps {
     cards: Card[];
     customDeck: Card[];
     onCardSelect: (card: Card) => void;
+    size?: 'small' | 'normal' | 'large';
 }
 
-export function CardGrid({ cards, customDeck, onCardSelect }: CardGridProps) {
+export function CardGrid({ cards, customDeck, onCardSelect, size = 'normal' }: CardGridProps) {
     return (
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-5 gap-6">
             <AnimatePresence mode="popLayout">
                 {cards.map((card) => {
                     const count = customDeck.filter(c => c.id === card.id).length;
@@ -31,20 +32,22 @@ export function CardGrid({ cards, customDeck, onCardSelect }: CardGridProps) {
                         >
                             <GameCard
                                 card={convertToGameCard(card)}
-                                onClick={() => onCardSelect(card)}
+                                onClick={() => !isMaxed && onCardSelect(card)}
                                 disabled={isMaxed}
+                                disableStyle={isMaxed ? 'grayscale' : 'none'}
+                                size={size}
                                 className={cn(
-                                    "transition-all duration-300",
-                                    isMaxed && "opacity-50 grayscale"
+                                    "transition-all duration-300 hover:scale-105",
+                                    isMaxed && "opacity-50"
                                 )}
                             />
                             <div className={cn(
-                                "absolute top-2 left-2 px-3 py-1 rounded-lg",
+                                "absolute top-2 right-2 px-2 py-1 rounded-lg",
                                 "bg-black/90 border border-yellow-900/50",
-                                "text-sm font-medium",
+                                "text-xs font-medium",
                                 isMaxed ? "text-red-400" : "text-yellow-400"
                             )}>
-                                {count} / {card.maxPerSession}
+                                {count}/{card.maxPerSession}
                             </div>
                         </motion.div>
                     );
