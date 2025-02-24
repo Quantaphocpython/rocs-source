@@ -4,12 +4,12 @@ import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useGameLogic } from '@/hooks/useGameLogic';
 import { MessageCircleQuestionIcon as QuestionMarkCircle } from 'lucide-react';
-import { Button } from './ui/button';
-import { GameField } from './game/GameField';
-import { GameHeader } from './game/GameHeader';
-import { PhaseAnnouncement } from './game/phase-announcement';
-import { PlayerHand } from './game/player-hand';
-import { TutorialDialog } from './game/tutorial-dialog';
+import { Button } from '../../ui/button';
+import { GameField } from './GameField';
+import { GameHeader } from './GameHeader';
+import { PhaseAnnouncement } from './PhaseAnnouncement';
+import { PlayerHand } from './PlayerHand';
+import { TutorialDialog } from '../tutorial/TutorialDialog';
 import type { Card } from '@/types/game';
 
 interface GameBoardProps {
@@ -116,5 +116,3 @@ export function GameBoard({ initialDeck }: GameBoardProps) {
     </div>
   );
 }
-
-export default GameBoard;

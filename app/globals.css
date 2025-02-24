@@ -73,209 +73,30 @@
 }
 
 @layer components {
-  .game-card {
-    @apply relative w-[160px] h-[220px] transition-all duration-300 cursor-pointer rounded-lg hover:scale-105;
-    perspective: 1000px;
+  /* Custom Scrollbar */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(234, 179, 8, 0.3) transparent;
   }
 
-  .game-card.game-card-small {
-    @apply w-[100px] h-[140px];
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
   }
 
-  .game-card.disabled {
-    @apply opacity-80 cursor-not-allowed hover:scale-100;
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
   }
 
-  .game-card.selected {
-    @apply ring-4 ring-primary shadow-2xl scale-105;
-    transform: translateY(-10px);
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(234, 179, 8, 0.3);
+    border-radius: 20px;
   }
 
-  .card-frame {
-    @apply w-full h-full relative rounded-lg overflow-hidden;
-    background: linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.1) 0%,
-      rgba(255, 255, 255, 0.05) 100%
-    );
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    backdrop-filter: blur(4px);
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(234, 179, 8, 0.5);
   }
 
-  .card-frame.METAL {
-    background: linear-gradient(135deg, #718096 0%, #4a5568 100%);
-    border-color: #a0aec0;
-  }
-
-  .card-frame.WOOD {
-    background: linear-gradient(135deg, #48bb78 0%, #2f855a 100%);
-    border-color: #68d391;
-  }
-
-  .card-frame.WATER {
-    background: linear-gradient(135deg, #4299e1 0%, #2b6cb0 100%);
-    border-color: #63b3ed;
-  }
-
-  .card-frame.FIRE {
-    background: linear-gradient(135deg, #f56565 0%, #c53030 100%);
-    border-color: #fc8181;
-  }
-
-  .card-frame.EARTH {
-    background: linear-gradient(135deg, #d69e2e 0%, #975a16 100%);
-    border-color: #f6ad55;
-  }
-
-  .class-METAL {
-    @apply bg-gradient-to-br from-gray-400 to-gray-700;
-    box-shadow: 0 0 10px rgba(113, 128, 150, 0.5);
-  }
-
-  .class-WOOD {
-    @apply bg-gradient-to-br from-green-400 to-green-700;
-    box-shadow: 0 0 10px rgba(72, 187, 120, 0.5);
-  }
-
-  .class-WATER {
-    @apply bg-gradient-to-br from-blue-400 to-blue-700;
-    box-shadow: 0 0 10px rgba(66, 153, 225, 0.5);
-  }
-
-  .class-FIRE {
-    @apply bg-gradient-to-br from-red-400 to-red-700;
-    box-shadow: 0 0 10px rgba(245, 101, 101, 0.5);
-  }
-
-  .class-EARTH {
-    @apply bg-gradient-to-br from-yellow-500 to-yellow-700;
-    box-shadow: 0 0 10px rgba(214, 158, 46, 0.5);
-  }
-
-  .card-name-box {
-    @apply absolute top-0 left-0 right-0 h-10 flex items-center px-2 z-10;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(4px);
-  }
-
-  .game-card-small .card-name-box {
-    @apply h-7 px-1.5;
-  }
-
-  .card-name {
-    @apply text-white font-bold text-sm truncate;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  }
-
-  .game-card-small .card-name {
-    @apply text-xs;
-  }
-
-  .card-image-box {
-    @apply w-full h-[90px] mt-10 relative;
-    background: rgba(255, 255, 255, 0.9);
-  }
-
-  .game-card-small .card-image-box {
-    @apply h-[50px] mt-7;
-  }
-
-  .card-class-box {
-    @apply absolute top-2 right-2 flex gap-1.5 z-20;
-  }
-
-  .game-card-small .card-class-box {
-    @apply top-1.5 right-1.5 gap-1;
-  }
-
-  .card-class-icon {
-    @apply w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-lg transform transition-transform hover:scale-110;
-  }
-
-  .game-card-small .card-class-icon {
-    @apply w-4 h-4 text-[8px];
-  }
-
-  .class-METAL {
-    @apply bg-gradient-to-br from-gray-400 to-gray-700;
-    box-shadow: 0 0 15px rgba(113, 128, 150, 0.5);
-  }
-
-  .class-WOOD {
-    @apply bg-gradient-to-br from-green-400 to-green-700;
-    box-shadow: 0 0 15px rgba(72, 187, 120, 0.5);
-  }
-
-  .class-WATER {
-    @apply bg-gradient-to-br from-blue-400 to-blue-700;
-    box-shadow: 0 0 15px rgba(66, 153, 225, 0.5);
-  }
-
-  .class-FIRE {
-    @apply bg-gradient-to-br from-red-400 to-red-700;
-    box-shadow: 0 0 15px rgba(245, 101, 101, 0.5);
-  }
-
-  .class-EARTH {
-    @apply bg-gradient-to-br from-yellow-500 to-yellow-700;
-    box-shadow: 0 0 15px rgba(214, 158, 46, 0.5);
-  }
-
-  .card-effects-box {
-    @apply p-2 mt-1 h-[45px] overflow-hidden text-xs;
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(4px);
-  }
-
-  .game-card-small .card-effects-box {
-    @apply p-1.5 h-[30px] text-[10px];
-  }
-
-  .card-effect-title {
-    @apply font-bold text-xs mb-0.5 text-gray-800;
-  }
-
-  .game-card-small .card-effect-title {
-    @apply text-[10px] mb-0;
-  }
-
-  .card-stats-box {
-    @apply absolute bottom-0 left-0 right-0 h-12 flex items-center justify-between px-2;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(4px);
-  }
-
-  .game-card-small .card-stats-box {
-    @apply h-8 px-1.5;
-  }
-
-  .card-stat {
-    @apply flex items-center gap-1.5 bg-white/20 backdrop-blur-sm px-2 py-1 rounded-full text-white;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  }
-
-  .game-card-small .card-stat {
-    @apply gap-1 px-1.5 py-0.5;
-  }
-
-  .card-stat-icon {
-    @apply w-3.5 h-3.5 drop-shadow-lg;
-  }
-
-  .game-card-small .card-stat-icon {
-    @apply w-3 h-3;
-  }
-
-  .card-stat-value {
-    @apply font-bold text-xs;
-  }
-
-  .game-card-small .card-stat-value {
-    @apply text-[10px];
-  }
-
-  /* Enhanced Game Board Styles */
+  /* Game Board Layout */
   .game-board {
     @apply min-h-screen w-full max-w-[1920px] mx-auto bg-black flex flex-col;
     background-image: radial-gradient(
@@ -317,10 +138,20 @@
     background-position: center;
   }
 
+  .player-hand {
+    @apply h-[20%] bg-black/80 p-6;
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.95),
+      rgba(0, 0, 0, 0.8)
+    );
+    box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Card Slots */
   .card-slot {
     @apply relative flex items-center justify-center border border-yellow-900/20 rounded-lg transition-all duration-300;
     background: rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(4px);
   }
 
   .card-slot:hover {
@@ -334,19 +165,188 @@
     animation: pulse 2s infinite;
   }
 
-  .player-hand {
-    @apply h-[20%] bg-black/80 p-6;
-    background: linear-gradient(
-      to top,
-      rgba(0, 0, 0, 0.95),
-      rgba(0, 0, 0, 0.8)
-    );
-    box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.3);
+  /* Card Styles */
+  .game-card {
+    @apply relative w-[160px] h-[220px] transition-all duration-300 cursor-pointer rounded-lg hover:scale-105;
+    perspective: 1000px;
   }
 
+  .game-card.game-card-small {
+    @apply w-[120px] h-[160px];
+  }
+
+  .game-card.disabled {
+    @apply opacity-80 cursor-not-allowed hover:scale-100;
+  }
+
+  .game-card.selected {
+    @apply ring-4 ring-yellow-400 shadow-2xl scale-105;
+    transform: translateY(-10px);
+  }
+
+  .card-frame {
+    @apply w-full h-full relative rounded-lg overflow-hidden;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0.05) 100%
+    );
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  }
+
+  /* Card Element Styles */
+  .card-frame.METAL {
+    background: linear-gradient(135deg, #718096 0%, #4a5568 100%);
+    border-color: #a0aec0;
+  }
+
+  .card-frame.WOOD {
+    background: linear-gradient(135deg, #48bb78 0%, #2f855a 100%);
+    border-color: #68d391;
+  }
+
+  .card-frame.WATER {
+    background: linear-gradient(135deg, #4299e1 0%, #2b6cb0 100%);
+    border-color: #63b3ed;
+  }
+
+  .card-frame.FIRE {
+    background: linear-gradient(135deg, #f56565 0%, #c53030 100%);
+    border-color: #fc8181;
+  }
+
+  .card-frame.EARTH {
+    background: linear-gradient(135deg, #d69e2e 0%, #975a16 100%);
+    border-color: #f6ad55;
+  }
+
+  /* Card Components */
+  .card-name-box {
+    @apply absolute top-0 left-0 right-0 h-10 flex items-center px-2 z-10;
+    background: rgba(0, 0, 0, 0.7);
+  }
+
+  .game-card-small .card-name-box {
+    @apply h-7 px-1.5;
+  }
+
+  .card-name {
+    @apply text-white font-bold text-sm truncate;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .game-card-small .card-name {
+    @apply text-xs;
+  }
+
+  .card-image-box {
+    @apply w-full h-[90px] mt-10 relative;
+    background: rgba(255, 255, 255, 0.9);
+  }
+
+  .game-card-small .card-image-box {
+    @apply h-[50px] mt-7;
+  }
+
+  .card-class-box {
+    @apply absolute top-2 right-2 flex gap-1.5 z-20;
+  }
+
+  .game-card-small .card-class-box {
+    @apply top-1.5 right-1.5 gap-1;
+  }
+
+  .card-class-icon {
+    @apply w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-lg transform transition-transform hover:scale-110;
+  }
+
+  .game-card-small .card-class-icon {
+    @apply w-4 h-4 text-[8px];
+  }
+
+  /* Element Classes */
+  .class-METAL {
+    @apply bg-gradient-to-br from-gray-400 to-gray-700;
+    box-shadow: 0 0 15px rgba(113, 128, 150, 0.5);
+  }
+
+  .class-WOOD {
+    @apply bg-gradient-to-br from-green-400 to-green-700;
+    box-shadow: 0 0 15px rgba(72, 187, 120, 0.5);
+  }
+
+  .class-WATER {
+    @apply bg-gradient-to-br from-blue-400 to-blue-700;
+    box-shadow: 0 0 15px rgba(66, 153, 225, 0.5);
+  }
+
+  .class-FIRE {
+    @apply bg-gradient-to-br from-red-400 to-red-700;
+    box-shadow: 0 0 15px rgba(245, 101, 101, 0.5);
+  }
+
+  .class-EARTH {
+    @apply bg-gradient-to-br from-yellow-500 to-yellow-700;
+    box-shadow: 0 0 15px rgba(214, 158, 46, 0.5);
+  }
+
+  /* Card Effects */
+  .card-effects-box {
+    @apply p-2 mt-1 h-[45px] overflow-hidden text-xs;
+    background: rgba(255, 255, 255, 0.9);
+  }
+
+  .game-card-small .card-effects-box {
+    @apply p-1.5 h-[30px] text-[10px];
+  }
+
+  .card-effect-title {
+    @apply font-bold text-xs mb-0.5 text-gray-800;
+  }
+
+  .game-card-small .card-effect-title {
+    @apply text-[10px] mb-0;
+  }
+
+  /* Card Stats */
+  .card-stats-box {
+    @apply absolute bottom-0 left-0 right-0 h-12 flex items-center justify-between px-2;
+    background: rgba(0, 0, 0, 0.7);
+  }
+
+  .game-card-small .card-stats-box {
+    @apply h-8 px-1.5;
+  }
+
+  .card-stat {
+    @apply flex items-center gap-1.5 bg-white/20 px-2 py-1 rounded-full text-white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+
+  .game-card-small .card-stat {
+    @apply gap-1 px-1.5 py-0.5;
+  }
+
+  .card-stat-icon {
+    @apply w-3.5 h-3.5 drop-shadow-lg;
+  }
+
+  .game-card-small .card-stat-icon {
+    @apply w-3 h-3;
+  }
+
+  .card-stat-value {
+    @apply font-bold text-xs;
+  }
+
+  .game-card-small .card-stat-value {
+    @apply text-[10px];
+  }
+
+  /* UI Elements */
   .stat-display {
     @apply flex items-center gap-3 px-6 py-3 bg-black/90 border border-yellow-900/50 rounded-lg;
-    backdrop-filter: blur(8px);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   }
 
@@ -365,33 +365,87 @@
     box-shadow: none;
   }
 
-  /* Enhanced Deck Builder Styles */
-  .stat-card {
-    @apply px-8 py-3 bg-black/80 border border-yellow-900/50 rounded-lg;
-    backdrop-filter: blur(8px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  /* Battle Stats */
+  .battle-stats {
+    @apply fixed bottom-4 left-4 z-50;
   }
 
-  .filter-button {
-    @apply bg-black/80 hover:bg-yellow-900/30 text-yellow-400 border border-yellow-900/50 p-2 rounded-lg transition-all duration-300;
-    backdrop-filter: blur(8px);
+  .battle-stats-content {
+    @apply w-96 bg-black/95 border border-yellow-900/50 rounded-lg overflow-hidden shadow-2xl;
   }
 
-  .filter-button-active {
-    @apply bg-yellow-900/80 border-yellow-400;
-    box-shadow: 0 0 20px rgba(234, 179, 8, 0.2);
+  .battle-stats-header {
+    @apply flex items-center justify-between gap-2 px-4 py-3 border-b border-yellow-900/50 bg-yellow-950/50;
   }
 
-  .sort-button {
-    @apply bg-black/80 hover:bg-yellow-900/30 text-yellow-400 border border-yellow-900/50 px-4 py-2 rounded-lg transition-all duration-300;
-    backdrop-filter: blur(8px);
+  .battle-stats-entry {
+    @apply px-4 py-3 border-b border-yellow-900/30 last:border-b-0 hover:bg-yellow-950/30 transition-colors;
   }
 
-  .sort-button-active {
-    @apply bg-yellow-900/80 border-yellow-400;
-    box-shadow: 0 0 20px rgba(234, 179, 8, 0.2);
+  /* Pre-built Deck Card Styles */
+
+  /* Embla Carousel Styles */
+  .embla {
+    @apply overflow-hidden;
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 10%,
+      black 90%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 10%,
+      black 90%,
+      transparent 100%
+    );
   }
 
+  .embla__container {
+    @apply flex;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+
+  .embla__slide {
+    @apply flex-[0_0_100%] min-w-0 relative;
+    transform: translateZ(0);
+  }
+
+  .embla__button {
+    @apply absolute top-1/2 -translate-y-1/2 z-10;
+    @apply w-12 h-12 flex items-center justify-center rounded-full;
+    @apply bg-black/60 text-yellow-400 hover:bg-black/80;
+    @apply transition-all duration-300;
+    @apply hover:scale-110;
+    @apply focus:outline-none focus:ring-2 focus:ring-yellow-400/50;
+  }
+
+  .embla__button--prev {
+    @apply left-4 hover:-translate-x-1;
+  }
+
+  .embla__button--next {
+    @apply right-4 hover:translate-x-1;
+  }
+
+  .embla__dots {
+    @apply flex justify-center gap-2 mt-8;
+  }
+
+  .embla__dot {
+    @apply w-2 h-2 rounded-full transition-all duration-300;
+    @apply bg-yellow-400/30 hover:bg-yellow-400/50;
+    @apply focus:outline-none focus:ring-2 focus:ring-yellow-400/50;
+  }
+
+  .embla__dot--selected {
+    @apply bg-yellow-400 w-8;
+  }
+
+  /* Animations */
   @keyframes pulse {
     0% {
       box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.4);
@@ -404,47 +458,13 @@
     }
   }
 
-  /* Enhanced Battle Stats */
-  .battle-stats {
-    @apply fixed bottom-4 left-4 z-50;
-  }
-
-  .battle-stats-content {
-    @apply w-96 bg-black/95 border border-yellow-900/50 rounded-lg overflow-hidden shadow-2xl;
-    backdrop-filter: blur(12px);
-  }
-
-  .battle-stats-header {
-    @apply flex items-center justify-between gap-2 px-4 py-3 border-b border-yellow-900/50 bg-yellow-950/50;
-  }
-
-  .battle-stats-entry {
-    @apply px-4 py-3 border-b border-yellow-900/30 last:border-b-0 hover:bg-yellow-950/30 transition-colors;
-  }
-
-  /* Enhanced Phase Announcement */
-  .phase-announcement {
-    @apply fixed inset-0 flex items-center justify-center pointer-events-none z-50;
-  }
-
-  .announcement-content {
-    @apply px-12 py-6 rounded-lg font-bold text-center backdrop-blur-sm flex flex-col items-center gap-4;
-    box-shadow: 0 0 50px rgba(0, 0, 0, 0.3);
-  }
-
-  .announcement-phase {
-    @apply bg-yellow-950/90 text-yellow-400 border-2 border-yellow-400;
-  }
-
-  .announcement-effect {
-    @apply bg-blue-950/90 text-blue-400 border-2 border-blue-400;
-  }
-
-  .announcement-damage {
-    @apply bg-red-950/90 text-red-400 border-2 border-red-400;
-  }
-
-  .announcement-heal {
-    @apply bg-green-950/90 text-green-400 border-2 border-green-400;
+  @keyframes glow {
+    0%,
+    100% {
+      opacity: 0.3;
+    }
+    50% {
+      opacity: 0.6;
+    }
   }
 }

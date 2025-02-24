@@ -1,20 +1,20 @@
 "use client";
 
-import { Card, Class, OnAttackEffect, OnDeadEffect, OnDefenseEffect, ActiveSkill } from "@/types/game";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import { Card, Class, OnAttackEffect, OnDeadEffect, OnDefenseEffect, ActiveSkill, GameCard } from "@/types/game";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../../ui/dialog";
 import { Heart, Sword, Shield, Zap, Flame, Droplet, Trees, Mountain, Cog } from "lucide-react";
 
 interface CardDetailsProps {
-  card: Card | null;
+  card: (Card | GameCard) | null;
   isOpen: boolean;
   onClose: () => void;
 }
 
-function getEffectDescription(card: Card | null) {
+function getEffectDescription(card: (Card | GameCard) | null) {
   if (!card) return [];
-  
+
   const effects = [];
-  
+
   if (card.onAttackEffect === OnAttackEffect.CRITICAL_STRIKE) {
     effects.push("30% chance to deal double damage");
   } else if (card.onAttackEffect === OnAttackEffect.LIFESTEAL) {
@@ -53,8 +53,9 @@ function getClassIcon(className: Class) {
 
 export function CardDetails({ card, isOpen, onClose }: CardDetailsProps) {
   if (!card) return null;
-  
+
   const effects = getEffectDescription(card);
+  const maxPerSession = 'maxPerSession' in card ? card.maxPerSession : 2; // Default value if not provided
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -71,7 +72,7 @@ export function CardDetails({ card, isOpen, onClose }: CardDetailsProps) {
             <h3 className="text-sm font-medium text-yellow-600">Classes</h3>
             <div className="flex gap-3">
               {card.class.map((cls, index) => (
-                <div 
+                <div
                   key={index}
                   className="flex items-center gap-2 px-4 py-2 rounded border border-yellow-900"
                 >
@@ -97,7 +98,9 @@ export function CardDetails({ card, isOpen, onClose }: CardDetailsProps) {
                 <Heart className="w-5 h-5" />
                 <div>
                   <div className="text-sm font-medium">Health</div>
-                  <div className="text-lg font-bold">{card.health}</div>
+                  <div className="text-lg font-bold">
+                    {'currentHealth' in card ? `${card.currentHealth}/${card.health}` : card.health}
+                  </div>
                 </div>
               </div>
               <div className="flex items-center gap-3 p-4 rounded border border-yellow-900">
@@ -116,7 +119,7 @@ export function CardDetails({ card, isOpen, onClose }: CardDetailsProps) {
               <h3 className="text-sm font-medium text-yellow-600">Effects</h3>
               <div className="space-y-2">
                 {effects.map((effect, index) => (
-                  <div 
+                  <div
                     key={index}
                     className="flex items-center gap-3 p-4 rounded border border-yellow-900"
                   >
@@ -130,7 +133,7 @@ export function CardDetails({ card, isOpen, onClose }: CardDetailsProps) {
 
           {/* Deck Limit */}
           <div className="flex items-center gap-2 px-4 py-3 rounded border border-yellow-900">
-            <span className="text-sm">Maximum {card.maxPerSession} copies per deck</span>
+            <span className="text-sm">Maximum {maxPerSession} copies per deck</span>
           </div>
         </div>
       </DialogContent>

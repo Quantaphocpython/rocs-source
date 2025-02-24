@@ -4,7 +4,7 @@ import { useState } from "react";
 import { GameState } from "@/types/game";
 import { Scroll, ChevronUp, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 
 interface BattleStatsProps {
   history: GameState["battleHistory"];

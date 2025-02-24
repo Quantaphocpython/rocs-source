@@ -1,6 +1,6 @@
 "use client";
 
-import { Dialog, DialogContent } from "../ui/dialog";
+import { Dialog, DialogContent } from "../../ui/dialog";
 import { Heart, Sword, Shield, Zap, Flame, Droplet, Trees, Mountain, Cog } from "lucide-react";
 
 interface TutorialDialogProps {

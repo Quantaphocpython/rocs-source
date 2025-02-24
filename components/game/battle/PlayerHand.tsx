@@ -2,7 +2,7 @@
 
 import { memo } from 'react';
 import { GameCard } from "@/types/game";
-import { GameCard as GameCardComponent } from "../ui/game-card";
+import { GameCard as GameCardComponent } from "../../ui/game-card";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 

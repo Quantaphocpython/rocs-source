@@ -1,5 +1,7 @@
-import { GameBoard } from "@/components/game-board";
+'use client';
+
+import { GameLobby } from '@/components/game/lobby';
 
 export default function Home() {
-  return <GameBoard />;
+  return <GameLobby />;
 }

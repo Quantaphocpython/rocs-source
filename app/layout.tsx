@@ -1,7 +1,10 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { TooltipProvider } from '@/components/ui/tooltip';
+import { ThemeProvider } from 'next-themes';
+import ContextProvider from '@/components/providers/ContextProvider';
+
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -18,9 +21,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <TooltipProvider>
-          {children}
-        </TooltipProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme={'system'}
+          enableSystem
+          disableTransitionOnChange
+        >
+          <ContextProvider>
+            <TooltipProvider>{children}</TooltipProvider>
+          </ContextProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
