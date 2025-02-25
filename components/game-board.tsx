@@ -79,27 +79,8 @@ export function GameBoard({ initialDeck }: GameBoardProps) {
         onTargetSlotChange={setTargetSlot}
         battleHistory={gameState.battleHistory}
       />
-
-      <PlayerHand
-        deck={gameState.deck}
-        selectedCard={selectedCard}
-        isPlayerTurn={isPlayerTurn}
-        playerStamina={gameState.playerStamina}
-        onCardSelect={handleCardSelect}
-      />
-
       <div className="flex justify-end gap-4 p-6 bg-black/30 border-t border-yellow-900/50">
-        <Button
-          className="action-button"
-          disabled={!isPlayerTurn || selectedCard === null}
-          onClick={() =>
-            selectedCard !== null &&
-            targetSlot !== null &&
-            handleCardPlay(selectedCard, targetSlot)
-          }
-        >
-          Play Card
-        </Button>
+
         <Button
           className="action-button"
           disabled={!isPlayerTurn}
@@ -108,6 +89,15 @@ export function GameBoard({ initialDeck }: GameBoardProps) {
           End Turn
         </Button>
       </div>
+      <PlayerHand
+        deck={gameState.deck}
+        selectedCard={selectedCard}
+        isPlayerTurn={isPlayerTurn}
+        playerStamina={gameState.playerStamina}
+        onCardSelect={handleCardSelect}
+      />
+
+
 
       <TutorialDialog
         isOpen={isTutorialOpen}

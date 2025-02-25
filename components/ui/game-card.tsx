@@ -1,181 +1,186 @@
 'use client';
 
-import { GameCard as GameCardType, Card } from '@/types/game';
-import { cn } from '@/lib/utils';
-import { Heart, Sword, Zap } from 'lucide-react';
 import { useState } from 'react';
+import { GameCard as GameCardType, Class } from '@/types/game';
+import { cn } from '@/lib/utils';
 import { CardDetails } from '../game/card/CardDetails';
-import { convertToGameCard } from '@/utils/gameLogic';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface GameCardProps {
-  card: GameCardType | Card;
+  card: GameCardType;
   onClick?: () => void;
   selected?: boolean;
   disabled?: boolean;
-  size?: 'small' | 'normal';
+  disableStyle?: 'grayscale' | 'opacity' | 'none';
+  size?: 'small' | 'normal' | 'large';
   className?: string;
 }
 
+function getCardPowerLevel(card: GameCardType) {
+  const powerScore = card.attack + card.health + card.staminaCost;
+  if (powerScore >= 18) return 'legendary';
+  if (powerScore >= 14) return 'epic';
+  if (powerScore >= 10) return 'rare';
+  return 'common';
+}
+
+function getClassColors(classes: Class[]) {
+  if (classes.length === 1) {
+    switch (classes[0]) {
+      case Class.FIRE:
+        return { primary: '#dc2626', secondary: '#ef4444', accent: '#f87171' };
+      case Class.WATER:
+        return { primary: '#2563eb', secondary: '#3b82f6', accent: '#60a5fa' };
+      case Class.WOOD:
+        return { primary: '#16a34a', secondary: '#22c55e', accent: '#4ade80' };
+      case Class.EARTH:
+        return { primary: '#ca8a04', secondary: '#eab308', accent: '#facc15' };
+      case Class.METAL:
+        return { primary: '#6b7280', secondary: '#9ca3af', accent: '#d1d5db' };
+    }
+  }
+  return { primary: '#7c3aed', secondary: '#8b5cf6', accent: '#a78bfa' };
+}
+
+function getCardSize(size: 'small' | 'normal' | 'large') {
+  switch (size) {
+    case 'small':
+      return 'w-[140px] h-[200px]';
+    case 'normal':
+      return 'w-[180px] h-[260px]';
+    case 'large':
+      return 'w-[220px] h-[320px]';
+  }
+}
+
 export function GameCard({
-  card: initialCard,
+  card,
   onClick,
   selected = false,
   disabled = false,
+  disableStyle = 'opacity',
   size = 'normal',
-  className,
+  className
 }: GameCardProps) {
   const [showDetails, setShowDetails] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
-  // Convert Card to GameCard if needed
-  const card =
-    'currentHealth' in initialCard
-      ? initialCard
-      : convertToGameCard(initialCard);
-
-  const handleContextMenu = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setShowDetails(true);
-  };
-
-  const getClassGradient = () => {
-    const classColors = {
-      FIRE: 'from-red-500/20 to-orange-700/20 border-red-500/50',
-      WATER: 'from-blue-500/20 to-cyan-700/20 border-blue-500/50',
-      WOOD: 'from-green-500/20 to-emerald-700/20 border-green-500/50',
-      EARTH: 'from-yellow-500/20 to-amber-700/20 border-yellow-500/50',
-      METAL: 'from-gray-400/20 to-slate-700/20 border-gray-400/50',
-    };
-
-    if (card.class.length === 1) {
-      return classColors[card.class[0]];
-    }
-
-    // For dual-class cards, create a diagonal gradient
-    const [primary, secondary] = card.class;
-    const [primaryColor, secondaryColor] = [
-      classColors[primary],
-      classColors[secondary],
-    ];
-    return `${primaryColor} via-transparent ${secondaryColor}`;
-  };
-
-  const getClassOverlay = () => {
-    const overlayStyles = card.class.map((cls) => {
-      switch (cls) {
-        case 'FIRE':
-          return 'after:bg-[radial-gradient(circle_at_center,rgba(239,68,68,0.1)_0%,transparent_70%)]';
-        case 'WATER':
-          return 'after:bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.1)_0%,transparent_70%)]';
-        case 'WOOD':
-          return 'after:bg-[radial-gradient(circle_at_center,rgba(34,197,94,0.1)_0%,transparent_70%)]';
-        case 'EARTH':
-          return 'after:bg-[radial-gradient(circle_at_center,rgba(234,179,8,0.1)_0%,transparent_70%)]';
-        case 'METAL':
-          return 'after:bg-[radial-gradient(circle_at_center,rgba(148,163,184,0.1)_0%,transparent_70%)]';
-        default:
-          return '';
-      }
-    });
-    return overlayStyles.join(' ');
-  };
+  const powerLevel = getCardPowerLevel(card);
+  const colors = getClassColors(card.class);
+  const cardSize = getCardSize(size);
 
   return (
     <>
-      <div
+      <motion.div
         className={cn(
-          'game-card relative group',
-          size === 'small' && 'game-card-small',
-          disabled && 'disabled',
-          selected && 'selected',
+          'relative rounded-lg overflow-hidden',
+          cardSize,
+          selected && 'ring-2 ring-white scale-105',
+          disabled && disableStyle === 'opacity' && 'opacity-50 cursor-not-allowed',
+          disabled && disableStyle === 'grayscale' && 'grayscale cursor-not-allowed',
+          'cursor-pointer transition-all duration-300',
           className
         )}
-        onClick={!disabled ? onClick : undefined}
-        onContextMenu={handleContextMenu}
+        style={{
+          boxShadow: isHovered ? `0 0 20px ${colors.accent}40` : 'none',
+          border: `2px solid ${colors.secondary}`,
+        }}
+        onClick={disabled ? undefined : onClick}
+        onContextMenu={(e) => {
+          e.preventDefault();
+          setShowDetails(true);
+        }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        whileHover={!disabled ? { scale: 1.05 } : {}}
+        animate={selected ? { scale: 1.05 } : { scale: 1 }}
+        transition={{ type: "spring", stiffness: 400, damping: 25 }}
       >
-        <div
-          className={cn(
-            'card-frame relative overflow-hidden transition-all duration-300',
-            'bg-gradient-to-br backdrop-blur-sm',
-            getClassGradient(),
-            'after:absolute after:inset-0 after:opacity-0 after:transition-opacity after:duration-300',
-            'group-hover:after:opacity-100',
-            getClassOverlay(),
-            // Glowing border effect
-            'before:absolute before:inset-0 before:p-[2px]',
-            'before:bg-gradient-to-br before:from-white/20 before:to-transparent',
-            'before:rounded-lg before:-z-10',
-            // Inner shadow
-            'shadow-[inset_0_0_15px_rgba(0,0,0,0.4)]'
-          )}
+        {/* Card Image */}
+        <motion.div
+          className="absolute inset-0 z-0"
+          animate={isHovered && !disabled ? { scale: 1.1 } : { scale: 1 }}
+          transition={{ duration: 0.4 }}
         >
-          {/* Card Name */}
-          <div className="card-name-box">
-            <h3 className="card-name">{card.name}</h3>
-          </div>
+          <img
+            src={card.image}
+            alt={card.name}
+            className="w-full h-full object-cover"
+          />
+        </motion.div>
 
-          {/* Card Classes */}
-          <div className="card-class-box">
+        {/* Card Content */}
+        <div className="relative z-20 p-3 h-full flex flex-col">
+          {/* Card Name */}
+          <motion.h3
+            className={cn(
+              "font-bold text-base leading-tight text-white drop-shadow-lg",
+              size === 'large' && "text-lg"
+            )}
+          >
+            {card.name}
+          </motion.h3>
+
+          {/* Element Indicators */}
+          <div className="absolute top-3 right-3 flex gap-1">
             {card.class.map((cls, index) => (
-              <div
+              <motion.div
                 key={index}
-                className={cn('card-class-icon', `class-${cls}`)}
+                className="w-5 h-5 rounded-full flex items-center justify-center bg-black/50 backdrop-blur-sm"
+                style={{
+                  border: `1px solid ${getClassColors([cls]).secondary}`,
+                  color: getClassColors([cls]).accent,
+                }}
+                whileHover={{ scale: 1.2 }}
               >
-                {cls.charAt(0)}
-              </div>
+                <span className="text-xs font-bold">{cls.charAt(0)}</span>
+              </motion.div>
             ))}
           </div>
 
-          {/* Card Image */}
-          <div className="card-image-box">
-            <img
-              src={card.image}
-              alt={card.name}
-              className="w-full h-full object-cover"
-            />
-          </div>
-
-          {/* Card Effects */}
-          <div className="card-effects-box">
-            <div className="card-effect-title">Effects:</div>
-            <div className="text-gray-700">
-              {card.onAttackEffect !== 'NONE' && (
-                <span className="text-red-600">
-                  {card.onAttackEffect === 'CRITICAL_STRIKE'
-                    ? '30% Critical'
-                    : 'Lifesteal'}
+          {/* Stats */}
+          <div className="mt-auto flex justify-between items-center">
+            <div className="flex items-center gap-3">
+              <motion.div
+                className="flex items-center gap-1"
+                whileHover={{ scale: 1.1 }}
+              >
+                <span className={cn(
+                  "font-bold drop-shadow-lg",
+                  size === 'large' ? "text-lg" : "text-base",
+                  card.attack >= 8 ? "text-red-400" : "text-red-500"
+                )}>
+                  {card.attack}
                 </span>
-              )}
-              {card.onDefenseEffect === 'THORNS' && (
-                <span className="text-yellow-600"> Thorns</span>
-              )}
-              {card.onDeadEffect === 'EXPLODE' && (
-                <span className="text-orange-600"> Explode</span>
-              )}
+              </motion.div>
+              <motion.div
+                className="flex items-center gap-1"
+                whileHover={{ scale: 1.1 }}
+              >
+                <span className={cn(
+                  "font-bold drop-shadow-lg",
+                  size === 'large' ? "text-lg" : "text-base",
+                  card.health >= 8 ? "text-green-400" : "text-green-500"
+                )}>
+                  {card.currentHealth}/{card.health}
+                </span>
+              </motion.div>
             </div>
-          </div>
-
-          {/* Card Stats */}
-          <div className="card-stats-box">
-            <div className="card-stat">
-              <Sword className="card-stat-icon" />
-              <span className="card-stat-value">{card.attack}</span>
-            </div>
-            <div className="card-stat">
-              <Heart className="card-stat-icon" />
-              <span className="card-stat-value">{card.currentHealth}</span>
-            </div>
-            <div className="card-stat">
-              <Zap className="card-stat-icon" />
-              <span className="card-stat-value">{card.staminaCost}</span>
-            </div>
-          </div>
-
-          {/* Hover Effects */}
-          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+            <motion.div
+              className="flex items-center gap-1"
+              whileHover={{ scale: 1.1 }}
+            >
+              <span className={cn(
+                "font-bold drop-shadow-lg",
+                size === 'large' ? "text-lg" : "text-base",
+                card.staminaCost <= 2 ? "text-yellow-400" : "text-yellow-500"
+              )}>
+                {card.staminaCost}
+              </span>
+            </motion.div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       <CardDetails
         card={card}

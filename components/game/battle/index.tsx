@@ -4,7 +4,6 @@ import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useGameLogic } from '@/hooks/useGameLogic';
 import { MessageCircleQuestionIcon as QuestionMarkCircle } from 'lucide-react';
-import { Button } from '../../ui/button';
 import { GameField } from './GameField';
 import { GameHeader } from './GameHeader';
 import { PhaseAnnouncement } from './PhaseAnnouncement';
@@ -34,6 +33,7 @@ export function GameBoard({ initialDeck }: GameBoardProps) {
     gameState,
     announcement,
     setAnnouncement,
+    canPlayAnyCard,
   } = useGameLogic();
 
   useEffect(() => {
@@ -47,9 +47,13 @@ export function GameBoard({ initialDeck }: GameBoardProps) {
     setSelectedCard(prev => prev === index ? null : index);
   }, [setSelectedCard]);
 
-  const handleCardPlay = useCallback((cardIndex: number, slotIndex: number) => {
-    playCard(cardIndex, slotIndex);
-  }, [playCard]);
+  const handleCardPlay = useCallback(() => {
+    if (selectedCard !== null && targetSlot !== null) {
+      playCard(selectedCard, targetSlot);
+    }
+  }, [playCard, selectedCard, targetSlot]);
+
+  const canPlaySelectedCard = selectedCard !== null && targetSlot !== null;
 
   return (
     <div className="game-board">
@@ -75,7 +79,7 @@ export function GameBoard({ initialDeck }: GameBoardProps) {
         selectedCard={selectedCard}
         targetSlot={targetSlot}
         isPlayerTurn={isPlayerTurn}
-        onCardPlay={handleCardPlay}
+        onCardPlay={(cardIndex, slotIndex) => playCard(cardIndex, slotIndex)}
         onTargetSlotChange={setTargetSlot}
         battleHistory={gameState.battleHistory}
       />
@@ -86,28 +90,11 @@ export function GameBoard({ initialDeck }: GameBoardProps) {
         isPlayerTurn={isPlayerTurn}
         playerStamina={gameState.playerStamina}
         onCardSelect={handleCardSelect}
+        onPlayCard={handleCardPlay}
+        onEndTurn={endTurn}
+        canPlayCard={canPlaySelectedCard}
+        canPlayAnyCard={canPlayAnyCard}
       />
-
-      <div className="flex justify-end gap-4 p-6 bg-black/30 border-t border-yellow-900/50">
-        <Button
-          className="action-button"
-          disabled={!isPlayerTurn || selectedCard === null}
-          onClick={() =>
-            selectedCard !== null &&
-            targetSlot !== null &&
-            handleCardPlay(selectedCard, targetSlot)
-          }
-        >
-          Play Card
-        </Button>
-        <Button
-          className="action-button"
-          disabled={!isPlayerTurn}
-          onClick={endTurn}
-        >
-          End Turn
-        </Button>
-      </div>
 
       <TutorialDialog
         isOpen={isTutorialOpen}

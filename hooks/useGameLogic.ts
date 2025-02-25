@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useState, useCallback, useRef, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
-import type { GameState, Card, GameCard } from '@/types/game';
-import { mockGameState } from '@/lib/mock-data';
-import { INITIAL_HAND_SIZE } from '@/constants/game';
-import { calculateStaminaGain, convertToGameCard } from '@/utils/gameLogic';
+import { useState, useCallback, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import type { GameState, Card, GameCard } from "@/types/game";
+import { mockGameState } from "@/lib/mock-data";
+import { INITIAL_HAND_SIZE } from "@/constants/game";
+import { calculateStaminaGain, convertToGameCard } from "@/utils/gameLogic";
 
 export function useGameLogic() {
   const router = useRouter();
@@ -18,8 +18,8 @@ export function useGameLogic() {
   const [roundCounter, setRoundCounter] = useState(1);
   const [announcement, setAnnouncement] = useState<{
     message: string | null;
-    type: 'phase' | 'effect' | 'damage' | 'heal';
-  }>({ message: null, type: 'phase' });
+    type: "phase" | "effect" | "damage" | "heal";
+  }>({ message: null, type: "phase" });
 
   // Use refs for values that shouldn't trigger re-renders
   const gameStateRef = useRef(gameState);
@@ -33,6 +33,13 @@ export function useGameLogic() {
     roundCounterRef.current = roundCounter;
   }, [gameState, isPlayerTurn, roundCounter]);
 
+  // Check if player can play any cards
+  const canPlayAnyCard = useCallback(() => {
+    return gameState.deck.some(
+      (card) => card.staminaCost <= gameState.playerStamina
+    );
+  }, [gameState.deck, gameState.playerStamina]);
+
   useEffect(() => {
     if (isPlayerTurn) return;
 
@@ -43,8 +50,8 @@ export function useGameLogic() {
 
       if (cardsOnField.length === 0) {
         setAnnouncement({
-          message: 'Monster attacks directly!',
-          type: 'phase',
+          message: "Monster attacks directly!",
+          type: "phase",
         });
 
         setTimeout(() => {
@@ -57,7 +64,7 @@ export function useGameLogic() {
                 ...prev.battleHistory,
                 {
                   turn: prev.battleHistory.length + 1,
-                  action: 'monster_attack',
+                  action: "monster_attack",
                   damageDealt: damage,
                   playerHpLeft: Math.max(0, prev.playerHealth - damage),
                 },
@@ -66,7 +73,7 @@ export function useGameLogic() {
           });
           setAnnouncement({
             message: `Direct Attack: ${gameState.currentMonster.attack} damage!`,
-            type: 'damage',
+            type: "damage",
           });
         }, 1000);
       } else {
@@ -76,7 +83,7 @@ export function useGameLogic() {
         if (targetCard && targetCard.card) {
           setAnnouncement({
             message: `Monster attacks ${targetCard.card.name}!`,
-            type: 'phase',
+            type: "phase",
           });
 
           setTimeout(() => {
@@ -87,8 +94,8 @@ export function useGameLogic() {
 
       setTimeout(() => {
         setAnnouncement({
-          message: 'Your Turn',
-          type: 'phase',
+          message: "Your Turn",
+          type: "phase",
         });
         const staminaGain = calculateStaminaGain(roundCounter);
         setGameState((prev) => ({
@@ -105,19 +112,19 @@ export function useGameLogic() {
   useEffect(() => {
     if (gameState.playerHealth <= 0) {
       setAnnouncement({
-        message: 'Game Over!',
-        type: 'phase',
+        message: "Game Over!",
+        type: "phase",
       });
       setTimeout(() => {
-        router.push('/deck');
+        router.push("/deck");
       }, 2000);
     } else if (gameState.currentMonster.health <= 0) {
       setAnnouncement({
-        message: 'Victory!',
-        type: 'phase',
+        message: "Victory!",
+        type: "phase",
       });
       setTimeout(() => {
-        router.push('/deck');
+        router.push("/deck");
       }, 2000);
     }
   }, [gameState.playerHealth, gameState.currentMonster.health, router]);
@@ -126,19 +133,19 @@ export function useGameLogic() {
     let finalDamage = damage;
     let healAmount = 0;
 
-    if (card.onAttackEffect === 'CRITICAL_STRIKE') {
+    if (card.onAttackEffect === "CRITICAL_STRIKE") {
       if (Math.random() < 0.3) {
         finalDamage *= 2;
         setAnnouncement({
-          message: 'Critical Strike!',
-          type: 'effect',
+          message: "Critical Strike!",
+          type: "effect",
         });
       }
-    } else if (card.onAttackEffect === 'LIFESTEAL') {
+    } else if (card.onAttackEffect === "LIFESTEAL") {
       healAmount = Math.floor(damage * 0.5);
       setAnnouncement({
         message: `Lifesteal: +${healAmount} HP`,
-        type: 'heal',
+        type: "heal",
       });
     }
 
@@ -148,10 +155,10 @@ export function useGameLogic() {
   const handleDefenseEffect = useCallback((card: GameCard | undefined) => {
     if (!card) return 0;
 
-    if (card.onDefenseEffect === 'THORNS') {
+    if (card.onDefenseEffect === "THORNS") {
       setAnnouncement({
-        message: 'Thorns Activated!',
-        type: 'effect',
+        message: "Thorns Activated!",
+        type: "effect",
       });
       return 2;
     }
@@ -159,11 +166,11 @@ export function useGameLogic() {
   }, []);
 
   const handleDeadEffect = useCallback((card: GameCard) => {
-    if (card.onDeadEffect === 'EXPLODE') {
+    if (card.onDeadEffect === "EXPLODE") {
       const explodeDamage = 3;
       setAnnouncement({
-        message: 'Card Explodes!',
-        type: 'effect',
+        message: "Card Explodes!",
+        type: "effect",
       });
       return explodeDamage;
     }
@@ -190,105 +197,110 @@ export function useGameLogic() {
     setIsPlayerTurn(true);
     setSelectedCard(null);
     setTargetSlot(null);
-    
+
     setAnnouncement({
-      message: 'Battle Start!',
-      type: 'phase',
+      message: "Battle Start!",
+      type: "phase",
     });
   }, []);
 
   const drawCard = useCallback(() => {
     if (remainingDeck.length === 0) {
-      toast.error('No more cards to draw!');
+      toast.error("No more cards to draw!");
       return;
     }
 
     const [newCard, ...restDeck] = remainingDeck;
-    setGameState(prev => ({
+    setGameState((prev) => ({
       ...prev,
       deck: [...prev.deck, newCard],
     }));
     setRemainingDeck(restDeck);
   }, [remainingDeck]);
 
-  const playCard = useCallback((cardIndex: number, slotIndex: number) => {
-    if (!isPlayerTurnRef.current) return;
-    
-    const currentGameState = gameStateRef.current;
-    if (currentGameState.playerStamina < currentGameState.deck[cardIndex].staminaCost) {
-      toast.error('Not enough stamina!');
-      return;
-    }
+  const playCard = useCallback(
+    (cardIndex: number, slotIndex: number) => {
+      if (!isPlayerTurnRef.current) return;
 
-    const card = currentGameState.deck[cardIndex];
-    setAnnouncement({
-      message: `Playing ${card.name}`,
-      type: 'phase',
-    });
+      const currentGameState = gameStateRef.current;
+      if (
+        currentGameState.playerStamina <
+        currentGameState.deck[cardIndex].staminaCost
+      ) {
+        toast.error("Not enough stamina!");
+        return;
+      }
 
-    setGameState(prev => {
-      const newDeck = [...prev.deck];
-      newDeck.splice(cardIndex, 1);
-
-      const { finalDamage, healAmount } = handleCardEffect(card, card.attack);
-
-      const newMonsterHealth = Math.max(0, prev.currentMonster.health - finalDamage);
-      const deadEffectDamage = card.currentHealth <= 0 ? handleDeadEffect(card) : 0;
-      const finalMonsterHealth = Math.max(0, newMonsterHealth - deadEffectDamage);
-
-      const newCardsOnField = [...prev.cardsOnField];
-      newCardsOnField[slotIndex] = card;
-
-      return {
-        ...prev,
-        deck: newDeck,
-        cardsOnField: newCardsOnField,
-        playerStamina: prev.playerStamina - card.staminaCost,
-        playerHealth: Math.min(40, prev.playerHealth + healAmount),
-        currentMonster: {
-          ...prev.currentMonster,
-          health: finalMonsterHealth,
-        },
-        battleHistory: [
-          ...prev.battleHistory,
-          {
-            turn: prev.battleHistory.length + 1,
-            action: 'play_card',
-            cardId: card.id,
-            damageDealt: finalDamage + deadEffectDamage,
-            monsterHpLeft: finalMonsterHealth,
-          },
-        ],
-      };
-    });
-
-    setSelectedCard(null);
-    setTargetSlot(null);
-
-    setTimeout(() => {
+      const card = currentGameState.deck[cardIndex];
       setAnnouncement({
-        message: "Monster's Turn",
-        type: 'phase',
+        message: `Playing ${card.name}`,
+        type: "phase",
       });
-      setIsPlayerTurn(false);
-    }, 1000);
-  }, [handleCardEffect, handleDeadEffect]);
+
+      setGameState((prev) => {
+        const newDeck = [...prev.deck];
+        newDeck.splice(cardIndex, 1);
+
+        const { finalDamage, healAmount } = handleCardEffect(card, card.attack);
+
+        const newMonsterHealth = Math.max(
+          0,
+          prev.currentMonster.health - finalDamage
+        );
+        const deadEffectDamage =
+          card.currentHealth <= 0 ? handleDeadEffect(card) : 0;
+        const finalMonsterHealth = Math.max(
+          0,
+          newMonsterHealth - deadEffectDamage
+        );
+
+        const newCardsOnField = [...prev.cardsOnField];
+        newCardsOnField[slotIndex] = card;
+
+        return {
+          ...prev,
+          deck: newDeck,
+          cardsOnField: newCardsOnField,
+          playerStamina: prev.playerStamina - card.staminaCost,
+          playerHealth: Math.min(40, prev.playerHealth + healAmount),
+          currentMonster: {
+            ...prev.currentMonster,
+            health: finalMonsterHealth,
+          },
+          battleHistory: [
+            ...prev.battleHistory,
+            {
+              turn: prev.battleHistory.length + 1,
+              action: "play_card",
+              cardId: card.id,
+              damageDealt: finalDamage + deadEffectDamage,
+              monsterHpLeft: finalMonsterHealth,
+            },
+          ],
+        };
+      });
+
+      setSelectedCard(null);
+      setTargetSlot(null);
+    },
+    [handleCardEffect, handleDeadEffect]
+  );
 
   const endTurn = useCallback(() => {
     if (!isPlayerTurnRef.current) return;
-    
+
     setAnnouncement({
-      message: 'Ending Turn...',
-      type: 'phase',
+      message: "Ending Turn...",
+      type: "phase",
     });
-    
+
     drawCard();
-    setRoundCounter(prev => prev + 1);
-    
+    setRoundCounter((prev) => prev + 1);
+
     setTimeout(() => {
       setAnnouncement({
         message: "Monster's Turn",
-        type: 'phase',
+        type: "phase",
       });
       setIsPlayerTurn(false);
       setSelectedCard(null);
@@ -308,8 +320,8 @@ export function useGameLogic() {
       if (hasCritical) {
         finalDamage *= 1.5;
         setAnnouncement({
-          message: 'Monster Critical Hit!',
-          type: 'effect',
+          message: "Monster Critical Hit!",
+          type: "effect",
         });
       }
 
@@ -317,7 +329,7 @@ export function useGameLogic() {
       if (thornsDamage > 0) {
         setAnnouncement({
           message: `Thorns Damage: ${thornsDamage}!`,
-          type: 'effect',
+          type: "effect",
         });
       }
 
@@ -336,7 +348,7 @@ export function useGameLogic() {
         updatedCardsOnField[cardIndex] = null;
         setAnnouncement({
           message: `${targetCard.name} was destroyed!`,
-          type: 'damage',
+          type: "damage",
         });
       } else {
         updatedCardsOnField[cardIndex] = {
@@ -345,7 +357,7 @@ export function useGameLogic() {
         };
         setAnnouncement({
           message: `${targetCard.name} takes ${finalDamage} damage!`,
-          type: 'damage',
+          type: "damage",
         });
       }
 
@@ -354,7 +366,7 @@ export function useGameLogic() {
         healAmount = Math.floor(finalDamage * 0.3);
         setAnnouncement({
           message: `Monster Heals for ${healAmount}!`,
-          type: 'heal',
+          type: "heal",
         });
       }
 
@@ -378,7 +390,7 @@ export function useGameLogic() {
           ...prev.battleHistory,
           {
             turn: prev.battleHistory.length + 1,
-            action: 'monster_attack',
+            action: "monster_attack",
             cardId: targetCard.id,
             damageDealt: finalDamage,
             monsterHpLeft: finalMonsterHealth,
@@ -395,6 +407,7 @@ export function useGameLogic() {
     targetSlot,
     roundCounter,
     announcement,
+    canPlayAnyCard,
     setSelectedCard,
     setTargetSlot,
     setAnnouncement,
