@@ -1,9 +1,17 @@
-import ContextProvider from '@/components/providers/ContextProvider';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import type { Metadata } from 'next';
 import { ThemeProvider } from 'next-themes';
 import { Inter } from 'next/font/google';
 import './globals.css';
+
+import dynamic from 'next/dynamic';
+
+const ContextProvider = dynamic(
+  () => import('@/components/providers/ContextProvider'),
+  {
+    ssr: false,
+  }
+);
 
 import '@rainbow-me/rainbowkit/styles.css';
 

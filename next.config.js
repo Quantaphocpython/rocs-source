@@ -5,6 +5,9 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   images: { unoptimized: true },
+  experimental: {
+    transpilePackages: ['@happy.tech/core', '@happy.tech/react'],
+  },
 };
 
 module.exports = nextConfig;
