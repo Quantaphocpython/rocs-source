@@ -48,6 +48,7 @@ export interface GameCard extends Omit<Card, 'maxPerSession'> {
 
 export interface Monster {
   id: number;
+  name: string;
   health: number;
   attack: number;
   class: Class[];
