@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { Card, Class, OnAttackEffect, OnDeadEffect, OnDefenseEffect, ActiveSkill, GameCard } from "@/types/game";
 import { Dialog, DialogContent } from "../../ui/dialog";
@@ -12,124 +12,85 @@ interface CardDetailsProps {
 
 function getEffectDescription(card: (Card | GameCard) | null) {
   if (!card) return [];
-
   const effects = [];
-
   if (card.onAttackEffect === OnAttackEffect.CRITICAL_STRIKE) {
-    effects.push({
-      name: "Critical Strike",
-      description: "30% chance to deal double damage",
-      type: "attack"
-    });
+    effects.push({ name: "Critical Strike", description: "30% chance to deal double damage", type: "attack" });
   } else if (card.onAttackEffect === OnAttackEffect.LIFESTEAL) {
-    effects.push({
-      name: "Lifesteal",
-      description: "Heals for 50% of damage dealt",
-      type: "heal"
-    });
+    effects.push({ name: "Lifesteal", description: "Heals for 50% of damage dealt", type: "heal" });
   }
-
   if (card.onDeadEffect === OnDeadEffect.EXPLODE) {
-    effects.push({
-      name: "Death Explosion",
-      description: "Deals 3 damage when destroyed",
-      type: "damage"
-    });
+    effects.push({ name: "Death Explosion", description: "Deals 3 damage when destroyed", type: "damage" });
   }
-
   if (card.onDefenseEffect === OnDefenseEffect.THORNS) {
-    effects.push({
-      name: "Thorns",
-      description: "Reflects 2 damage when attacked",
-      type: "defense"
-    });
+    effects.push({ name: "Thorns", description: "Reflects 2 damage when attacked", type: "defense" });
   }
-
   if (card.activeSkill === ActiveSkill.SACRIFICE) {
-    effects.push({
-      name: "Sacrifice",
-      description: "Can be sacrificed to gain 2 stamina",
-      type: "utility"
-    });
+    effects.push({ name: "Sacrifice", description: "Can be sacrificed to gain 2 stamina", type: "utility" });
   }
-
   return effects;
 }
 
 function getClassIcon(className: Class) {
   switch (className) {
-    case Class.FIRE:
-      return <Flame className="w-5 h-5 text-red-400" />;
-    case Class.WATER:
-      return <Droplet className="w-5 h-5 text-blue-400" />;
-    case Class.WOOD:
-      return <Trees className="w-5 h-5 text-green-400" />;
-    case Class.EARTH:
-      return <Mountain className="w-5 h-5 text-yellow-400" />;
-    case Class.METAL:
-      return <Cog className="w-5 h-5 text-gray-400" />;
+    case Class.FIRE: return <Flame className="w-4 h-4 text-red-700" />;
+    case Class.WATER: return <Droplet className="w-4 h-4 text-blue-700" />;
+    case Class.WOOD: return <Trees className="w-4 h-4 text-green-700" />;
+    case Class.EARTH: return <Mountain className="w-4 h-4 text-yellow-700" />;
+    case Class.METAL: return <Cog className="w-4 h-4 text-gray-700" />;
   }
 }
 
 export function CardDetails({ card, isOpen, onClose }: CardDetailsProps) {
   if (!card) return null;
-
   const effects = getEffectDescription(card);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-black border border-yellow-900 text-yellow-400 p-0 max-w-2xl">
-        <div className="p-6 space-y-6">
-          {/* Card Header with Image */}
+      <DialogContent className="bg-gray-900 border border-gray-700 rounded-lg p-0 max-w-[600px] overflow-hidden">
+        <div className="p-6 space-y-6 bg-gradient-to-b from-gray-800 to-gray-900">
+          {/* Card Header */}
           <div className="flex gap-6">
-            <div className="w-[200px] h-[280px] rounded-lg overflow-hidden relative">
-              <img
-                src={card.image}
-                alt={card.name}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/80" />
+            <div className="w-[180px] h-[240px] rounded-lg overflow-hidden relative border border-gray-600">
+              <img src={card.image} alt={card.name} className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent to-gray-900/70" />
             </div>
 
             <div className="flex-1 space-y-4">
-              <h2 className="text-3xl font-bold">{card.name}</h2>
+              <h2 className="text-2xl font-semibold text-white tracking-wide">{card.name}</h2>
 
               {/* Classes */}
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 {card.class.map((cls, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/50 border border-yellow-900/30"
-                  >
+                  <div key={index} className="flex items-center gap-2 px-3 py-1 rounded-md bg-gray-700/50 border border-gray-600">
                     {getClassIcon(cls)}
-                    <span className="font-medium">{cls}</span>
+                    <span className="text-xs font-medium text-white">{cls}</span>
                   </div>
                 ))}
               </div>
 
               {/* Core Stats */}
               <div className="grid grid-cols-3 gap-3">
-                <div className="flex items-center gap-2 p-3 rounded-lg bg-black/50 border border-red-900/30">
-                  <Sword className="w-5 h-5 text-red-400" />
+                <div className="flex items-center gap-2 p-3 rounded-md bg-gray-700/50 border border-red-800/50">
+                  <Sword className="w-4 h-4 text-red-700" />
                   <div>
-                    <p className="text-xs text-red-400/80">Attack</p>
-                    <p className="text-xl font-bold text-red-400">{card.attack}</p>
+                    <p className="text-xs text-gray-400">Attack</p>
+                    <p className="text-lg font-semibold text-white">{card.attack}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 p-3 rounded-lg bg-black/50 border border-green-900/30">
-                  <Heart className="w-5 h-5 text-green-400" />
+                <div className="flex items-center gap-2 p-3 rounded-md bg-gray-700/50 border border-green-800/50">
+                  <Heart className="w-4 h-4 text-green-700" />
                   <div>
-                    <p className="text-xs text-green-400/80">Health</p>
-                    <p className="text-xl font-bold text-green-400">
+                    <p className="text-xs text-gray-400">Health</p>
+                    <p className="text-lg font-semibold text-white">
                       {'currentHealth' in card ? `${card.currentHealth}/${card.health}` : card.health}
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 p-3 rounded-lg bg-black/50 border border-yellow-900/30">
-                  <Zap className="w-5 h-5 text-yellow-400" />
+                <div className="flex items-center gap-2 p-3 rounded-md bg-gray-700/50 border border-yellow-800/50">
+                  <Zap className="w-4 h-4 text-yellow-700" />
                   <div>
-                    <p className="text-xs text-yellow-400/80">Cost</p>
-                    <p className="text-xl font-bold text-yellow-400">{card.staminaCost}</p>
+                    <p className="text-xs text-gray-400">Cost</p>
+                    <p className="text-lg font-semibold text-white">{card.staminaCost}</p>
                   </div>
                 </div>
               </div>
@@ -139,18 +100,15 @@ export function CardDetails({ card, isOpen, onClose }: CardDetailsProps) {
           {/* Special Effects */}
           {effects.length > 0 && (
             <div className="space-y-3">
-              <h3 className="text-lg font-semibold flex items-center gap-2">
-                <Shield className="w-5 h-5" />
+              <h3 className="text-base font-medium text-white flex items-center gap-2">
+                <Shield className="w-4 h-4 text-gray-400" />
                 Special Effects
               </h3>
               <div className="grid grid-cols-2 gap-3">
                 {effects.map((effect, index) => (
-                  <div
-                    key={index}
-                    className="p-3 rounded-lg bg-black/50 border border-yellow-900/30"
-                  >
-                    <h4 className="font-medium text-yellow-400 mb-1">{effect.name}</h4>
-                    <p className="text-sm text-yellow-200/70">{effect.description}</p>
+                  <div key={index} className="p-3 rounded-md bg-gray-700/50 border border-gray-600">
+                    <h4 className="font-medium text-sm text-white mb-1">{effect.name}</h4>
+                    <p className="text-xs text-gray-300">{effect.description}</p>
                   </div>
                 ))}
               </div>
@@ -158,12 +116,12 @@ export function CardDetails({ card, isOpen, onClose }: CardDetailsProps) {
           )}
 
           {/* Strategy Tips */}
-          <div className="p-4 rounded-lg bg-black/50 border border-yellow-900/30">
+          <div className="p-4 rounded-md bg-gray-700/50 border border-gray-600">
             <div className="flex items-center gap-2 mb-2">
-              <Info className="w-5 h-5 text-blue-400" />
-              <h3 className="text-lg font-semibold text-blue-400">Strategy Tips</h3>
+              <Info className="w-4 h-4 text-blue-700" />
+              <h3 className="text-base font-medium text-white">Strategy Tips</h3>
             </div>
-            <div className="space-y-2 text-sm text-blue-200/70">
+            <div className="space-y-1 text-xs text-gray-300">
               <p>• Use this card's {card.class.join(" and ")} element synergies</p>
               {card.attack > 7 && <p>• High attack makes it great for offensive plays</p>}
               {card.health > 7 && <p>• High health makes it ideal for defensive positions</p>}

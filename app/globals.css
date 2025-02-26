@@ -24,6 +24,18 @@
     --input: 0 0% 89.8%;
     --ring: 0 0% 3.9%;
     --radius: 0.5rem;
+
+    /* Element Colors */
+    --fire-primary: 0 100% 50%;
+    --fire-secondary: 20 100% 50%;
+    --water-primary: 200 100% 50%;
+    --water-secondary: 190 100% 50%;
+    --wood-primary: 120 100% 30%;
+    --wood-secondary: 100 100% 30%;
+    --earth-primary: 30 80% 40%;
+    --earth-secondary: 40 70% 40%;
+    --metal-primary: 240 20% 70%;
+    --metal-secondary: 230 30% 60%;
   }
 
   .dark {
@@ -56,7 +68,7 @@
   body {
     @apply text-foreground;
     font-family: system-ui, -apple-system, sans-serif;
-    background-image: url("https://img.freepik.com/free-vector/abstract-black-texture-background-hexagon_206725-413.jpg");
+    background-image: url("https://wallpapers.com/images/featured/1080p-gaming-background-g3jh3d1kcvj61sz5.jpg");
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -66,10 +78,539 @@
 }
 
 @layer components {
+  /* Game Board Layout */
+  .game-board {
+    @apply min-h-screen w-full max-w-[1920px] mx-auto flex flex-col;
+  }
+
+  /* Game Header */
+  .game-header {
+    @apply relative px-3 py-1.5 bg-black/10 backdrop-blur-sm border-b border-violet-900/10;
+  }
+
+  .turn-indicator {
+    @apply absolute top-full left-1/2 -translate-x-1/2 px-6 py-2 rounded-b-lg 
+           bg-black/60 backdrop-blur-sm border-x border-b border-violet-900/30;
+  }
+
+  /* Stats Display */
+  .stat-display {
+    @apply flex items-center gap-1.5 px-2 py-1 rounded-lg bg-black/30 backdrop-blur-sm
+           border border-violet-900/20 transition-all duration-300 hover:bg-violet-900/20;
+  }
+
+  .stat-display-group {
+    @apply flex gap-1.5;
+  }
+
+  .stat-icon {
+    @apply w-3 h-3 text-white/80;
+  }
+
+  .stat-value {
+    @apply text-sm font-medium text-white;
+  }
+
+  .stat-label {
+    @apply text-[10px] text-white/60;
+  }
+
+  /* Battle Field */
+  .battle-field {
+    @apply flex-1 relative overflow-hidden;
+  }
+
+  .battle-arena {
+    @apply flex-1 relative flex items-center justify-between px-20;
+  }
+
+  .player-field {
+    @apply flex-1 grid grid-cols-5 gap-6;
+  }
+
+  /* Player Hand */
+  .player-hand {
+    @apply px-4 py-3 border-t border-white/10;
+  }
+
+  /* Card Slots */
+  .card-slot {
+    @apply relative flex items-center justify-center border border-white/10 rounded-lg 
+           transition-all duration-300;
+  }
+
+  .card-slot:hover {
+    @apply border-white/20;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+  }
+
+  .card-slot.targetable {
+    @apply border-yellow-400 border-2;
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+    animation: pulse 2s infinite;
+  }
+
+  /* Enhanced Card Attack Animations */
+  /* Fire Attack */
+  @keyframes fireAttack {
+    0% {
+      transform: translate(0, 0) scale(1) rotate(0deg);
+      filter: brightness(1) saturate(1) blur(0);
+      opacity: 1;
+    }
+    20% {
+      transform: translate(120px, -50px) scale(1.5) rotate(15deg)
+        translateY(5px);
+      filter: brightness(2.5) saturate(2) blur(2px)
+        drop-shadow(0 0 50px hsl(var(--fire-primary)))
+        drop-shadow(0 0 20px hsl(var(--fire-secondary)));
+      opacity: 0.9;
+    }
+    40% {
+      transform: translate(250px, 20px) scale(1.8) rotate(-10deg)
+        translateY(-5px);
+      filter: brightness(3) saturate(2.5) blur(3px)
+        drop-shadow(0 0 70px hsl(var(--fire-primary)))
+        drop-shadow(0 0 30px hsl(var(--fire-secondary)));
+      opacity: 0.85;
+    }
+    60% {
+      transform: translate(180px, -30px) scale(1.6) rotate(5deg) translateY(5px);
+      filter: brightness(2.5) saturate(2) blur(2px)
+        drop-shadow(0 0 60px hsl(var(--fire-primary)))
+        drop-shadow(0 0 25px hsl(var(--fire-secondary)));
+      opacity: 0.9;
+    }
+    80% {
+      transform: translate(80px, 10px) scale(1.4) rotate(-5deg) translateY(-5px);
+      filter: brightness(2) saturate(1.8) blur(1px)
+        drop-shadow(0 0 40px hsl(var(--fire-primary)));
+      opacity: 0.95;
+    }
+    100% {
+      transform: translate(0, 0) scale(1) rotate(0deg);
+      filter: brightness(1) saturate(1) blur(0);
+      opacity: 1;
+    }
+  }
+
+  /* Water Attack */
+  @keyframes waterAttack {
+    0% {
+      transform: translate(0, 0) scale(1) skewX(0);
+      filter: brightness(1) saturate(1) blur(0);
+      opacity: 1;
+    }
+    20% {
+      transform: translate(150px, 30px) scale(1.4) skewX(-20deg)
+        translateY(10px);
+      filter: brightness(2.2) saturate(2) blur(3px)
+        drop-shadow(0 0 50px hsl(var(--water-primary)))
+        drop-shadow(0 0 20px hsl(var(--water-secondary)));
+      opacity: 0.9;
+    }
+    40% {
+      transform: translate(300px, -20px) scale(1.6) skewX(25deg)
+        translateY(-10px);
+      filter: brightness(2.8) saturate(2.5) blur(4px)
+        drop-shadow(0 0 70px hsl(var(--water-primary)))
+        drop-shadow(0 0 30px hsl(var(--water-secondary)));
+      opacity: 0.85;
+    }
+    60% {
+      transform: translate(200px, 10px) scale(1.5) skewX(-15deg) translateY(5px);
+      filter: brightness(2.4) saturate(2) blur(3px)
+        drop-shadow(0 0 60px hsl(var(--water-primary)));
+      opacity: 0.9;
+    }
+    80% {
+      transform: translate(100px, -15px) scale(1.3) skewX(10deg)
+        translateY(-5px);
+      filter: brightness(2) saturate(1.8) blur(2px)
+        drop-shadow(0 0 40px hsl(var(--water-primary)));
+      opacity: 0.95;
+    }
+    100% {
+      transform: translate(0, 0) scale(1) skewX(0);
+      filter: brightness(1) saturate(1) blur(0);
+      opacity: 1;
+    }
+  }
+
+  /* Wood Attack */
+  @keyframes woodAttack {
+    0% {
+      transform: translate(0, 0) scale(1) rotate(0);
+      filter: brightness(1) saturate(1) blur(0);
+      opacity: 1;
+    }
+    20% {
+      transform: translate(130px, -60px) scale(1.4) rotate(-20deg)
+        translateY(8px);
+      filter: brightness(2) saturate(2) blur(2px)
+        drop-shadow(0 0 50px hsl(var(--wood-primary)))
+        drop-shadow(0 0 20px hsl(var(--wood-secondary)));
+      opacity: 0.9;
+    }
+    40% {
+      transform: translate(260px, 10px) scale(1.6) rotate(20deg)
+        translateY(-8px);
+      filter: brightness(2.5) saturate(2.5) blur(3px)
+        drop-shadow(0 0 70px hsl(var(--wood-primary)))
+        drop-shadow(0 0 30px hsl(var(--wood-secondary)));
+      opacity: 0.85;
+    }
+    60% {
+      transform: translate(180px, -20px) scale(1.5) rotate(-15deg)
+        translateY(5px);
+      filter: brightness(2.2) saturate(2) blur(2px)
+        drop-shadow(0 0 60px hsl(var(--wood-primary)));
+      opacity: 0.9;
+    }
+    80% {
+      transform: translate(90px, 30px) scale(1.3) rotate(10deg) translateY(-5px);
+      filter: brightness(1.8) saturate(1.8) blur(1px)
+        drop-shadow(0 0 40px hsl(var(--wood-primary)));
+      opacity: 0.95;
+    }
+    100% {
+      transform: translate(0, 0) scale(1) rotate(0);
+      filter: brightness(1) saturate(1) blur(0);
+      opacity: 1;
+    }
+  }
+
+  /* Earth Attack */
+  @keyframes earthAttack {
+    0% {
+      transform: translate(0, 0) scale(1);
+      filter: brightness(1) saturate(1) blur(0);
+      opacity: 1;
+    }
+    20% {
+      transform: translate(140px, 40px) scale(1.6) translateY(10px);
+      filter: brightness(2.2) saturate(1.8) blur(2px)
+        drop-shadow(0 0 50px hsl(var(--earth-primary)))
+        drop-shadow(0 0 20px hsl(var(--earth-secondary)));
+      opacity: 0.9;
+    }
+    40% {
+      transform: translate(280px, 0) scale(1.8) translateY(-10px);
+      filter: brightness(2.8) saturate(2) blur(3px)
+        drop-shadow(0 0 70px hsl(var(--earth-primary)))
+        drop-shadow(0 0 30px hsl(var(--earth-secondary)));
+      opacity: 0.85;
+    }
+    60% {
+      transform: translate(200px, -30px) scale(1.7) translateY(8px);
+      filter: brightness(2.4) saturate(1.8) blur(2px)
+        drop-shadow(0 0 60px hsl(var(--earth-primary)));
+      opacity: 0.9;
+    }
+    80% {
+      transform: translate(100px, 20px) scale(1.5) translateY(-5px);
+      filter: brightness(2) saturate(1.6) blur(1px)
+        drop-shadow(0 0 40px hsl(var(--earth-primary)));
+      opacity: 0.95;
+    }
+    100% {
+      transform: translate(0, 0) scale(1);
+      filter: brightness(1) saturate(1) blur(0);
+      opacity: 1;
+    }
+  }
+
+  /* Metal Attack */
+  @keyframes metalAttack {
+    0% {
+      transform: translate(0, 0) scale(1) rotate(0);
+      filter: brightness(1) saturate(1) blur(0);
+      opacity: 1;
+    }
+    20% {
+      transform: translate(120px, 0) scale(1.3) rotate(180deg) translateY(5px);
+      filter: brightness(2.5) saturate(0.8) blur(2px)
+        drop-shadow(0 0 50px hsl(var(--metal-primary)))
+        drop-shadow(0 0 20px hsl(var(--metal-secondary)));
+      opacity: 0.9;
+    }
+    40% {
+      transform: translate(240px, 0) scale(1.5) rotate(360deg) translateY(-5px);
+      filter: brightness(3) saturate(0.6) blur(3px)
+        drop-shadow(0 0 70px hsl(var(--metal-primary)))
+        drop-shadow(0 0 30px hsl(var(--metal-secondary)));
+      opacity: 0.85;
+    }
+    60% {
+      transform: translate(180px, 0) scale(1.4) rotate(540deg) translateY(5px);
+      filter: brightness(2.5) saturate(0.7) blur(2px)
+        drop-shadow(0 0 60px hsl(var(--metal-primary)));
+      opacity: 0.9;
+    }
+    80% {
+      transform: translate(90px, 0) scale(1.3) rotate(720deg) translateY(-5px);
+      filter: brightness(2) saturate(0.8) blur(1px)
+        drop-shadow(0 0 40px hsl(var(--metal-primary)));
+      opacity: 0.95;
+    }
+    100% {
+      transform: translate(0, 0) scale(1) rotate(900deg);
+      filter: brightness(1) saturate(1) blur(0);
+      opacity: 1;
+    }
+  }
+
+  /* Animation Classes */
+  .animate-fireAttack {
+    animation: fireAttack 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .animate-waterAttack {
+    animation: waterAttack 1.6s ease-in-out;
+  }
+  .animate-woodAttack {
+    animation: woodAttack 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .animate-earthAttack {
+    animation: earthAttack 1.6s ease-in-out;
+  }
+  .animate-metalAttack {
+    animation: metalAttack 1.8s cubic-bezier(0.36, 0, 0.66, -0.56);
+  }
+
+  /* Boss Animations */
+  @keyframes bossAttack {
+    0% {
+      transform: translateX(0) scale(1) rotate(0deg);
+      filter: brightness(1) blur(0);
+      box-shadow: none;
+    }
+    20% {
+      transform: translateX(-50px) scale(1.3) rotate(-5deg) translateY(5px);
+      filter: brightness(2) blur(2px);
+      box-shadow: 0 0 60px hsl(var(--fire-primary)),
+        0 0 20px rgba(255, 0, 0, 0.8);
+    }
+    40% {
+      transform: translateX(40px) scale(1.5) rotate(5deg) translateY(-5px);
+      filter: brightness(2.5) blur(3px);
+      box-shadow: 0 0 80px hsl(var(--fire-primary)), 0 0 30px rgba(255, 0, 0, 1);
+    }
+    60% {
+      transform: translateX(-20px) scale(1.4) rotate(-3deg) translateY(3px);
+      filter: brightness(2) blur(2px);
+      box-shadow: 0 0 70px hsl(var(--fire-primary)),
+        0 0 25px rgba(255, 0, 0, 0.9);
+    }
+    80% {
+      transform: translateX(10px) scale(1.2) rotate(2deg) translateY(-3px);
+      filter: brightness(1.5) blur(1px);
+      box-shadow: 0 0 50px hsl(var(--fire-primary)),
+        0 0 15px rgba(255, 0, 0, 0.7);
+    }
+    100% {
+      transform: translateX(0) scale(1) rotate(0deg);
+      filter: brightness(1) blur(0);
+      box-shadow: none;
+    }
+  }
+
+  @keyframes bossHit {
+    0% {
+      transform: scale(1);
+      filter: brightness(1) hue-rotate(0) blur(0);
+      opacity: 1;
+    }
+    25% {
+      transform: scale(1.1) translateY(5px);
+      filter: brightness(2) hue-rotate(-45deg) blur(2px);
+      opacity: 0.9;
+    }
+    50% {
+      transform: scale(0.9) translateY(-5px);
+      filter: brightness(1.8) hue-rotate(45deg) blur(3px);
+      opacity: 0.85;
+    }
+    75% {
+      transform: scale(1.05) translateY(3px);
+      filter: brightness(1.5) hue-rotate(-20deg) blur(1px);
+      opacity: 0.9;
+    }
+    100% {
+      transform: scale(1);
+      filter: brightness(1) hue-rotate(0) blur(0);
+      opacity: 1;
+    }
+  }
+
+  .boss-attacking {
+    animation: bossAttack 0.8s cubic-bezier(0.36, 0, 0.66, -0.56);
+  }
+  .boss-hit {
+    animation: bossHit 0.5s ease-in-out;
+  }
+
+  /* Element-specific particle effects */
+  .fire-particles {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: radial-gradient(
+      circle,
+      hsl(var(--fire-primary)) 0%,
+      transparent 70%
+    );
+    box-shadow: 0 0 15px hsl(var(--fire-secondary));
+    animation: particleBurst 0.6s ease-out;
+  }
+
+  .water-particles {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: radial-gradient(
+      circle,
+      hsl(var(--water-primary)) 0%,
+      transparent 70%
+    );
+    box-shadow: 0 0 15px hsl(var(--water-secondary));
+    animation: particleBurst 0.6s ease-out;
+  }
+
+  .wood-particles {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: radial-gradient(
+      circle,
+      hsl(var(--wood-primary)) 0%,
+      transparent 70%
+    );
+    box-shadow: 0 0 15px hsl(var(--wood-secondary));
+    animation: particleBurst 0.6s ease-out;
+  }
+
+  .earth-particles {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: radial-gradient(
+      circle,
+      hsl(var(--earth-primary)) 0%,
+      transparent 70%
+    );
+    box-shadow: 0 0 15px hsl(var(--earth-secondary));
+    animation: particleBurst 0.6s ease-out;
+  }
+
+  .metal-particles {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: radial-gradient(
+      circle,
+      hsl(var(--metal-primary)) 0%,
+      transparent 70%
+    );
+    box-shadow: 0 0 15px hsl(var(--metal-secondary));
+    animation: particleBurst 0.6s ease-out;
+  }
+
+  @keyframes particleBurst {
+    0% {
+      transform: scale(0) translate(0, 0);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(2.5) translate(60px, -60px);
+      opacity: 0;
+    }
+  }
+
+  /* Element-specific attack trails */
+  .fire-trail {
+    position: absolute;
+    width: 100px;
+    height: 10px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsl(var(--fire-primary)),
+      transparent
+    );
+    opacity: 0.8;
+    animation: trailFade 0.5s ease-out;
+  }
+
+  .water-trail {
+    position: absolute;
+    width: 100px;
+    height: 10px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsl(var(--water-primary)),
+      transparent
+    );
+    opacity: 0.8;
+    animation: trailFade 0.5s ease-out;
+  }
+
+  .wood-trail {
+    position: absolute;
+    width: 100px;
+    height: 10px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsl(var(--wood-primary)),
+      transparent
+    );
+    opacity: 0.8;
+    animation: trailFade 0.5s ease-out;
+  }
+
+  .earth-trail {
+    position: absolute;
+    width: 100px;
+    height: 10px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsl(var(--earth-primary)),
+      transparent
+    );
+    opacity: 0.8;
+    animation: trailFade 0.5s ease-out;
+  }
+
+  .metal-trail {
+    position: absolute;
+    width: 100px;
+    height: 10px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsl(var(--metal-primary)),
+      transparent
+    );
+    opacity: 0.8;
+    animation: trailFade 0.5s ease-out;
+  }
+
+  @keyframes trailFade {
+    0% {
+      opacity: 0.8;
+      transform: scaleX(1);
+    }
+    100% {
+      opacity: 0;
+      transform: scaleX(1.5);
+    }
+  }
   /* Custom Scrollbar */
   .custom-scrollbar {
     scrollbar-width: thin;
-    scrollbar-color: rgba(234, 179, 8, 0.3) transparent;
+    scrollbar-color: rgba(139, 92, 246, 0.3) transparent;
   }
 
   .custom-scrollbar::-webkit-scrollbar {
@@ -81,508 +622,107 @@
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background-color: rgba(234, 179, 8, 0.3);
+    background-color: rgba(139, 92, 246, 0.3);
     border-radius: 20px;
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(234, 179, 8, 0.5);
+    background-color: rgba(139, 92, 246, 0.5);
   }
 
-  /* Game Board Layout */
-  .game-board {
-    @apply min-h-screen w-full max-w-[1920px] mx-auto flex flex-col;
-    background-image: url("https://img.freepik.com/free-vector/abstract-black-texture-background-hexagon_206725-413.jpg");
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
+  /* Boss Container */
+  .boss-container {
+    @apply w-[400px] relative flex flex-col items-center;
   }
 
-  .game-header {
-    @apply relative p-6 bg-black/30 border-b border-yellow-900/50;
+  .boss-image {
+    @apply w-full h-[500px] relative rounded-lg overflow-hidden;
+    box-shadow: 0 0 50px rgba(139, 92, 246, 0.2);
   }
 
-  .turn-indicator {
-    @apply absolute top-0 left-1/2 -translate-x-1/2 px-6 py-2 bg-black/60 rounded-b-lg border-x border-b border-yellow-900/50;
+  .boss-stats {
+    @apply absolute -bottom-10 left-1/2 -translate-x-1/2 w-[120%] p-4 rounded-lg;
+    background: rgba(15, 3, 30, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    box-shadow: 0 10px 30px rgba(15, 3, 30, 0.3);
   }
 
-  .battle-field {
-    @apply flex-1 relative;
+  .boss-name {
+    @apply text-2xl font-bold text-violet-400 text-center mb-4;
+    text-shadow: 0 2px 10px rgba(139, 92, 246, 0.3);
   }
 
-  .player-hand {
-    @apply p-6 bg-black/30 border-t border-yellow-900/50;
+  .boss-stat {
+    @apply flex items-center gap-2 px-3 py-2 rounded-lg;
+    background: rgba(15, 3, 30, 0.5);
+    border: 1px solid rgba(139, 92, 246, 0.2);
   }
 
-  .card-slot {
-    @apply relative aspect-[3/4] bg-black/20 rounded-lg border border-yellow-900/30 transition-all duration-300;
+  .boss-stat-icon {
+    @apply w-5 h-5;
   }
 
-  .card-slot.targetable {
-    @apply border-yellow-400 ring-2 ring-yellow-400/50;
+  .boss-stat-value {
+    @apply text-lg font-bold;
   }
 
-  .stat-display {
-    @apply flex items-center gap-3 px-6 py-3 bg-black border border-yellow-900 rounded-lg;
+  /* Deck Builder Styles */
+  .deck-stat-card {
+    @apply flex items-center gap-3 p-4 rounded-lg bg-black/40 backdrop-blur-sm
+           border border-yellow-900/30 transition-all duration-300
+           hover:bg-yellow-900/20 hover:border-yellow-400/30;
   }
 
-  .action-button {
-    @apply bg-yellow-900/90 hover:bg-yellow-800 text-yellow-400 transition-all duration-300;
-    @apply disabled:opacity-50 disabled:cursor-not-allowed;
-  }
-
-  /* Card Animation Classes */
-  .card-attack-animation {
-    animation: cardAttack 0.5s ease-in-out;
-  }
-
-  @keyframes cardAttack {
-    0% {
-      transform: translateY(0) scale(1);
-    }
-    50% {
-      transform: translateY(-50%) scale(1.2);
-    }
-    100% {
-      transform: translateY(0) scale(1);
-    }
-  }
-
-  .card-damage-animation {
-    animation: cardDamage 0.3s ease-in-out;
-  }
-
-  @keyframes cardDamage {
-    0% {
-      transform: scale(1);
-      filter: brightness(1);
-    }
-    50% {
-      transform: scale(0.9);
-      filter: brightness(1.5) sepia(1) hue-rotate(-50deg);
-    }
-    100% {
-      transform: scale(1);
-      filter: brightness(1);
-    }
-  }
-
-  .card-heal-animation {
-    animation: cardHeal 0.5s ease-in-out;
-  }
-
-  @keyframes cardHeal {
-    0% {
-      filter: brightness(1);
-    }
-    50% {
-      filter: brightness(1.5) sepia(1) hue-rotate(90deg);
-    }
-    100% {
-      filter: brightness(1);
-    }
-  }
-
-  /* Boss Animation Classes */
-  .boss-attack-animation {
-    animation: bossAttack 0.6s ease-in-out;
-  }
-
-  @keyframes bossAttack {
-    0% {
-      transform: translateX(0) scale(1);
-    }
-    40% {
-      transform: translateX(-10%) scale(1.1);
-    }
-    60% {
-      transform: translateX(5%) scale(0.95);
-    }
-    100% {
-      transform: translateX(0) scale(1);
-    }
-  }
-
-  .boss-damage-animation {
-    animation: bossDamage 0.4s ease-in-out;
-  }
-
-  @keyframes bossDamage {
-    0% {
-      transform: scale(1);
-      filter: brightness(1);
-    }
-    50% {
-      transform: scale(0.95) rotate(-2deg);
-      filter: brightness(1.3) sepia(1) hue-rotate(-50deg);
-    }
-    100% {
-      transform: scale(1) rotate(0);
-      filter: brightness(1);
-    }
-  }
-
-  /* Card Movement Animation */
-  .card-movement {
-    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .card-movement:hover {
-    transform: translateY(-1rem) scale(1.05);
-  }
-
-  /* Combat Effect Animations */
-  .effect-critical {
-    animation: criticalEffect 0.4s ease-in-out;
-  }
-
-  @keyframes criticalEffect {
-    0% {
-      filter: brightness(1);
-    }
-    50% {
-      filter: brightness(1.5) sepia(1) hue-rotate(-90deg);
-    }
-    100% {
-      filter: brightness(1);
-    }
-  }
-
-  .effect-lifesteal {
-    animation: lifestealEffect 0.5s ease-in-out;
-  }
-
-  @keyframes lifestealEffect {
-    0% {
-      filter: brightness(1);
-    }
-    50% {
-      filter: brightness(1.3) sepia(1) hue-rotate(120deg);
-    }
-    100% {
-      filter: brightness(1);
-    }
-  }
-
-  .effect-thorns {
-    animation: thornsEffect 0.3s ease-in-out;
-  }
-
-  @keyframes thornsEffect {
-    0% {
-      filter: brightness(1);
-    }
-    50% {
-      filter: brightness(1.4) sepia(1) hue-rotate(45deg);
-    }
-    100% {
-      filter: brightness(1);
-    }
-  }
-
-  /* Card Slots */
-  .card-slot {
-    @apply relative flex items-center justify-center border border-yellow-900/20 rounded-lg transition-all duration-300;
-    background: rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(4px);
-  }
-
-  .card-slot:hover {
-    @apply border-yellow-900/40;
-    box-shadow: 0 0 20px rgba(234, 179, 8, 0.1);
-  }
-
-  .card-slot.targetable {
-    @apply border-yellow-400 border-2;
-    box-shadow: 0 0 30px rgba(234, 179, 8, 0.2);
-    animation: pulse 2s infinite;
-  }
-
-  /* Card Styles */
-  .game-card {
-    @apply relative w-[160px] h-[220px] transition-all duration-300 cursor-pointer rounded-lg hover:scale-105;
-    perspective: 1000px;
-  }
-
-  .game-card.game-card-small {
-    @apply w-[120px] h-[160px];
-  }
-
-  .game-card.disabled {
-    @apply opacity-80 cursor-not-allowed hover:scale-100;
-  }
-
-  .game-card.selected {
-    @apply ring-4 ring-yellow-400 shadow-2xl scale-105;
-    transform: translateY(-10px);
-  }
-
-  .card-frame {
-    @apply w-full h-full relative rounded-lg overflow-hidden;
-    background: linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.1) 0%,
-      rgba(255, 255, 255, 0.05) 100%
-    );
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    backdrop-filter: blur(4px);
-  }
-
-  /* Card Element Styles */
-  .card-frame.METAL {
-    background: linear-gradient(135deg, #718096 0%, #4a5568 100%);
-    border-color: #a0aec0;
-  }
-
-  .card-frame.WOOD {
-    background: linear-gradient(135deg, #48bb78 0%, #2f855a 100%);
-    border-color: #68d391;
-  }
-
-  .card-frame.WATER {
-    background: linear-gradient(135deg, #4299e1 0%, #2b6cb0 100%);
-    border-color: #63b3ed;
-  }
-
-  .card-frame.FIRE {
-    background: linear-gradient(135deg, #f56565 0%, #c53030 100%);
-    border-color: #fc8181;
-  }
-
-  .card-frame.EARTH {
-    background: linear-gradient(135deg, #d69e2e 0%, #975a16 100%);
-    border-color: #f6ad55;
-  }
-
-  /* Card Components */
-  .card-name-box {
-    @apply absolute top-0 left-0 right-0 h-10 flex items-center px-2 z-10;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(4px);
-  }
-
-  .game-card-small .card-name-box {
-    @apply h-7 px-1.5;
-  }
-
-  .card-name {
-    @apply text-white font-bold text-sm truncate;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  }
-
-  .game-card-small .card-name {
-    @apply text-xs;
-  }
-
-  .card-image-box {
-    @apply w-full h-[90px] mt-10 relative;
-    background: rgba(255, 255, 255, 0.9);
-  }
-
-  .game-card-small .card-image-box {
-    @apply h-[50px] mt-7;
-  }
-
-  .card-class-box {
-    @apply absolute top-2 right-2 flex gap-1.5 z-20;
-  }
-
-  .game-card-small .card-class-box {
-    @apply top-1.5 right-1.5 gap-1;
-  }
-
-  .card-class-icon {
-    @apply w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-lg transform transition-transform hover:scale-110;
-  }
-
-  .game-card-small .card-class-icon {
-    @apply w-4 h-4 text-[8px];
-  }
-
-  /* Element Classes */
-  .class-METAL {
-    @apply bg-gradient-to-br from-gray-400 to-gray-700;
-    box-shadow: 0 0 15px rgba(113, 128, 150, 0.5);
-  }
-
-  .class-WOOD {
-    @apply bg-gradient-to-br from-green-400 to-green-700;
-    box-shadow: 0 0 15px rgba(72, 187, 120, 0.5);
-  }
-
-  .class-WATER {
-    @apply bg-gradient-to-br from-blue-400 to-blue-700;
-    box-shadow: 0 0 15px rgba(66, 153, 225, 0.5);
-  }
-
-  .class-FIRE {
-    @apply bg-gradient-to-br from-red-400 to-red-700;
-    box-shadow: 0 0 15px rgba(245, 101, 101, 0.5);
-  }
-
-  .class-EARTH {
-    @apply bg-gradient-to-br from-yellow-500 to-yellow-700;
-    box-shadow: 0 0 15px rgba(214, 158, 46, 0.5);
-  }
-
-  /* Card Effects */
-  .card-effects-box {
-    @apply p-2 mt-1 h-[45px] overflow-hidden text-xs;
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(4px);
-  }
-
-  .game-card-small .card-effects-box {
-    @apply p-1.5 h-[30px] text-[10px];
-  }
-
-  .card-effect-title {
-    @apply font-bold text-xs mb-0.5 text-gray-800;
-  }
-
-  .game-card-small .card-effect-title {
-    @apply text-[10px] mb-0;
-  }
-
-  /* Card Stats */
-  .card-stats-box {
-    @apply absolute bottom-0 left-0 right-0 h-12 flex items-center justify-between px-2;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(4px);
-  }
-
-  .game-card-small .card-stats-box {
-    @apply h-8 px-1.5;
-  }
-
-  .card-stat {
-    @apply flex items-center gap-1.5 bg-white/20 backdrop-blur-sm px-2 py-1 rounded-full text-white;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  }
-
-  .game-card-small .card-stat {
-    @apply gap-1 px-1.5 py-0.5;
-  }
-
-  .card-stat-icon {
-    @apply w-3.5 h-3.5 drop-shadow-lg;
-  }
-
-  .game-card-small .card-stat-icon {
-    @apply w-3 h-3;
-  }
-
-  .card-stat-value {
-    @apply font-bold text-xs;
-  }
-
-  .game-card-small .card-stat-value {
-    @apply text-[10px];
-  }
-
-  /* Pre-built Deck Card Styles */
   .prebuilt-deck-card {
-    @apply relative rounded-lg overflow-hidden cursor-pointer transition-all duration-500;
-    @apply bg-black;
-    @apply hover:bg-yellow-950;
+    @apply relative rounded-xl overflow-hidden cursor-pointer transition-all duration-500
+           bg-gradient-to-br from-black/80 to-black/60 backdrop-blur-md
+           border border-yellow-900/30 hover:border-yellow-400/50
+           group hover:shadow-2xl hover:shadow-yellow-900/20;
   }
 
   .prebuilt-deck-card.selected {
-    @apply ring-4 ring-yellow-400 transform scale-[1.02];
-  }
-
-  .prebuilt-deck-card:hover {
-    @apply scale-[1.02];
-  }
-
-  .deck-stat-card {
-    @apply flex items-center gap-3 bg-black rounded-lg p-4;
-    @apply border border-yellow-900/30 transition-colors duration-300;
-    @apply hover:bg-yellow-950 hover:border-yellow-900;
+    @apply ring-2 ring-yellow-400 shadow-2xl shadow-yellow-400/20;
   }
 
   /* Embla Carousel Styles */
   .embla {
     @apply overflow-hidden;
-    -webkit-mask-image: linear-gradient(
-      to right,
-      transparent 0%,
-      black 10%,
-      black 90%,
-      transparent 100%
-    );
-    mask-image: linear-gradient(
-      to right,
-      transparent 0%,
-      black 10%,
-      black 90%,
-      transparent 100%
-    );
   }
 
   .embla__container {
     @apply flex;
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
   }
 
   .embla__slide {
     @apply flex-[0_0_100%] min-w-0 relative;
-    transform: translateZ(0);
   }
 
   .embla__button {
-    @apply absolute top-1/2 -translate-y-1/2 z-10;
-    @apply w-12 h-12 flex items-center justify-center rounded-full;
-    @apply bg-black/60 text-yellow-400 hover:bg-black/80;
-    @apply transition-all duration-300;
-    @apply hover:scale-110;
-    @apply focus:outline-none focus:ring-2 focus:ring-yellow-400/50;
+    @apply absolute top-1/2 -translate-y-1/2 z-10 w-12 h-12
+           flex items-center justify-center rounded-full
+           bg-black/60 text-yellow-400 hover:bg-black/80
+           transition-colors duration-300 border border-yellow-900/30;
   }
 
   .embla__button--prev {
-    @apply left-4 hover:-translate-x-1;
+    @apply left-4;
   }
 
   .embla__button--next {
-    @apply right-4 hover:translate-x-1;
+    @apply right-4;
   }
 
   .embla__dots {
-    @apply flex justify-center gap-2 mt-8;
+    @apply flex justify-center gap-2 mt-4;
   }
 
   .embla__dot {
-    @apply w-2 h-2 rounded-full transition-all duration-300;
-    @apply bg-yellow-400/30 hover:bg-yellow-400/50;
-    @apply focus:outline-none focus:ring-2 focus:ring-yellow-400/50;
+    @apply w-2 h-2 rounded-full bg-yellow-400/30 hover:bg-yellow-400/50
+           transition-all duration-300 cursor-pointer;
   }
 
   .embla__dot--selected {
-    @apply bg-yellow-400 w-8;
-  }
-
-  /* Animations */
-  @keyframes pulse {
-    0% {
-      box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.4);
-    }
-    70% {
-      box-shadow: 0 0 0 10px rgba(234, 179, 8, 0);
-    }
-    100% {
-      box-shadow: 0 0 0 0 rgba(234, 179, 8, 0);
-    }
-  }
-
-  @keyframes glow {
-    0%,
-    100% {
-      opacity: 0.3;
-    }
-    50% {
-      opacity: 0.6;
-    }
+    @apply w-6 bg-yellow-400;
   }
 }

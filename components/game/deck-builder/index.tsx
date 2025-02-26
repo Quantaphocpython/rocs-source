@@ -135,6 +135,7 @@ export function DeckBuilder() {
               decks={prebuiltDecks}
               selectedDeck={selectedDeck}
               onDeckSelect={handleDeckSelect}
+              onStartBattle={handleStartGame}
             />
           </TabsContent>
 
@@ -170,30 +171,25 @@ export function DeckBuilder() {
                   deck={customDeck}
                   onRemoveCard={removeCard}
                 />
+
+                {customDeck.length === DECK_SIZE && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mt-4"
+                  >
+                    <Button
+                      className="w-full bg-yellow-900/90 hover:bg-yellow-800 text-yellow-400 py-6 text-lg"
+                      onClick={handleStartGame}
+                    >
+                      Start Battle
+                    </Button>
+                  </motion.div>
+                )}
               </div>
             </div>
           </TabsContent>
         </Tabs>
-
-        <motion.div
-          className="fixed bottom-8 right-8"
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-        >
-          <Button
-            className="bg-yellow-900/90 hover:bg-yellow-800 text-yellow-400 px-8 py-3 rounded-lg text-lg
-                     shadow-lg shadow-yellow-900/20 transition-all duration-300 hover:shadow-yellow-900/40
-                     hover:scale-105"
-            onClick={handleStartGame}
-            disabled={
-              (activeTab === 'prebuilt' && !selectedDeck) ||
-              (activeTab === 'custom' && customDeck.length < DECK_SIZE)
-            }
-          >
-            {deckInfo ? 'Change Deck & Start Battle' : 'Start Battle'}
-          </Button>
-        </motion.div>
       </div>
     </motion.div>
   );

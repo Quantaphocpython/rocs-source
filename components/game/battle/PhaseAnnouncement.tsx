@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -24,13 +24,26 @@ export function PhaseAnnouncement({ message, type, onComplete }: PhaseAnnounceme
   const getIcon = () => {
     switch (type) {
       case "phase":
-        return <Zap className="w-8 h-8" />;
+        return <Zap className="w-4 h-4" />;
       case "effect":
-        return <Shield className="w-8 h-8" />;
+        return <Shield className="w-4 h-4" />;
       case "damage":
-        return <Sword className="w-8 h-8" />;
+        return <Sword className="w-4 h-4" />;
       case "heal":
-        return <Heart className="w-8 h-8" />;
+        return <Heart className="w-4 h-4" />;
+    }
+  };
+
+  const getTypeStyles = () => {
+    switch (type) {
+      case "phase":
+        return "bg-violet-500/20 text-violet-200 border-violet-400/30 shadow-violet-500/20";
+      case "effect":
+        return "bg-blue-500/20 text-blue-200 border-blue-400/30 shadow-blue-500/20";
+      case "damage":
+        return "bg-red-500/20 text-red-200 border-red-400/30 shadow-red-500/20";
+      case "heal":
+        return "bg-emerald-500/20 text-emerald-200 border-emerald-400/30 shadow-emerald-500/20";
     }
   };
 
@@ -38,25 +51,35 @@ export function PhaseAnnouncement({ message, type, onComplete }: PhaseAnnounceme
     <AnimatePresence>
       {message && (
         <motion.div
-          initial={{ opacity: 0, scale: 0.8, y: -20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.8, y: 20 }}
-          className="fixed inset-0 flex items-center justify-center pointer-events-none z-50"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 20 }}
+          className="fixed top-16 left-1/2 -translate-x-1/2 z-50 pointer-events-none"
         >
-          <div
+          <motion.div
             className={cn(
-              "px-12 py-6 rounded-lg font-bold text-center backdrop-blur-sm",
-              "flex flex-col items-center gap-4",
-              "shadow-[0_0_50px_rgba(0,0,0,0.3)]",
-              type === "phase" && "bg-yellow-950/90 text-yellow-400 border-2 border-yellow-400",
-              type === "effect" && "bg-blue-950/90 text-blue-400 border-2 border-blue-400",
-              type === "damage" && "bg-red-950/90 text-red-400 border-2 border-red-400",
-              type === "heal" && "bg-green-950/90 text-green-400 border-2 border-green-400"
+              "flex items-center gap-2 px-4 py-2 rounded-lg backdrop-blur-sm",
+              "border shadow-lg",
+              getTypeStyles()
             )}
+            initial={{ scale: 0.9 }}
+            animate={{
+              scale: [0.9, 1.1, 1],
+              transition: { duration: 0.3 }
+            }}
           >
-            {getIcon()}
-            <div className="text-3xl">{message}</div>
-          </div>
+            <motion.div
+              initial={{ rotate: -30, scale: 0.8 }}
+              animate={{
+                rotate: [0, 15, 0],
+                scale: [0.8, 1.2, 1],
+                transition: { duration: 0.5 }
+              }}
+            >
+              {getIcon()}
+            </motion.div>
+            <span className="text-sm font-medium">{message}</span>
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>

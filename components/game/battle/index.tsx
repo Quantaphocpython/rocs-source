@@ -25,6 +25,7 @@ export function GameBoard({ initialDeck }: GameBoardProps) {
     selectedCard,
     targetSlot,
     roundCounter,
+    currentPhase,
     startGame,
     playCard,
     endTurn,
@@ -79,9 +80,14 @@ export function GameBoard({ initialDeck }: GameBoardProps) {
         selectedCard={selectedCard}
         targetSlot={targetSlot}
         isPlayerTurn={isPlayerTurn}
+        currentPhase={currentPhase}
         onCardPlay={(cardIndex, slotIndex) => playCard(cardIndex, slotIndex)}
         onTargetSlotChange={setTargetSlot}
         battleHistory={gameState.battleHistory}
+        bossHealth={gameState.currentMonster.health}
+        bossMaxHealth={60} // This should come from monster data
+        bossAttack={gameState.currentMonster.attack}
+        bossImage="https://res.cloudinary.com/dlotuochc/image/upload/v1739797748/TCG%20Battle%20Adventure/jzm1wj6kzrekhu3zq8an.png" // This should come from monster data
       />
 
       <PlayerHand
