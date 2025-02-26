@@ -31,11 +31,11 @@ export const PlayerHand = memo(function PlayerHand({
   canPlayAnyCard
 }: PlayerHandProps) {
   return (
-    <div id="player-hand" className="player-hand relative">
+    <div className="player-hand h-[150px] relative">
       {/* Action Buttons */}
-      <div className="absolute -top-16 right-8 flex items-center gap-4 z-10">
+      <div className="absolute -top-12 right-6 flex items-center gap-3 z-10">
         <Button
-          className="bg-yellow-900/90 hover:bg-yellow-800 text-yellow-400"
+          className="action-button h-8 px-4 text-sm"
           disabled={!isPlayerTurn || !canPlayCard}
           onClick={onPlayCard}
         >
@@ -43,8 +43,8 @@ export const PlayerHand = memo(function PlayerHand({
         </Button>
         <Button
           className={cn(
-            "bg-yellow-900/90 hover:bg-yellow-800 text-yellow-400",
-            !canPlayAnyCard() && isPlayerTurn && "animate-pulse ring-2 ring-yellow-400"
+            "action-button h-8 px-4 text-sm",
+            !canPlayAnyCard() && isPlayerTurn && "animate-pulse ring-2 ring-violet-400"
           )}
           disabled={!isPlayerTurn}
           onClick={onEndTurn}
@@ -54,7 +54,7 @@ export const PlayerHand = memo(function PlayerHand({
       </div>
 
       {/* Cards */}
-      <div className="h-full flex items-center justify-center gap-6">
+      <div className="h-full flex items-center justify-center gap-4 px-6">
         <AnimatePresence mode="popLayout">
           {deck.map((card, index) => (
             <motion.div
@@ -71,15 +71,19 @@ export const PlayerHand = memo(function PlayerHand({
               }}
               className={cn(
                 "transform transition-all duration-300",
-                selectedCard === index && "ring-2 ring-yellow-400"
+                selectedCard === index && "ring-2 ring-violet-400"
               )}
+              style={{
+                width: '80px',  // Smaller card width
+                height: '112px' // Maintain aspect ratio
+              }}
             >
               <GameCardComponent
                 card={card}
                 onClick={() => isPlayerTurn && onCardSelect(index)}
                 selected={selectedCard === index}
                 disabled={!isPlayerTurn || playerStamina < card.staminaCost}
-                size="small"
+                size="tiny" // Add new size option for even smaller cards
               />
             </motion.div>
           ))}
