@@ -26,14 +26,19 @@ export function PlayerStats({ health, stamina, stage, round, nextStaminaGain }: 
       </motion.div>
 
       <motion.div
-        className="flex items-center gap-1 px-2 py-1 rounded-full bg-black/50 border border-yellow-900/30 backdrop-blur-sm group relative"
-        whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
+        className="stat-display group relative"
+        whileHover={{ scale: 1.05 }}
       >
-        <Zap className="w-4 h-4 text-yellow-400" />
-        <div className="text-sm font-medium text-yellow-300">{stamina}</div>
-        <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 hidden group-hover:block bg-black/90 border border-yellow-900/50 rounded px-2 py-1 text-[10px] text-yellow-400 whitespace-nowrap z-50">
-          +{nextStaminaGain} next turn
-        </span>
+        <Zap className="w-3 h-3 text-yellow-400" />
+        <div>
+          <div className="text-[10px] text-yellow-400/80">Stamina</div>
+          <div className="text-sm text-yellow-400">{stamina}/5</div>
+        </div>
+        <div className="absolute -bottom-8 left-0 hidden group-hover:block 
+                      bg-black/90 border border-violet-900/50 rounded px-2 py-1 
+                      text-[10px] text-violet-400 whitespace-nowrap z-50">
+          Next turn: {nextStaminaGain}/5
+        </div>
       </motion.div>
 
       <motion.div
