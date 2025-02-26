@@ -44,9 +44,12 @@ export function GameBoard({ initialDeck }: GameBoardProps) {
     }
   }, [initialDeck, startGame, isGameStarted]);
 
-  const handleCardSelect = useCallback((index: number) => {
-    setSelectedCard(prev => prev === index ? null : index);
-  }, [setSelectedCard]);
+  const handleCardSelect = useCallback(
+    (index: number) => {
+      setSelectedCard((prev) => (prev === index ? null : index));
+    },
+    [setSelectedCard]
+  );
 
   const handleCardPlay = useCallback(() => {
     if (selectedCard !== null && targetSlot !== null) {

@@ -4,8 +4,13 @@ import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { CustomConnectButton } from '../wallet/CustomConnectButton';
 import Link from 'next/link';
+import { ConnectButton } from '@happy.tech/react';
+import { register, connect } from '@happy.tech/core';
 
 export function Navbar({ className }: { className?: string }) {
+  const onRegister = () => {
+    connect();
+  };
   return (
     <motion.nav
       initial={{ opacity: 0, y: -20 }}
@@ -24,7 +29,9 @@ export function Navbar({ className }: { className?: string }) {
       >
         TCG Battle
       </Link>
-      <CustomConnectButton />
+
+      <ConnectButton />
+      {/* <CustomConnectButton /> */}
     </motion.nav>
   );
 }
