@@ -1,10 +1,19 @@
-import './globals.css';
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import type { Metadata } from 'next';
 import { ThemeProvider } from 'next-themes';
-import ContextProvider from '@/components/providers/ContextProvider';
+import { Inter } from 'next/font/google';
+import './globals.css';
 
+import dynamic from 'next/dynamic';
+
+const ContextProvider = dynamic(
+  () => import('@/components/providers/ContextProvider'),
+  {
+    ssr: false,
+  }
+);
+
+import '@rainbow-me/rainbowkit/styles.css';
 
 const inter = Inter({ subsets: ['latin'] });
 

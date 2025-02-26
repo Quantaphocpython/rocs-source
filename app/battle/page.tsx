@@ -3,7 +3,8 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useDeck } from '@/hooks/useDeck';
-import { GameBoard } from '@/components/game-board';
+import { GameBoard } from '@/components/game/battle';
+
 
 export default function BattlePage() {
   const router = useRouter();

@@ -1,13 +1,13 @@
-import type { Card, GameCard } from '@/types/game';
-import { BASE_STAMINA_GAIN, STAMINA_SCALING_FACTOR } from '@/constants/game';
+import type { Card, GameCard } from "@/types/game";
 
 export function calculateStaminaGain(round: number) {
-  return Math.floor(BASE_STAMINA_GAIN + (round - 1) * STAMINA_SCALING_FACTOR);
+  // Cap stamina gain at 5
+  return Math.min(round, 5);
 }
 
 export function convertToGameCard(card: Card): GameCard {
   return {
     ...card,
-    currentHealth: card.health
+    currentHealth: card.health,
   };
 }

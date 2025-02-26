@@ -1,11 +1,12 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { PrebuiltDeck } from "@/types/game";
 import { GameCard } from "@/components/ui/game-card";
 import { cn } from "@/lib/utils";
 import { convertToGameCard } from "@/utils/gameLogic";
-import { Sword, Shield, Zap, Star, Crosshair } from 'lucide-react';
+import { Sword, Shield, Zap, Star, Crosshair, ChevronDown } from 'lucide-react';
 
 interface PrebuiltDeckCardProps {
     deck: PrebuiltDeck;
@@ -14,6 +15,8 @@ interface PrebuiltDeckCardProps {
 }
 
 export function PrebuiltDeckCard({ deck, isSelected, onSelect }: PrebuiltDeckCardProps) {
+    const [isExpanded, setIsExpanded] = useState(false);
+
     const stats = {
         totalAttack: deck.cards.reduce((sum, card) => sum + card.attack, 0),
         totalHealth: deck.cards.reduce((sum, card) => sum + card.health, 0),
@@ -44,130 +47,159 @@ export function PrebuiltDeckCard({ deck, isSelected, onSelect }: PrebuiltDeckCar
     return (
         <motion.div
             className={cn(
-                'group relative rounded-lg overflow-hidden cursor-pointer',
-                'bg-gradient-to-br from-black/80 to-black/40',
-                'hover:from-yellow-950/30 hover:to-black/60',
-                'transition-all duration-500',
-                isSelected ? 'ring-4 ring-yellow-400' : ''
+                'relative rounded-xl overflow-hidden transition-all duration-500',
+                'bg-gradient-to-br from-black/80 to-black/60 backdrop-blur-md',
+                'border border-yellow-900/30 hover:border-yellow-400/50',
+                'group hover:shadow-2xl hover:shadow-yellow-900/20',
+                isSelected && 'ring-1 ring-yellow-400/50 shadow-lg shadow-yellow-400/10'
             )}
-            onClick={() => onSelect(deck)}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
         >
-            {/* Background Image */}
-            <div className="absolute inset-0">
-                <img
-                    src={deck.coverImage}
-                    alt={deck.name}
-                    className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-br from-black/90 via-black/80 to-transparent" />
+            {/* Background Image with Overlay */}
+            <div className="absolute bottom-4 right-4 z-10">
+                <button
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onSelect(deck);
+                    }}
+                    className={cn(
+                        "px-3 py-1.5 rounded-lg text-sm transition-all duration-300",
+                        "flex items-center gap-1.5 backdrop-blur-sm",
+                        isSelected ? (
+                            "bg-violet-500/20 text-violet-200 border-violet-400/30"
+                        ) : (
+                            "bg-black/40 text-yellow-400/80 hover:text-yellow-400 border-yellow-900/30 hover:border-yellow-400/30"
+                        ),
+                        "border",
+                    )}
+                >
+                    {isSelected ? (
+                        <>
+                            <Star className="w-3.5 h-3.5" />
+                            <span>Selected</span>
+                        </>
+                    ) : (
+                        <>
+                            <Sword className="w-3.5 h-3.5" />
+                            <span>Select</span>
+                        </>
+                    )}
+                </button>
             </div>
 
-            <div className="relative p-8 flex flex-col md:flex-row gap-8">
-                {/* Left Section: Info */}
-                <div className="flex-1 space-y-6">
-                    {/* Header */}
-                    <div className="space-y-4">
-                        <h3 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600">
-                            {deck.name}
-                        </h3>
+            {/* Select Button - Top Right Corner */}
 
-                        <div className="flex items-center gap-4 text-sm">
+
+            {/* Compact View */}
+            <div
+                className="relative p-6 cursor-pointer"
+                onClick={() => setIsExpanded(!isExpanded)}
+            >
+                <div className="flex items-start justify-between gap-6">
+                    {/* Left: Basic Info */}
+                    <div className="flex-1 space-y-4">
+                        <div>
+                            <h3 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600">
+                                {deck.name}
+                            </h3>
+                            <p className="text-yellow-200/80 text-sm mt-1 line-clamp-2">
+                                {deck.description}
+                            </p>
+                        </div>
+
+                        <div className="flex items-center gap-3 text-sm">
                             <div className={cn(
-                                "px-3 py-1.5 rounded-full flex items-center gap-2",
+                                "px-2 py-1 rounded-full flex items-center gap-1.5",
                                 "bg-black/40 backdrop-blur-sm border border-yellow-900/30",
                                 getDifficultyColor(deck.difficulty)
                             )}>
-                                <Star className="w-4 h-4" />
-                                <span className="font-medium">{deck.difficulty}</span>
+                                <Star className="w-3 h-3" />
+                                <span className="text-xs font-medium">{deck.difficulty}</span>
                             </div>
                             <div className={cn(
-                                "px-3 py-1.5 rounded-full flex items-center gap-2",
+                                "px-2 py-1 rounded-full flex items-center gap-1.5",
                                 "bg-black/40 backdrop-blur-sm border border-yellow-900/30",
                                 getPlaystyleColor(deck.playstyle)
                             )}>
-                                <Crosshair className="w-4 h-4" />
-                                <span className="font-medium">{deck.playstyle}</span>
-                            </div>
-                        </div>
-
-                        <p className="text-yellow-200/80 text-lg leading-relaxed">
-                            {deck.description}
-                        </p>
-                    </div>
-
-                    {/* Stats */}
-                    <div className="grid grid-cols-3 gap-4">
-                        <div className="deck-stat-card">
-                            <Sword className="w-6 h-6 text-red-400" />
-                            <div>
-                                <p className="text-xs text-yellow-200/60">Total Attack</p>
-                                <p className="text-xl font-bold text-red-400">{stats.totalAttack}</p>
-                            </div>
-                        </div>
-                        <div className="deck-stat-card">
-                            <Shield className="w-6 h-6 text-green-400" />
-                            <div>
-                                <p className="text-xs text-yellow-200/60">Total Health</p>
-                                <p className="text-xl font-bold text-green-400">{stats.totalHealth}</p>
-                            </div>
-                        </div>
-                        <div className="deck-stat-card">
-                            <Zap className="w-6 h-6 text-blue-400" />
-                            <div>
-                                <p className="text-xs text-yellow-200/60">Avg. Cost</p>
-                                <p className="text-xl font-bold text-blue-400">{stats.avgCost}</p>
+                                <Crosshair className="w-3 h-3" />
+                                <span className="text-xs font-medium">{deck.playstyle}</span>
                             </div>
                         </div>
                     </div>
 
-                    {/* Strategy */}
-                    <div className="relative overflow-hidden rounded-lg border border-yellow-900/30 p-4">
-                        <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/5 to-transparent" />
-                        <div className="relative space-y-2">
-                            <h4 className="font-medium text-yellow-400">Strategy Guide</h4>
-                            <p className="text-sm text-yellow-200/70 leading-relaxed">{deck.strategy}</p>
+                    {/* Right: Quick Stats */}
+                    <div className="flex items-center gap-3">
+                        <div className="text-center">
+                            <Sword className="w-4 h-4 text-red-400 mx-auto" />
+                            <p className="text-xs text-red-400 mt-1">{stats.totalAttack}</p>
                         </div>
+                        <div className="text-center">
+                            <Shield className="w-4 h-4 text-green-400 mx-auto" />
+                            <p className="text-xs text-green-400 mt-1">{stats.totalHealth}</p>
+                        </div>
+                        <div className="text-center">
+                            <Zap className="w-4 h-4 text-blue-400 mx-auto" />
+                            <p className="text-xs text-blue-400 mt-1">{stats.avgCost}</p>
+                        </div>
+                        <motion.div
+                            animate={{ rotate: isExpanded ? 180 : 0 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            <ChevronDown className="w-4 h-4 text-yellow-400" />
+                        </motion.div>
                     </div>
                 </div>
+            </div>
 
-                {/* Right Section: Cards */}
-                <div className="w-full md:w-[400px] space-y-4">
-                    <h4 className="text-sm font-medium text-yellow-200/60">Deck Cards</h4>
-                    <div className="relative h-[500px] overflow-y-auto custom-scrollbar">
-                        <div className="grid grid-cols-2 gap-3 pr-2">
-                            {deck.cards.map((card, index) => (
-                                <motion.div
-                                    key={index}
-                                    initial={{ opacity: 0, x: 20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: 0.1 * index }}
-                                    className="transform transition-all duration-300 hover:scale-105"
-                                >
-                                    <GameCard
-                                        card={convertToGameCard(card)}
-                                        disabled={true}
-                                        size="small"
-                                    />
-                                </motion.div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Selection Indicator */}
-                {isSelected && (
+            {/* Expanded View */}
+            <AnimatePresence>
+                {isExpanded && (
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className="absolute top-4 right-4 px-4 py-2 bg-yellow-400 text-black rounded-full"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="overflow-hidden"
                     >
-                        <span className="text-sm font-medium">Selected</span>
+                        <div className="p-6 pt-0 grid grid-cols-2 gap-6">
+                            {/* Strategy */}
+                            <div className="relative overflow-hidden rounded-lg border border-yellow-900/30 p-4">
+                                <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/5 to-transparent" />
+                                <div className="relative space-y-2">
+                                    <h4 className="font-medium text-yellow-400">Strategy Guide</h4>
+                                    <p className="text-sm text-yellow-200/70 leading-relaxed">{deck.strategy}</p>
+                                </div>
+                            </div>
+
+                            {/* Cards Preview */}
+                            <div className="space-y-2">
+                                <h4 className="text-sm font-medium text-yellow-200/60">Deck Cards</h4>
+                                <div className="h-[300px] overflow-y-auto custom-scrollbar pr-2">
+                                    <div className="grid grid-cols-3 gap-2">
+                                        {deck.cards.map((card, index) => (
+                                            <motion.div
+                                                key={index}
+                                                initial={{ opacity: 0, scale: 0.8 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                transition={{ delay: index * 0.05 }}
+                                                className="transform transition-all duration-300 hover:scale-105"
+                                            >
+                                                <GameCard
+                                                    card={convertToGameCard(card)}
+                                                    disabled={false}
+                                                    size="tiny"
+                                                />
+                                            </motion.div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </motion.div>
                 )}
-            </div>
+            </AnimatePresence>
         </motion.div>
     );
 }
