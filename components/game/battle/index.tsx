@@ -79,6 +79,7 @@ export function GameBoard({ initialDeck }: GameBoardProps) {
       />
 
       <GameField
+        bossName={'boss'}
         cardsOnField={gameState.cardsOnField}
         selectedCard={selectedCard}
         targetSlot={targetSlot}

@@ -18,6 +18,7 @@ import { useState } from 'react';
 interface MapBossSelectionProps {
   bosses: Monster[];
   selectedBoss: Monster;
+  // completedBosses: number[];
   onSelectBoss: (boss: Monster) => void;
 }
 
@@ -25,8 +26,9 @@ export function MapBossSelection({
   bosses,
   selectedBoss,
   onSelectBoss,
-}: MapBossSelectionProps) {
-  const [completedBosses] = useState<number[]>([]);
+}: // completedBosses,
+MapBossSelectionProps) {
+  const [completedBosses] = useState<number[]>([1]);
 
   const getClassIcon = (className: string) => {
     switch (className) {
