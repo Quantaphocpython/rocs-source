@@ -5,7 +5,7 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   images: { unoptimized: true },
-
+  trailingSlash: true,
   // Di chuyển transpilePackages ra khỏi experimental
   transpilePackages: [
     '@happy.tech/core',
