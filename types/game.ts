@@ -93,7 +93,7 @@ export interface GameState {
 }
 
 export interface PrebuiltDeck {
-  id: string;
+  id: number;
   name: string;
   description: string;
   difficulty: "Easy" | "Medium" | "Hard" | "Expert";
