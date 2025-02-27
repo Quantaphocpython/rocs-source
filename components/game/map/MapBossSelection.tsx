@@ -18,7 +18,6 @@ import { useState } from 'react';
 interface MapBossSelectionProps {
   bosses: Monster[];
   selectedBoss: Monster;
-  // completedBosses: number[];
   onSelectBoss: (boss: Monster) => void;
 }
 
@@ -26,9 +25,8 @@ export function MapBossSelection({
   bosses,
   selectedBoss,
   onSelectBoss,
-}: // completedBosses,
-MapBossSelectionProps) {
-  const [completedBosses] = useState<number[]>([1]);
+}: MapBossSelectionProps) {
+  const [completedBosses] = useState<number[]>([]);
 
   const getClassIcon = (className: string) => {
     switch (className) {
@@ -47,9 +45,9 @@ MapBossSelectionProps) {
     }
   };
 
-  const isBossLocked = (bossId: number, index: number) => {
-    if (index === 0) return false;
-    return !completedBosses.includes(bosses[index - 1].id);
+  const isBossLocked = (bossId: number) => {
+    if (bossId === bosses[0].id) return false;
+    return !completedBosses.includes(bossId - 1);
   };
 
   return (
@@ -60,7 +58,7 @@ MapBossSelectionProps) {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {bosses.map((boss, index) => {
-          const isLocked = isBossLocked(boss.id, index);
+          const isLocked = isBossLocked(boss.id);
           const isCompleted = completedBosses.includes(boss.id);
           const isSelected = selectedBoss.id === boss.id;
 
@@ -74,18 +72,17 @@ MapBossSelectionProps) {
               duration={400}
             >
               <motion.div
+                key={boss.id}
                 className={cn(
-                  // Base styles
                   'group relative rounded-xl overflow-hidden cursor-pointer transition-all duration-300',
                   'bg-gray-900/90 border border-gray-800/50 backdrop-blur-md shadow-xl',
-                  // Conditional styles
                   isLocked
-                    ? 'opacity-60'
-                    : 'hover:shadow-[0_0_25px_rgba(147,51,234,0.3)] hover:border-purple-600/70',
+                    ? 'opacity-60 cursor-not-allowed'
+                    : 'hover:shadow-lg',
                   isSelected && !isLocked
-                    ? 'ring-2 ring-purple-500 shadow-[0_0_30px_rgba(147,51,234,0.7)] border-purple-700/70'
-                    : 'border-purple-800/50',
-                  isCompleted && 'border-green-600/50'
+                    ? 'ring-2 ring-purple-500 shadow-lg'
+                    : '',
+                  isCompleted ? 'border-green-600/50' : ''
                 )}
                 onClick={() => !isLocked && onSelectBoss(boss)}
                 whileHover={!isLocked ? { scale: 1.03 } : {}}

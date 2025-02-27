@@ -18,7 +18,7 @@ export default function MapPage() {
   const { savedDeck } = useDeck();
   const { monsters, isLoading: isMonsterLoading } = useGetMonsters();
   const [selectedBoss, setSelectedBoss] = useState({
-    id: 0,
+    id: -1,
     name: 'Default Monster',
     health: 50,
     attack: 10,
@@ -29,10 +29,10 @@ export default function MapPage() {
   const { address, isConnected } = useAccount();
 
   useEffect(() => {
-    if (monsters && monsters.length > 0 && selectedBoss.id !== monsters[0].id) {
-      setSelectedBoss(monsters[0]);
+    if (monsters && monsters.length > 0 && selectedBoss.id === -1) {
+      setSelectedBoss(monsters.find((m) => m.id === 0) || monsters[0]);
     }
-  }, [monsters, selectedBoss]);
+  }, [monsters, selectedBoss.id]);
 
   useEffect(() => {
     const timer = setTimeout(() => {

@@ -332,8 +332,12 @@ export function useGameLogic() {
   );
 
   const endTurn = useCallback(async () => {
-    if (currentPhase !== 'player') return;
+    if (currentPhase !== 'player') {
+      console.log('❌ Không thể end turn vì không phải lượt player.');
+      return;
+    }
 
+    console.log('✅ Bắt đầu End Turn.');
     setCurrentPhase('battle');
     setAnnouncement({
       message: 'Battle Phase',
@@ -341,13 +345,15 @@ export function useGameLogic() {
     });
 
     await sleep(1000);
+    console.log('⏳ Đã chờ 1 giây, bắt đầu xử lý quái.');
 
     const cardsOnField = gameState.cardsOnField.filter((card) => card !== null);
+    console.log('🃏 Cards trên field:', cardsOnField);
 
-    // Xử lý tấn công của từng quái
     for (const card of cardsOnField) {
       if (!card) continue;
 
+      console.log(`⚔️ ${card.name} chuẩn bị tấn công!`);
       setAnnouncement({
         message: `${card.name} attacks!`,
         type: 'phase',
@@ -356,10 +362,15 @@ export function useGameLogic() {
       await sleep(800);
 
       const { finalDamage, healAmount } = handleCardEffect(card, card.attack);
+      console.log(
+        `💥 ${card.name} gây sát thương: ${finalDamage}, hồi máu: ${healAmount}`
+      );
+
       const newMonsterHealth = Math.max(
         0,
         gameState.currentMonster.health - finalDamage
       );
+      console.log(`🩸 Máu quái còn lại: ${newMonsterHealth}`);
 
       setGameState((prev) => ({
         ...prev,
@@ -388,16 +399,19 @@ export function useGameLogic() {
       await sleep(800);
 
       if (newMonsterHealth <= 0) {
+        console.log('🏆 Quái bị đánh bại, chiến thắng!');
         setAnnouncement({
           message: 'Victory!',
           type: 'phase',
         });
+
         await sleep(2000);
         router.push('/deck');
         return;
       }
     }
 
+    console.log('🛡 Đến lượt quái tấn công.');
     setCurrentPhase('monster');
     setIsPlayerTurn(false);
     setAnnouncement({
@@ -407,6 +421,7 @@ export function useGameLogic() {
 
     await sleep(1000);
     await handleMonsterAttack();
+    console.log('🔥 Quái đã tấn công xong.');
   }, [currentPhase, gameState, handleCardEffect, handleMonsterAttack, router]);
 
   useEffect(() => {
