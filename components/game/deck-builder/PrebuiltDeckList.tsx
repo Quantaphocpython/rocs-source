@@ -4,7 +4,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import useEmblaCarousel from 'embla-carousel-react';
 import { ChevronLeft, ChevronRight, Save } from 'lucide-react';
-import { PrebuiltDeck } from "@/types/game";
+import { PrebuiltDeck } from '@/types/game';
 
 import { cn } from '@/lib/utils';
 import { PrebuiltDeckCard } from './PreviewDeckCard';
@@ -16,7 +16,12 @@ interface PrebuiltDeckListProps {
   onSaveDeck: () => void;
 }
 
-export function PrebuiltDeckList({ decks, selectedDeck, onDeckSelect, onSaveDeck }: PrebuiltDeckListProps) {
+export function PrebuiltDeckList({
+  decks,
+  selectedDeck,
+  onDeckSelect,
+  onSaveDeck,
+}: PrebuiltDeckListProps) {
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
     align: 'center',
@@ -95,8 +100,8 @@ export function PrebuiltDeckList({ decks, selectedDeck, onDeckSelect, onSaveDeck
           <button
             key={index}
             className={cn(
-              "embla__dot",
-              index === selectedIndex && "embla__dot--selected"
+              'embla__dot',
+              index === selectedIndex && 'embla__dot--selected'
             )}
             onClick={() => emblaApi?.scrollTo(index)}
             aria-label={`Go to slide ${index + 1}`}
@@ -115,11 +120,11 @@ export function PrebuiltDeckList({ decks, selectedDeck, onDeckSelect, onSaveDeck
           <button
             onClick={onSaveDeck}
             className={cn(
-              "flex items-center gap-2 px-8 py-3 rounded-lg text-lg font-medium",
-              "bg-yellow-900/90 hover:bg-yellow-800 text-yellow-400",
-              "border border-yellow-900/50 hover:border-yellow-400/50",
-              "shadow-lg shadow-yellow-900/20 hover:shadow-yellow-900/40",
-              "transform transition-all duration-300 hover:scale-105"
+              'flex items-center gap-2 px-8 py-3 rounded-lg text-lg font-medium',
+              'bg-yellow-900/90 hover:bg-yellow-800 text-yellow-400',
+              'border border-yellow-900/50 hover:border-yellow-400/50',
+              'shadow-lg shadow-yellow-900/20 hover:shadow-yellow-900/40',
+              'transform transition-all duration-300 hover:scale-105'
             )}
           >
             <Save className="w-5 h-5" />

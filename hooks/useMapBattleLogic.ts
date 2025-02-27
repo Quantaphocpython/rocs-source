@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import { useState, useCallback, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import type { GameState, Card, GameCard, Boss } from "@/types/game";
-import { INITIAL_HAND_SIZE } from "@/constants/game";
-import { calculateStaminaGain, convertToGameCard } from "@/utils/gameLogic";
+import { useState, useCallback, useRef, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+import type { GameState, Card, GameCard, Boss, Monster } from '@/types/game';
+import { INITIAL_HAND_SIZE } from '@/constants/game';
+import { calculateStaminaGain, convertToGameCard } from '@/utils/gameLogic';
 
-type GamePhase = "player" | "battle" | "end" | "monster";
+type GamePhase = 'player' | 'battle' | 'end' | 'monster';
 
-export function useMapBattleLogic(boss: Boss) {
+export function useMapBattleLogic(boss: Monster) {
   const router = useRouter();
   const [gameState, setGameState] = useState<GameState>({
     _id: `boss-battle-${boss.id}`,
-    playerId: "player-1",
+    playerId: 'player-1',
     sessionId: `session-${Date.now()}`,
     currentStage: boss.id,
     playerHealth: 40,
@@ -28,6 +28,7 @@ export function useMapBattleLogic(boss: Boss) {
     battleHistory: [],
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
+    currentMonster: boss,
   });
 
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
@@ -35,11 +36,11 @@ export function useMapBattleLogic(boss: Boss) {
   const [remainingDeck, setRemainingDeck] = useState<GameCard[]>([]);
   const [targetSlot, setTargetSlot] = useState<number | null>(null);
   const [roundCounter, setRoundCounter] = useState(1);
-  const [currentPhase, setCurrentPhase] = useState<GamePhase>("player");
+  const [currentPhase, setCurrentPhase] = useState<GamePhase>('player');
   const [announcement, setAnnouncement] = useState<{
     message: string | null;
-    type: "phase" | "effect" | "damage" | "heal";
-  }>({ message: null, type: "phase" });
+    type: 'phase' | 'effect' | 'damage' | 'heal';
+  }>({ message: null, type: 'phase' });
 
   const gameStateRef = useRef(gameState);
   const isPlayerTurnRef = useRef(isPlayerTurn);
@@ -64,19 +65,19 @@ export function useMapBattleLogic(boss: Boss) {
     let finalDamage = damage;
     let healAmount = 0;
 
-    if (card.onAttackEffect === "CRITICAL_STRIKE") {
+    if (card.onAttackEffect === 'CRITICAL_STRIKE') {
       if (Math.random() < 0.3) {
         finalDamage *= 2;
         setAnnouncement({
-          message: "Critical Strike!",
-          type: "effect",
+          message: 'Critical Strike!',
+          type: 'effect',
         });
       }
-    } else if (card.onAttackEffect === "LIFESTEAL") {
+    } else if (card.onAttackEffect === 'LIFESTEAL') {
       healAmount = Math.floor(damage * 0.5);
       setAnnouncement({
         message: `Lifesteal: +${healAmount} HP`,
-        type: "heal",
+        type: 'heal',
       });
     }
 
@@ -86,10 +87,10 @@ export function useMapBattleLogic(boss: Boss) {
   const handleDefenseEffect = useCallback((card: GameCard | undefined) => {
     if (!card) return 0;
 
-    if (card.onDefenseEffect === "THORNS") {
+    if (card.onDefenseEffect === 'THORNS') {
       setAnnouncement({
-        message: "Thorns Activated!",
-        type: "effect",
+        message: 'Thorns Activated!',
+        type: 'effect',
       });
       return 2;
     }
@@ -97,11 +98,11 @@ export function useMapBattleLogic(boss: Boss) {
   }, []);
 
   const handleDeadEffect = useCallback((card: GameCard) => {
-    if (card.onDeadEffect === "EXPLODE") {
+    if (card.onDeadEffect === 'EXPLODE') {
       const explodeDamage = 3;
       setAnnouncement({
-        message: "Card Explodes!",
-        type: "effect",
+        message: 'Card Explodes!',
+        type: 'effect',
       });
       return explodeDamage;
     }
@@ -129,11 +130,11 @@ export function useMapBattleLogic(boss: Boss) {
       setIsPlayerTurn(true);
       setSelectedCard(null);
       setTargetSlot(null);
-      setCurrentPhase("player");
+      setCurrentPhase('player');
 
       setAnnouncement({
         message: `Battle vs ${boss.name} Start!`,
-        type: "phase",
+        type: 'phase',
       });
     },
     [boss.name]
@@ -141,7 +142,7 @@ export function useMapBattleLogic(boss: Boss) {
 
   const drawCard = useCallback(() => {
     if (remainingDeck.length === 0) {
-      toast.error("No more cards to draw!");
+      toast.error('No more cards to draw!');
       return;
     }
 
@@ -163,7 +164,7 @@ export function useMapBattleLogic(boss: Boss) {
       if (cardsOnField.length === 0) {
         setAnnouncement({
           message: `${boss.name} attacks you directly!`,
-          type: "damage",
+          type: 'damage',
         });
 
         await sleep(1000);
@@ -181,7 +182,7 @@ export function useMapBattleLogic(boss: Boss) {
             ...prev.battleHistory,
             {
               turn: prev.battleHistory.length + 1,
-              action: "monster_attack",
+              action: 'monster_attack',
               damageDealt: bossAttack,
               playerHpLeft: newPlayerHealth,
             },
@@ -190,8 +191,8 @@ export function useMapBattleLogic(boss: Boss) {
 
         if (newPlayerHealth <= 0) {
           setAnnouncement({
-            message: "Defeat!",
-            type: "phase",
+            message: 'Defeat!',
+            type: 'phase',
           });
           return;
         }
@@ -204,7 +205,7 @@ export function useMapBattleLogic(boss: Boss) {
 
         setAnnouncement({
           message: `${boss.name} attacks ${targetCard.name}!`,
-          type: "phase",
+          type: 'phase',
         });
 
         await sleep(1000);
@@ -216,8 +217,8 @@ export function useMapBattleLogic(boss: Boss) {
         if (hasCritical) {
           finalDamage *= 1.5;
           setAnnouncement({
-            message: "Boss Critical Hit!",
-            type: "effect",
+            message: 'Boss Critical Hit!',
+            type: 'effect',
           });
           await sleep(800);
         }
@@ -231,7 +232,7 @@ export function useMapBattleLogic(boss: Boss) {
 
           setAnnouncement({
             message: `${targetCard.name} was destroyed!`,
-            type: "damage",
+            type: 'damage',
           });
 
           setGameState((prev) => ({
@@ -245,7 +246,7 @@ export function useMapBattleLogic(boss: Boss) {
               ...prev.battleHistory,
               {
                 turn: prev.battleHistory.length + 1,
-                action: "monster_attack",
+                action: 'monster_attack',
                 cardId: targetCard.id,
                 damageDealt: finalDamage,
                 monsterHpLeft: prev.currentBoss.health,
@@ -260,7 +261,7 @@ export function useMapBattleLogic(boss: Boss) {
 
           setAnnouncement({
             message: `${targetCard.name} takes ${finalDamage} damage!`,
-            type: "damage",
+            type: 'damage',
           });
 
           setGameState((prev) => ({
@@ -270,7 +271,7 @@ export function useMapBattleLogic(boss: Boss) {
               ...prev.battleHistory,
               {
                 turn: prev.battleHistory.length + 1,
-                action: "monster_attack",
+                action: 'monster_attack',
                 cardId: targetCard.id,
                 damageDealt: finalDamage,
                 monsterHpLeft: prev.currentBoss.health,
@@ -281,7 +282,7 @@ export function useMapBattleLogic(boss: Boss) {
       }
 
       await sleep(1000);
-      setCurrentPhase("player");
+      setCurrentPhase('player');
       setIsPlayerTurn(true);
 
       const nextStamina = calculateStaminaGain(roundCounter + 1);
@@ -291,35 +292,35 @@ export function useMapBattleLogic(boss: Boss) {
       }));
 
       setAnnouncement({
-        message: "Your Turn",
-        type: "phase",
+        message: 'Your Turn',
+        type: 'phase',
       });
 
       drawCard();
     } catch (error) {
-      console.error("Error in boss attack:", error);
-      setCurrentPhase("player");
+      console.error('Error in boss attack:', error);
+      setCurrentPhase('player');
       setIsPlayerTurn(true);
     }
   }, [gameState, boss.name, handleDeadEffect, roundCounter, drawCard]);
 
   const playCard = useCallback(
     (cardIndex: number, slotIndex: number) => {
-      if (currentPhase !== "player") return;
+      if (currentPhase !== 'player') return;
 
       const currentGameState = gameStateRef.current;
       if (
         currentGameState.playerStamina <
         currentGameState.deck[cardIndex].staminaCost
       ) {
-        toast.error("Not enough stamina!");
+        toast.error('Not enough stamina!');
         return;
       }
 
       const card = currentGameState.deck[cardIndex];
       setAnnouncement({
         message: `Playing ${card.name}`,
-        type: "phase",
+        type: 'phase',
       });
 
       setGameState((prev) => {
@@ -344,12 +345,12 @@ export function useMapBattleLogic(boss: Boss) {
   );
 
   const endTurn = useCallback(async () => {
-    if (currentPhase !== "player") return;
+    if (currentPhase !== 'player') return;
 
-    setCurrentPhase("battle");
+    setCurrentPhase('battle');
     setAnnouncement({
-      message: "Battle Phase",
-      type: "phase",
+      message: 'Battle Phase',
+      type: 'phase',
     });
 
     await sleep(1000);
@@ -361,7 +362,7 @@ export function useMapBattleLogic(boss: Boss) {
 
       setAnnouncement({
         message: `${card.name} attacks!`,
-        type: "phase",
+        type: 'phase',
       });
 
       await sleep(800);
@@ -383,7 +384,7 @@ export function useMapBattleLogic(boss: Boss) {
           ...prev.battleHistory,
           {
             turn: prev.battleHistory.length + 1,
-            action: "play_card",
+            action: 'play_card',
             cardId: card.id,
             damageDealt: finalDamage,
             monsterHpLeft: newBossHealth,
@@ -393,25 +394,25 @@ export function useMapBattleLogic(boss: Boss) {
 
       setAnnouncement({
         message: `${card.name} deals ${finalDamage} damage!`,
-        type: "damage",
+        type: 'damage',
       });
 
       await sleep(800);
 
       if (newBossHealth <= 0) {
         setAnnouncement({
-          message: "Victory!",
-          type: "phase",
+          message: 'Victory!',
+          type: 'phase',
         });
         return;
       }
     }
 
-    setCurrentPhase("monster");
+    setCurrentPhase('monster');
     setIsPlayerTurn(false);
     setAnnouncement({
       message: `${boss.name}'s Turn`,
-      type: "phase",
+      type: 'phase',
     });
 
     await sleep(1000);

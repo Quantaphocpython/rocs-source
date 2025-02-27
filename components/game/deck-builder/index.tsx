@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useDeck } from '@/hooks/useDeck';
-import { prebuiltDecks, cardPool } from '@/lib/mock-data';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -15,12 +14,9 @@ import type { PrebuiltDeck, Card } from '@/types/game';
 import { Class } from '@/types/game';
 import { DECK_SIZE } from '@/constants/game';
 import { motion } from 'framer-motion';
-
 import { useGetCards } from '@/hooks/useGetCards';
 import { useGetPrebuiltDecks } from '@/hooks/useGetPrebuildDecks';
-
 import { Map } from 'lucide-react';
-
 
 export function DeckBuilder() {
   const { cards } = useGetCards();
@@ -39,8 +35,6 @@ export function DeckBuilder() {
   useEffect(() => {
     setHasDeck(!!savedDeck);
   }, [savedDeck]);
-
-  console.log(decks);
 
   const handleDeckSelect = (deck: PrebuiltDeck) => {
     setSelectedDeck(deck);
@@ -127,7 +121,6 @@ export function DeckBuilder() {
           <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600">
             Deck Builder
           </h1>
-
           {hasDeck && (
             <Button
               className="bg-yellow-900/90 hover:bg-yellow-800 text-yellow-400 px-6 py-5 text-lg"
@@ -149,13 +142,13 @@ export function DeckBuilder() {
           <TabsList className="bg-black/50 border border-yellow-900/50 p-1 mb-8">
             <TabsTrigger
               value="prebuilt"
-              className="text-yellow-400 data-[state=active]:bg-yellow-900/50 transition-all duration-300"
+              className="text-yellow-300 data-[state=active]:bg-yellow-800/80 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300"
             >
-              Pre-built Decks
+              Pre-built Deck
             </TabsTrigger>
             <TabsTrigger
               value="custom"
-              className="text-yellow-400 data-[state=active]:bg-yellow-900/50 transition-all duration-300"
+              className="text-yellow-300 data-[state=active]:bg-yellow-800/80 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300"
             >
               Custom Deck
             </TabsTrigger>
@@ -199,14 +192,13 @@ export function DeckBuilder() {
                 </div>
               </div>
 
-              <div className="col-span-3">
+              <div className="col-span-3 relative">
                 <DeckPreview deck={customDeck} onRemoveCard={removeCard} />
-
                 {customDeck.length === DECK_SIZE && (
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="mt-4"
+                    className="mt-4 w-full"
                   >
                     <Button
                       className="w-full bg-yellow-900/90 hover:bg-yellow-800 text-yellow-400 py-6 text-lg"

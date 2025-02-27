@@ -22,6 +22,7 @@ interface GameFieldProps {
   bossMaxHealth: number;
   bossAttack: number;
   bossImage: string;
+  bossName: string;
 }
 
 export function GameField({
@@ -37,6 +38,7 @@ export function GameField({
   bossMaxHealth,
   bossAttack,
   bossImage,
+  bossName,
 }: GameFieldProps) {
   const [attackingCard, setAttackingCard] = useState<number | null>(null);
   const [isBossHit, setIsBossHit] = useState(false);
@@ -105,18 +107,18 @@ export function GameField({
     if (currentPhase === 'battle') {
       const cardIndexes = cardsOnField
         .slice(0, 5)
-        .map((card, index) => card ? index : null)
+        .map((card, index) => (card ? index : null))
         .filter((index): index is number => index !== null);
 
       const animateCardAttacks = async () => {
         for (const index of cardIndexes) {
           setAttackingCard(index);
-          await new Promise(resolve => setTimeout(resolve, 800));
+          await new Promise((resolve) => setTimeout(resolve, 800));
           setIsBossHit(true);
-          await new Promise(resolve => setTimeout(resolve, 300));
+          await new Promise((resolve) => setTimeout(resolve, 300));
           setIsBossHit(false);
           setAttackingCard(null);
-          await new Promise(resolve => setTimeout(resolve, 300));
+          await new Promise((resolve) => setTimeout(resolve, 300));
         }
       };
 
@@ -129,7 +131,7 @@ export function GameField({
     if (currentPhase === 'monster') {
       const cardIndexes = cardsOnField
         .slice(0, 5)
-        .map((card, index) => card ? index : null)
+        .map((card, index) => (card ? index : null))
         .filter((index): index is number => index !== null);
 
       if (cardIndexes.length > 0) {
@@ -138,11 +140,11 @@ export function GameField({
 
         const animateMonsterAttack = async () => {
           setIsBossAttacking(true);
-          await new Promise(resolve => setTimeout(resolve, 800));
+          await new Promise((resolve) => setTimeout(resolve, 800));
           setIsBossAttacking(false);
 
           setCardUnderAttack(targetIndex);
-          await new Promise(resolve => setTimeout(resolve, 800));
+          await new Promise((resolve) => setTimeout(resolve, 800));
           setCardUnderAttack(null);
         };
 
@@ -160,7 +162,7 @@ export function GameField({
           maxHealth={bossMaxHealth}
           attack={bossAttack}
           image={bossImage}
-          name="Dark Overlord"
+          name={bossName}
           isAttacking={isBossAttacking}
           isHit={isBossHit}
         />
@@ -183,8 +185,12 @@ export function GameField({
                   selectedCard={selectedCard}
                   onCardPlay={onCardPlay}
                   onTargetChange={onTargetSlotChange}
-                  elementalAnimationClass={card ? getElementalAnimationClass(card) : ''}
-                  elementalParticleClass={card ? getElementalParticleClass(card) : ''}
+                  elementalAnimationClass={
+                    card ? getElementalAnimationClass(card) : ''
+                  }
+                  elementalParticleClass={
+                    card ? getElementalParticleClass(card) : ''
+                  }
                   elementalTrailClass={card ? getElementalTrailClass(card) : ''}
                 />
               );
@@ -226,7 +232,7 @@ function CardSlot({
   onTargetChange,
   elementalAnimationClass,
   elementalParticleClass,
-  elementalTrailClass
+  elementalTrailClass,
 }: CardSlotProps) {
   return (
     <motion.div
@@ -234,24 +240,26 @@ function CardSlot({
       animate={{
         opacity: 1,
         scale: isUnderAttack ? [1, 1.1, 0.9, 1] : 1,
-        rotate: isUnderAttack ? [-5, 5, 0] : 0
+        rotate: isUnderAttack ? [-5, 5, 0] : 0,
       }}
       exit={{ opacity: 0, scale: 0.8 }}
       transition={{
         duration: isUnderAttack ? 0.4 : 0.3,
-        times: isUnderAttack ? [0, 0.2, 0.5, 1] : undefined
+        times: isUnderAttack ? [0, 0.2, 0.5, 1] : undefined,
       }}
       className={cn(
         'w-[140px] aspect-[3/4]',
         'rounded-lg transition-all duration-300',
         'flex items-center justify-center',
         isTargetable && 'ring-2 ring-violet-400 shadow-lg shadow-violet-400/20',
-        selectedCard !== null && !card && 'cursor-pointer hover:bg-violet-500/10',
+        selectedCard !== null &&
+          !card &&
+          'cursor-pointer hover:bg-violet-500/10',
         isAttacking && elementalAnimationClass
       )}
       style={{
         border: '1px solid rgba(139, 92, 246, 0.1)',
-        background: card ? 'transparent' : 'rgba(0, 0, 0, 0.2)'
+        background: card ? 'transparent' : 'rgba(0, 0, 0, 0.2)',
       }}
       onClick={() => {
         if (selectedCard !== null && !card) {
@@ -278,18 +286,14 @@ function CardSlot({
       {card && (
         <div className="w-full h-full flex items-center justify-center">
           <div className="transform transition-transform duration-300 hover:scale-105">
-            <GameCardComponent
-              card={card}
-              disabled={false}
-              size="small"
-            />
+            <GameCardComponent card={card} disabled={false} size="small" />
           </div>
 
           {/* Attack Trail Effect */}
           {isAttacking && (
             <div
               className={cn(
-                "absolute left-full top-1/2 -translate-y-1/2 h-1 w-32",
+                'absolute left-full top-1/2 -translate-y-1/2 h-1 w-32',
                 elementalTrailClass
               )}
             />
@@ -299,13 +303,13 @@ function CardSlot({
           {isAttacking && (
             <div
               className={cn(
-                "absolute w-4 h-4 rounded-full",
+                'absolute w-4 h-4 rounded-full',
                 elementalParticleClass
               )}
               style={{
                 left: '100%',
                 top: '50%',
-                transform: 'translate(-50%, -50%)'
+                transform: 'translate(-50%, -50%)',
               }}
             />
           )}

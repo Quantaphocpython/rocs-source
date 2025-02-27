@@ -32,7 +32,6 @@ function getInitialData() {
 }
 
 export function useDeck() {
-  // Initialize with data from localStorage immediately
   const [{ savedDeck, deckInfo }, setState] = useState(() => {
     const { deck, info } = getInitialData();
     return {
