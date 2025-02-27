@@ -314,36 +314,6 @@ export const cardPool: Card[] = [
   },
 ];
 
-export const monsters: Monster[] = [
-  {
-    id: 1,
-    name: '',
-    health: 40,
-    attack: 5,
-    image:
-      'https://res.cloudinary.com/dlotuochc/image/upload/v1739797748/TCG%20Battle%20Adventure/jzm1wj6kzrekhu3zq8an.png',
-    class: [Class.FIRE, Class.EARTH],
-  },
-  {
-    id: 2,
-    name: '',
-    health: 50,
-    attack: 6,
-    image:
-      'https://res.cloudinary.com/dlotuochc/image/upload/v1740049294/TCG%20Battle%20Adventure/vgsemseiixtxtyjjfo1v.png',
-    class: [Class.WATER, Class.METAL],
-  },
-  {
-    id: 3,
-    name: '',
-    health: 60,
-    attack: 7,
-    image:
-      'https://res.cloudinary.com/dlotuochc/image/upload/v1740049291/TCG%20Battle%20Adventure/wqujynso8o9akodknazz.png',
-    class: [Class.WOOD, Class.FIRE],
-  },
-];
-
 export const mockGameState: GameState = {
   _id: 'mock-game-1',
   playerId: 'player-1',
@@ -357,6 +327,7 @@ export const mockGameState: GameState = {
     health: 40,
     attack: 5,
   },
+  currentBoss: null,
   cardsOnField: [],
   battleHistory: [],
   createdAt: new Date().toISOString(),
@@ -365,7 +336,7 @@ export const mockGameState: GameState = {
 
 export const prebuiltDecks: PrebuiltDeck[] = [
   {
-    id: 'fire-aggro',
+    id: 5,
     name: 'Inferno Dominance',
     description:
       'Overwhelm your enemies with aggressive fire attacks and explosive combinations',
@@ -394,7 +365,7 @@ export const prebuiltDecks: PrebuiltDeck[] = [
       'Focus on dealing maximum damage early. Use Water Elementals for sustain and Storm Mages for consistent damage.',
   },
   {
-    id: 'earth-defense',
+    id: 4,
     name: "Mountain's Bulwark",
     description: 'An impenetrable fortress of earth and stone',
     difficulty: 'Easy',
@@ -422,7 +393,7 @@ export const prebuiltDecks: PrebuiltDeck[] = [
       'Build a wall of high-health units. Use thorns effects to punish attackers while slowly grinding them down.',
   },
   {
-    id: 'metal-control',
+    id: 3,
     name: 'Steel Legion',
     description: 'Precise strikes and calculated moves',
     difficulty: 'Hard',
@@ -450,7 +421,7 @@ export const prebuiltDecks: PrebuiltDeck[] = [
       'Control the battlefield with armored units while setting up powerful critical strike combinations.',
   },
   {
-    id: 'nature-combo',
+    id: 2,
     name: 'Wild Synthesis',
     description: "Harness the power of nature's harmony",
     difficulty: 'Medium',
@@ -477,7 +448,7 @@ export const prebuiltDecks: PrebuiltDeck[] = [
       'Build powerful combinations between Wood and Water units. Focus on healing and sustain while growing stronger.',
   },
   {
-    id: 'elemental-chaos',
+    id: 1,
     name: 'Elemental Chaos',
     description: 'Master all elements in perfect discord',
     difficulty: 'Expert',

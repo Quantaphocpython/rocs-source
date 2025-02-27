@@ -1,18 +1,36 @@
 'use client';
 
-import { INITIAL_HAND_SIZE } from '@/constants/game';
-import { mockGameState } from '@/lib/mock-data';
-import type { Card, GameCard, GameState } from '@/types/game';
-import { calculateStaminaGain, convertToGameCard } from '@/utils/gameLogic';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
+import type { GameState, Card, GameCard, Boss, Monster } from '@/types/game';
+import { INITIAL_HAND_SIZE } from '@/constants/game';
+import { calculateStaminaGain, convertToGameCard } from '@/utils/gameLogic';
 
 type GamePhase = 'player' | 'battle' | 'end' | 'monster';
 
-export function useGameLogic() {
+export function useMapBattleLogic(boss: Monster) {
   const router = useRouter();
-  const [gameState, setGameState] = useState<GameState>(mockGameState);
+  const [gameState, setGameState] = useState<GameState>({
+    _id: `boss-battle-${boss.id}`,
+    playerId: 'player-1',
+    sessionId: `session-${Date.now()}`,
+    currentStage: boss.id,
+    playerHealth: 40,
+    playerStamina: 1,
+    deck: [],
+    currentBoss: {
+      bossId: boss.id,
+      health: boss.health,
+      attack: boss.attack,
+    },
+    cardsOnField: Array(10).fill(null),
+    battleHistory: [],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    currentMonster: boss,
+  });
+
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
   const [isPlayerTurn, setIsPlayerTurn] = useState(true);
   const [remainingDeck, setRemainingDeck] = useState<GameCard[]>([]);
@@ -91,33 +109,36 @@ export function useGameLogic() {
     return 0;
   }, []);
 
-  const startGame = useCallback((selectedDeck: Card[]) => {
-    const shuffledDeck = [...selectedDeck].sort(() => Math.random() - 0.5);
-    const initialHand = shuffledDeck
-      .slice(0, INITIAL_HAND_SIZE)
-      .map(convertToGameCard);
-    const remaining = shuffledDeck
-      .slice(INITIAL_HAND_SIZE)
-      .map(convertToGameCard);
+  const startGame = useCallback(
+    (selectedDeck: Card[]) => {
+      const shuffledDeck = [...selectedDeck].sort(() => Math.random() - 0.5);
+      const initialHand = shuffledDeck
+        .slice(0, INITIAL_HAND_SIZE)
+        .map(convertToGameCard);
+      const remaining = shuffledDeck
+        .slice(INITIAL_HAND_SIZE)
+        .map(convertToGameCard);
 
-    setGameState({
-      ...mockGameState,
-      deck: initialHand,
-      cardsOnField: Array(10).fill(null),
-    });
+      setGameState((prev) => ({
+        ...prev,
+        deck: initialHand,
+        cardsOnField: Array(10).fill(null),
+      }));
 
-    setRemainingDeck(remaining);
-    setRoundCounter(1);
-    setIsPlayerTurn(true);
-    setSelectedCard(null);
-    setTargetSlot(null);
-    setCurrentPhase('player');
+      setRemainingDeck(remaining);
+      setRoundCounter(1);
+      setIsPlayerTurn(true);
+      setSelectedCard(null);
+      setTargetSlot(null);
+      setCurrentPhase('player');
 
-    setAnnouncement({
-      message: 'Battle Start!',
-      type: 'phase',
-    });
-  }, []);
+      setAnnouncement({
+        message: `Battle vs ${boss.name} Start!`,
+        type: 'phase',
+      });
+    },
+    [boss.name]
+  );
 
   const drawCard = useCallback(() => {
     if (remainingDeck.length === 0) {
@@ -133,7 +154,7 @@ export function useGameLogic() {
     setRemainingDeck(restDeck);
   }, [remainingDeck]);
 
-  const handleMonsterAttack = useCallback(async () => {
+  const handleBossAttack = useCallback(async () => {
     try {
       const cardsOnField = gameState.cardsOnField
         .slice(0, 5)
@@ -142,16 +163,16 @@ export function useGameLogic() {
 
       if (cardsOnField.length === 0) {
         setAnnouncement({
-          message: 'Monster attacks you directly!',
+          message: `${boss.name} attacks you directly!`,
           type: 'damage',
         });
 
         await sleep(1000);
 
-        const monsterDamage = gameState.currentMonster.attack;
+        const bossAttack = gameState.currentBoss.attack;
         const newPlayerHealth = Math.max(
           0,
-          gameState.playerHealth - monsterDamage
+          gameState.playerHealth - bossAttack
         );
 
         setGameState((prev) => ({
@@ -162,7 +183,7 @@ export function useGameLogic() {
             {
               turn: prev.battleHistory.length + 1,
               action: 'monster_attack',
-              damageDealt: monsterDamage,
+              damageDealt: bossAttack,
               playerHpLeft: newPlayerHealth,
             },
           ],
@@ -170,11 +191,9 @@ export function useGameLogic() {
 
         if (newPlayerHealth <= 0) {
           setAnnouncement({
-            message: 'Game Over!',
+            message: 'Defeat!',
             type: 'phase',
           });
-          await sleep(2000);
-          router.push('/deck');
           return;
         }
       } else {
@@ -185,21 +204,20 @@ export function useGameLogic() {
         if (!targetCard) return;
 
         setAnnouncement({
-          message: `Monster attacks ${targetCard.name}!`,
+          message: `${boss.name} attacks ${targetCard.name}!`,
           type: 'phase',
         });
 
         await sleep(1000);
 
-        const monsterAttack = gameState.currentMonster.attack;
-        let finalDamage = monsterAttack;
+        const bossAttack = gameState.currentBoss.attack;
+        let finalDamage = bossAttack;
 
-        // 20% cơ hội đánh chí mạng
         const hasCritical = Math.random() < 0.2;
         if (hasCritical) {
           finalDamage *= 1.5;
           setAnnouncement({
-            message: 'Monster Critical Hit!',
+            message: 'Boss Critical Hit!',
             type: 'effect',
           });
           await sleep(800);
@@ -220,12 +238,9 @@ export function useGameLogic() {
           setGameState((prev) => ({
             ...prev,
             cardsOnField: updatedCardsOnField,
-            currentMonster: {
-              ...prev.currentMonster,
-              health: Math.max(
-                0,
-                prev.currentMonster.health - deadEffectDamage
-              ),
+            currentBoss: {
+              ...prev.currentBoss,
+              health: Math.max(0, prev.currentBoss.health - deadEffectDamage),
             },
             battleHistory: [
               ...prev.battleHistory,
@@ -234,7 +249,7 @@ export function useGameLogic() {
                 action: 'monster_attack',
                 cardId: targetCard.id,
                 damageDealt: finalDamage,
-                monsterHpLeft: prev.currentMonster.health,
+                monsterHpLeft: prev.currentBoss.health,
               },
             ],
           }));
@@ -259,22 +274,21 @@ export function useGameLogic() {
                 action: 'monster_attack',
                 cardId: targetCard.id,
                 damageDealt: finalDamage,
-                monsterHpLeft: prev.currentMonster.health,
+                monsterHpLeft: prev.currentBoss.health,
               },
             ],
           }));
         }
       }
 
-      // Chuyển về lượt người chơi sau khi boss đánh xong
       await sleep(1000);
       setCurrentPhase('player');
       setIsPlayerTurn(true);
 
-      const staminaGain = calculateStaminaGain(roundCounter);
+      const nextStamina = calculateStaminaGain(roundCounter + 1);
       setGameState((prev) => ({
         ...prev,
-        playerStamina: Math.min(10, prev.playerStamina + staminaGain),
+        playerStamina: nextStamina,
       }));
 
       setAnnouncement({
@@ -284,12 +298,11 @@ export function useGameLogic() {
 
       drawCard();
     } catch (error) {
-      console.error('Error in monster attack:', error);
-      // Fallback về lượt người chơi nếu có lỗi
+      console.error('Error in boss attack:', error);
       setCurrentPhase('player');
       setIsPlayerTurn(true);
     }
-  }, [gameState, handleDeadEffect, roundCounter, router, drawCard]);
+  }, [gameState, boss.name, handleDeadEffect, roundCounter, drawCard]);
 
   const playCard = useCallback(
     (cardIndex: number, slotIndex: number) => {
@@ -332,12 +345,8 @@ export function useGameLogic() {
   );
 
   const endTurn = useCallback(async () => {
-    if (currentPhase !== 'player') {
-      console.log('❌ Không thể end turn vì không phải lượt player.');
-      return;
-    }
+    if (currentPhase !== 'player') return;
 
-    console.log('✅ Bắt đầu End Turn.');
     setCurrentPhase('battle');
     setAnnouncement({
       message: 'Battle Phase',
@@ -345,15 +354,12 @@ export function useGameLogic() {
     });
 
     await sleep(1000);
-    console.log('⏳ Đã chờ 1 giây, bắt đầu xử lý quái.');
 
     const cardsOnField = gameState.cardsOnField.filter((card) => card !== null);
-    console.log('🃏 Cards trên field:', cardsOnField);
 
     for (const card of cardsOnField) {
       if (!card) continue;
 
-      console.log(`⚔️ ${card.name} chuẩn bị tấn công!`);
       setAnnouncement({
         message: `${card.name} attacks!`,
         type: 'phase',
@@ -362,22 +368,17 @@ export function useGameLogic() {
       await sleep(800);
 
       const { finalDamage, healAmount } = handleCardEffect(card, card.attack);
-      console.log(
-        `💥 ${card.name} gây sát thương: ${finalDamage}, hồi máu: ${healAmount}`
-      );
-
-      const newMonsterHealth = Math.max(
+      const newBossHealth = Math.max(
         0,
-        gameState.currentMonster.health - finalDamage
+        gameState.currentBoss.health - finalDamage
       );
-      console.log(`🩸 Máu quái còn lại: ${newMonsterHealth}`);
 
       setGameState((prev) => ({
         ...prev,
         playerHealth: Math.min(40, prev.playerHealth + healAmount),
-        currentMonster: {
-          ...prev.currentMonster,
-          health: newMonsterHealth,
+        currentBoss: {
+          ...prev.currentBoss,
+          health: newBossHealth,
         },
         battleHistory: [
           ...prev.battleHistory,
@@ -386,7 +387,7 @@ export function useGameLogic() {
             action: 'play_card',
             cardId: card.id,
             damageDealt: finalDamage,
-            monsterHpLeft: newMonsterHealth,
+            monsterHpLeft: newBossHealth,
           },
         ],
       }));
@@ -398,51 +399,27 @@ export function useGameLogic() {
 
       await sleep(800);
 
-      if (newMonsterHealth <= 0) {
-        console.log('🏆 Quái bị đánh bại, chiến thắng!');
+      if (newBossHealth <= 0) {
         setAnnouncement({
           message: 'Victory!',
           type: 'phase',
         });
-
-        await sleep(2000);
-        router.push('/deck');
         return;
       }
     }
 
-    console.log('🛡 Đến lượt quái tấn công.');
     setCurrentPhase('monster');
     setIsPlayerTurn(false);
     setAnnouncement({
-      message: "Monster's Turn",
+      message: `${boss.name}'s Turn`,
       type: 'phase',
     });
 
     await sleep(1000);
-    await handleMonsterAttack();
-    console.log('🔥 Quái đã tấn công xong.');
-  }, [currentPhase, gameState, handleCardEffect, handleMonsterAttack, router]);
+    await handleBossAttack();
 
-  useEffect(() => {
-    if (gameState.playerHealth <= 0) {
-      setAnnouncement({
-        message: 'Game Over!',
-        type: 'phase',
-      });
-      setTimeout(() => {
-        router.push('/deck');
-      }, 2000);
-    } else if (gameState.currentMonster.health <= 0) {
-      setAnnouncement({
-        message: 'Victory!',
-        type: 'phase',
-      });
-      setTimeout(() => {
-        router.push('/deck');
-      }, 2000);
-    }
-  }, [gameState.playerHealth, gameState.currentMonster.health, router]);
+    setRoundCounter((prev) => prev + 1);
+  }, [currentPhase, gameState, handleCardEffect, handleBossAttack, boss.name]);
 
   return {
     gameState,

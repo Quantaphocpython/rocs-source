@@ -55,7 +55,18 @@ export interface Monster {
   image: string;
 }
 
+export interface Boss {
+  id: number;
+  name: string;
+  health: number;
+  attack: number;
+  image: string;
+  class: string[];
+  description: string;
+}
+
 export interface GameState {
+  currentMonster: any;
   _id: string;
   playerId: string;
   sessionId: string;
@@ -63,12 +74,12 @@ export interface GameState {
   playerHealth: number;
   playerStamina: number;
   deck: GameCard[];
-  currentMonster: {
-    monsterId: number;
+  currentBoss: {
+    bossId?: number;
+    monsterId?: number;
     health: number;
     attack: number;
   };
-  cardOnHand: (GameCard | null)[];
   cardsOnField: (GameCard | null)[];
   battleHistory: {
     turn: number;
@@ -83,7 +94,7 @@ export interface GameState {
 }
 
 export interface PrebuiltDeck {
-  id: string;
+  id: number;
   name: string;
   description: string;
   difficulty: 'Easy' | 'Medium' | 'Hard' | 'Expert';

@@ -2,23 +2,28 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { useGameLogic } from '@/hooks/useGameLogic';
+import { useMapBattleLogic } from '@/hooks/useMapBattleLogic';
 import { MessageCircleQuestionIcon as QuestionMarkCircle } from 'lucide-react';
-import { GameField } from './GameField';
-import { GameHeader } from './GameHeader';
-import { PhaseAnnouncement } from './PhaseAnnouncement';
-import { PlayerHand } from './PlayerHand';
-import { TutorialDialog } from '../tutorial/TutorialDialog';
-import type { Card } from '@/types/game';
+import { Button } from '@/components/ui/button';
+import { GameField } from '@/components/game/battle/GameField';
+import { GameHeader } from '@/components/game/battle/GameHeader';
+import { PhaseAnnouncement } from '@/components/game/battle/PhaseAnnouncement';
+import { PlayerHand } from '@/components/game/battle/PlayerHand';
+import { TutorialDialog } from '@/components/game/tutorial/TutorialDialog';
+import { VictoryScreen } from '@/components/game/map-battle/VictoryScreen';
+import { DefeatScreen } from '@/components/game/map-battle/DefeatScreen';
+import type { Card, Boss, Monster } from '@/types/game';
 
 interface GameBoardProps {
   initialDeck: Card[];
+  boss: Monster;
 }
 
-export function GameBoard({ initialDeck }: GameBoardProps) {
+export function GameBoard({ initialDeck, boss }: GameBoardProps) {
   const router = useRouter();
   const [isTutorialOpen, setIsTutorialOpen] = useState(false);
   const [isGameStarted, setIsGameStarted] = useState(false);
+  const [gameEnded, setGameEnded] = useState<'victory' | 'defeat' | null>(null);
 
   const {
     isPlayerTurn,
@@ -35,7 +40,7 @@ export function GameBoard({ initialDeck }: GameBoardProps) {
     announcement,
     setAnnouncement,
     canPlayAnyCard,
-  } = useGameLogic();
+  } = useMapBattleLogic(boss);
 
   useEffect(() => {
     if (!isGameStarted && initialDeck) {
@@ -43,6 +48,14 @@ export function GameBoard({ initialDeck }: GameBoardProps) {
       setIsGameStarted(true);
     }
   }, [initialDeck, startGame, isGameStarted]);
+
+  useEffect(() => {
+    if (gameState.playerHealth <= 0) {
+      setGameEnded('defeat');
+    } else if (gameState.currentBoss.health <= 0) {
+      setGameEnded('victory');
+    }
+  }, [gameState.playerHealth, gameState.currentBoss.health]);
 
   const handleCardSelect = useCallback(
     (index: number) => {
@@ -57,7 +70,23 @@ export function GameBoard({ initialDeck }: GameBoardProps) {
     }
   }, [playCard, selectedCard, targetSlot]);
 
-  const canPlaySelectedCard = selectedCard !== null && targetSlot !== null;
+  const handleReturnToMap = useCallback(() => {
+    router.push('/map');
+  }, [router]);
+
+  if (gameEnded === 'victory') {
+    return <VictoryScreen boss={boss} onContinue={handleReturnToMap} />;
+  }
+
+  if (gameEnded === 'defeat') {
+    return (
+      <DefeatScreen
+        boss={boss}
+        onRetry={() => setGameEnded(null)}
+        onReturnToMap={handleReturnToMap}
+      />
+    );
+  }
 
   return (
     <div className="game-board">
@@ -73,13 +102,12 @@ export function GameBoard({ initialDeck }: GameBoardProps) {
         playerStamina={gameState.playerStamina}
         currentStage={gameState.currentStage}
         roundCounter={roundCounter}
-        monsterHealth={gameState.currentMonster.health}
-        monsterAttack={gameState.currentMonster.attack}
+        monsterHealth={gameState.currentBoss.health}
+        monsterAttack={gameState.currentBoss.attack}
         onTutorialOpen={() => setIsTutorialOpen(true)}
       />
 
       <GameField
-        bossName={'boss'}
         cardsOnField={gameState.cardsOnField}
         selectedCard={selectedCard}
         targetSlot={targetSlot}
@@ -88,10 +116,11 @@ export function GameBoard({ initialDeck }: GameBoardProps) {
         onCardPlay={(cardIndex, slotIndex) => playCard(cardIndex, slotIndex)}
         onTargetSlotChange={setTargetSlot}
         battleHistory={gameState.battleHistory}
-        bossHealth={gameState.currentMonster.health}
-        bossMaxHealth={60} // This should come from monster data
-        bossAttack={gameState.currentMonster.attack}
-        bossImage="https://res.cloudinary.com/dlotuochc/image/upload/v1739797748/TCG%20Battle%20Adventure/jzm1wj6kzrekhu3zq8an.png" // This should come from monster data
+        bossHealth={gameState.currentBoss.health}
+        bossMaxHealth={boss.health}
+        bossAttack={gameState.currentBoss.attack}
+        bossImage={boss.image}
+        bossName={boss.name}
       />
 
       <PlayerHand
@@ -102,7 +131,7 @@ export function GameBoard({ initialDeck }: GameBoardProps) {
         onCardSelect={handleCardSelect}
         onPlayCard={handleCardPlay}
         onEndTurn={endTurn}
-        canPlayCard={canPlaySelectedCard}
+        canPlayCard={selectedCard !== null && targetSlot !== null}
         canPlayAnyCard={canPlayAnyCard}
       />
 

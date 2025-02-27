@@ -1,37 +1,21 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { useDeck } from '@/hooks/useDeck';
-import { GameBoard } from '@/components/game/battle';
-
+import { useEffect } from 'react';
+import { toast } from 'sonner';
 
 export default function BattlePage() {
   const router = useRouter();
-  const { savedDeck } = useDeck();
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Short timeout to ensure localStorage is checked
-    const timer = setTimeout(() => {
-      if (!savedDeck) {
-        router.push('/deck');
-      }
-      setIsLoading(false);
-    }, 100);
+    // Redirect to deck selection
+    toast.info('Please select a deck first');
+    router.push('/deck');
+  }, [router]);
 
-    return () => clearTimeout(timer);
-  }, [savedDeck, router]);
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-yellow-400 text-xl">Loading...</div>
-      </div>
-    );
-  }
-
-  if (!savedDeck) return null;
-
-  return <GameBoard initialDeck={savedDeck} />;
+  return (
+    <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="text-yellow-400 text-xl">Redirecting to deck selection...</div>
+    </div>
+  );
 }

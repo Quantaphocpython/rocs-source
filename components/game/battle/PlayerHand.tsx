@@ -1,11 +1,11 @@
 'use client';
 
 import { memo } from 'react';
-import { GameCard } from "@/types/game";
-import { GameCard as GameCardComponent } from "../../ui/game-card";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { motion, AnimatePresence } from "framer-motion";
+import { GameCard } from '@/types/game';
+import { GameCard as GameCardComponent } from '../../ui/game-card';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface PlayerHandProps {
   deck: GameCard[];
@@ -28,23 +28,18 @@ export const PlayerHand = memo(function PlayerHand({
   onPlayCard,
   onEndTurn,
   canPlayCard,
-  canPlayAnyCard
+  canPlayAnyCard,
 }: PlayerHandProps) {
   return (
     <div className="player-hand h-[150px] relative">
       {/* Action Buttons */}
       <div className="absolute -top-12 right-6 flex items-center gap-3 z-10">
         <Button
-          className="action-button h-8 px-4 text-sm"
-          disabled={!isPlayerTurn || !canPlayCard}
-          onClick={onPlayCard}
-        >
-          Play Card
-        </Button>
-        <Button
           className={cn(
-            "action-button h-8 px-4 text-sm",
-            !canPlayAnyCard() && isPlayerTurn && "animate-pulse ring-2 ring-violet-400"
+            'action-button h-8 px-4 text-sm transition-all duration-300', // Base styles
+            isPlayerTurn
+              ? 'bg-violet-700 hover:bg-violet-800 text-white font-semibold animate-pulse duration-1000 ring-2 ring-violet-400 shadow-lg shadow-violet-500/40 hover:scale-105'
+              : 'bg-gray-700 text-gray-400 cursor-not-allowed opacity-60'
           )}
           disabled={!isPlayerTurn}
           onClick={onEndTurn}
@@ -65,17 +60,17 @@ export const PlayerHand = memo(function PlayerHand({
               exit={{ opacity: 0, y: 50 }}
               whileHover={{ y: -16, scale: 1.05 }}
               transition={{
-                type: "spring",
+                type: 'spring',
                 stiffness: 400,
-                damping: 25
+                damping: 25,
               }}
               className={cn(
-                "transform transition-all duration-300",
-                selectedCard === index && "ring-2 ring-violet-400"
+                'transform transition-all duration-300',
+                selectedCard === index && 'ring-2 ring-violet-400'
               )}
               style={{
-                width: '80px',  // Smaller card width
-                height: '112px' // Maintain aspect ratio
+                width: '80px', // Smaller card width
+                height: '112px', // Maintain aspect ratio
               }}
             >
               <GameCardComponent
@@ -83,7 +78,7 @@ export const PlayerHand = memo(function PlayerHand({
                 onClick={() => isPlayerTurn && onCardSelect(index)}
                 selected={selectedCard === index}
                 disabled={!isPlayerTurn || playerStamina < card.staminaCost}
-                size="tiny" // Add new size option for even smaller cards
+                size="tiny"
               />
             </motion.div>
           ))}

@@ -1,9 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useDeck } from '@/hooks/useDeck';
-import { prebuiltDecks, cardPool } from '@/lib/mock-data';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -15,17 +14,27 @@ import type { PrebuiltDeck, Card } from '@/types/game';
 import { Class } from '@/types/game';
 import { DECK_SIZE } from '@/constants/game';
 import { motion } from 'framer-motion';
+import { useGetCards } from '@/hooks/useGetCards';
+import { useGetPrebuiltDecks } from '@/hooks/useGetPrebuildDecks';
+import { Map } from 'lucide-react';
 
 export function DeckBuilder() {
+  const { cards } = useGetCards();
+  const { decks } = useGetPrebuiltDecks();
   const router = useRouter();
-  const { saveDeck, deckInfo } = useDeck();
+  const { savedDeck, deckInfo, saveDeck } = useDeck();
   const [selectedDeck, setSelectedDeck] = useState<PrebuiltDeck | null>(
-    deckInfo ? prebuiltDecks.find(d => d.id === deckInfo.id) || null : null
+    deckInfo ? decks?.find((d) => d.id === deckInfo.id) || null : null
   );
   const [customDeck, setCustomDeck] = useState<Card[]>([]);
   const [activeFilter, setActiveFilter] = useState<Class | null>(null);
   const [sortBy, setSortBy] = useState<'attack' | 'health' | 'cost'>('attack');
   const [activeTab, setActiveTab] = useState<'prebuilt' | 'custom'>('prebuilt');
+  const [hasDeck, setHasDeck] = useState(false);
+
+  useEffect(() => {
+    setHasDeck(!!savedDeck);
+  }, [savedDeck]);
 
   const handleDeckSelect = (deck: PrebuiltDeck) => {
     setSelectedDeck(deck);
@@ -38,7 +47,7 @@ export function DeckBuilder() {
       return;
     }
 
-    const cardCount = customDeck.filter(c => c.id === card.id).length;
+    const cardCount = customDeck.filter((c) => c.id === card.id).length;
     if (cardCount >= card.maxPerSession) {
       toast.error(`Can't add more copies of ${card.name}`);
       return;
@@ -49,10 +58,10 @@ export function DeckBuilder() {
   };
 
   const removeCard = (index: number) => {
-    setCustomDeck(prev => prev.filter((_, i) => i !== index));
+    setCustomDeck((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleStartGame = () => {
+  const handleSaveDeck = () => {
     if (activeTab === 'prebuilt' && !selectedDeck) {
       toast.error('Please select a deck first');
       return;
@@ -68,7 +77,7 @@ export function DeckBuilder() {
         saveDeck(selectedDeck);
       } else if (activeTab === 'custom') {
         const customPrebuiltDeck: PrebuiltDeck = {
-          id: 'custom-deck',
+          id: 0,
           name: 'Custom Deck',
           description: 'Your personally crafted deck',
           difficulty: 'Medium',
@@ -76,22 +85,24 @@ export function DeckBuilder() {
           strengths: ['Customized strategy', 'Personal playstyle'],
           weaknesses: ['Untested combinations'],
           cards: customDeck,
-          coverImage: 'https://images.unsplash.com/photo-1635859890085-ec9e0c90f072',
-          strategy: 'Use your custom combination of cards to develop your own unique strategy.',
+          coverImage:
+            'https://images.unsplash.com/photo-1635859890085-ec9e0c90f072',
+          strategy:
+            'Use your custom combination of cards to develop your own unique strategy.',
         };
         saveDeck(customPrebuiltDeck);
       }
 
-      toast.success('Deck selected successfully!');
-      router.push('/battle');
+      setHasDeck(true);
+      toast.success('Deck saved successfully!');
     } catch (error) {
       toast.error('Failed to save deck. Please try again.');
     }
   };
 
-  const filteredCards = cardPool.filter(
-    card => !activeFilter || card.class.includes(activeFilter)
-  );
+  const filteredCards = cards
+    ? cards.filter((card) => !activeFilter || card.class.includes(activeFilter))
+    : [];
 
   return (
     <motion.div
@@ -101,30 +112,43 @@ export function DeckBuilder() {
       transition={{ duration: 0.6 }}
     >
       <div className="max-w-7xl mx-auto">
-        <motion.h1
-          className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600 mb-8"
+        <motion.div
+          className="flex items-center justify-between mb-8"
           initial={{ y: -20 }}
           animate={{ y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          Deck Builder
-        </motion.h1>
+          <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600">
+            Deck Builder
+          </h1>
+          {hasDeck && (
+            <Button
+              className="bg-yellow-900/90 hover:bg-yellow-800 text-yellow-400 px-6 py-5 text-lg"
+              onClick={() => router.push('/map')}
+            >
+              <Map className="mr-2 h-5 w-5" />
+              Go to Map
+            </Button>
+          )}
+        </motion.div>
 
         <Tabs
           value={activeTab}
-          onValueChange={(value) => setActiveTab(value as 'prebuilt' | 'custom')}
+          onValueChange={(value) =>
+            setActiveTab(value as 'prebuilt' | 'custom')
+          }
           className="space-y-8"
         >
           <TabsList className="bg-black/50 border border-yellow-900/50 p-1 mb-8">
             <TabsTrigger
               value="prebuilt"
-              className="text-yellow-400 data-[state=active]:bg-yellow-900/50 transition-all duration-300"
+              className="text-yellow-300 data-[state=active]:bg-yellow-800/80 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300"
             >
-              Pre-built Decks
+              Pre-built Deck
             </TabsTrigger>
             <TabsTrigger
               value="custom"
-              className="text-yellow-400 data-[state=active]:bg-yellow-900/50 transition-all duration-300"
+              className="text-yellow-300 data-[state=active]:bg-yellow-800/80 data-[state=active]:text-white data-[state=active]:shadow-lg transition-all duration-300"
             >
               Custom Deck
             </TabsTrigger>
@@ -132,10 +156,10 @@ export function DeckBuilder() {
 
           <TabsContent value="prebuilt">
             <PrebuiltDeckList
-              decks={prebuiltDecks}
+              decks={decks ?? []}
               selectedDeck={selectedDeck}
               onDeckSelect={handleDeckSelect}
-              onStartBattle={handleStartGame}
+              onSaveDeck={handleSaveDeck}
             />
           </TabsContent>
 
@@ -144,7 +168,9 @@ export function DeckBuilder() {
               <div className="col-span-9">
                 <div className="bg-black/30 border border-yellow-900/50 rounded-lg p-6 backdrop-blur-sm">
                   <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-xl font-bold text-yellow-400">Available Cards</h3>
+                    <h3 className="text-xl font-bold text-yellow-400">
+                      Available Cards
+                    </h3>
                     <div className="text-sm text-yellow-400/60">
                       Click on cards to add them to your deck
                     </div>
@@ -166,23 +192,19 @@ export function DeckBuilder() {
                 </div>
               </div>
 
-              <div className="col-span-3">
-                <DeckPreview
-                  deck={customDeck}
-                  onRemoveCard={removeCard}
-                />
-
+              <div className="col-span-3 relative">
+                <DeckPreview deck={customDeck} onRemoveCard={removeCard} />
                 {customDeck.length === DECK_SIZE && (
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="mt-4"
+                    className="mt-4 w-full"
                   >
                     <Button
                       className="w-full bg-yellow-900/90 hover:bg-yellow-800 text-yellow-400 py-6 text-lg"
-                      onClick={handleStartGame}
+                      onClick={handleSaveDeck}
                     >
-                      Start Battle
+                      Save Deck
                     </Button>
                   </motion.div>
                 )}

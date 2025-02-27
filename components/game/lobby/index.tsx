@@ -1,27 +1,20 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Sword, Shield, Scroll } from 'lucide-react';
+import { Shield, Scroll } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar';
 import { BackgroundEffects } from './BackgroundEffects';
 import { HeroSection } from './HeroSection';
 import { MenuCard } from './MenuCard';
-
 
 export function GameLobby() {
   const router = useRouter();
 
   const menuItems = [
     {
-      icon: Sword,
-      title: 'Quick Battle',
-      description: 'Jump straight into action with a pre-built deck',
-      path: '/battle',
-    },
-    {
       icon: Shield,
       title: 'Deck Builder',
-      description: 'Create your own custom deck from available cards',
+      description: 'Create your deck before entering the adventure',
       path: '/deck',
     },
     {
@@ -33,16 +26,16 @@ export function GameLobby() {
   ];
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-yellow-900/20 to-black">
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-purple-light/20 to-purple-dark">
       <Navbar />
       <BackgroundEffects />
 
-      Hero Section
-      <div className="relative min-h-screen">
+      {/* Hero Section */}
+      <div className="relative min-h-screen pt-28">
         <HeroSection />
 
         {/* Menu Cards */}
-        <div className="absolute bottom-24 left-1/2 -translate-x-1/2 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl w-full px-6">
+        <div className="absolute bottom-24 left-1/2 -translate-x-1/2 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl w-full px-6">
           {menuItems.map((item, i) => (
             <MenuCard
               key={item.title}
