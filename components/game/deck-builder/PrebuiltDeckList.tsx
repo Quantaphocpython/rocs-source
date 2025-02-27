@@ -3,7 +3,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import useEmblaCarousel from 'embla-carousel-react';
-import { ChevronLeft, ChevronRight, Sword } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Save } from 'lucide-react';
 import { PrebuiltDeck } from "@/types/game";
 
 import { cn } from '@/lib/utils';
@@ -13,10 +13,10 @@ interface PrebuiltDeckListProps {
   decks: PrebuiltDeck[];
   selectedDeck: PrebuiltDeck | null;
   onDeckSelect: (deck: PrebuiltDeck) => void;
-  onStartBattle: () => void;
+  onSaveDeck: () => void;
 }
 
-export function PrebuiltDeckList({ decks, selectedDeck, onDeckSelect, onStartBattle }: PrebuiltDeckListProps) {
+export function PrebuiltDeckList({ decks, selectedDeck, onDeckSelect, onSaveDeck }: PrebuiltDeckListProps) {
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
     align: 'center',
@@ -104,32 +104,26 @@ export function PrebuiltDeckList({ decks, selectedDeck, onDeckSelect, onStartBat
         ))}
       </div>
 
-      {/* Start Battle Button */}
+      {/* Save Deck Button */}
       {selectedDeck && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
-          className="fixed top-8 right-8 z-50"
+          className="fixed bottom-8 right-8 z-50"
         >
           <button
-            onClick={onStartBattle}
+            onClick={onSaveDeck}
             className={cn(
               "flex items-center gap-2 px-8 py-3 rounded-lg text-lg font-medium",
-              "bg-gradient-to-br from-black/80 to-black/60 backdrop-blur-md",
-              "border border-yellow-900/30 hover:border-yellow-400/50",
-              "text-yellow-400 hover:text-yellow-200",
-              "shadow-lg shadow-yellow-900/20 hover:shadow-xl hover:shadow-yellow-900/40",
-              "transform transition-all duration-300 hover:scale-105",
-              "relative overflow-hidden group"
+              "bg-yellow-900/90 hover:bg-yellow-800 text-yellow-400",
+              "border border-yellow-900/50 hover:border-yellow-400/50",
+              "shadow-lg shadow-yellow-900/20 hover:shadow-yellow-900/40",
+              "transform transition-all duration-300 hover:scale-105"
             )}
           >
-            {/* Hiệu ứng gradient hover */}
-            <span className="absolute inset-0 bg-gradient-to-r from-yellow-400/0 via-yellow-400/20 to-yellow-400/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-            {/* Nội dung nút */}
-            <Sword className="w-5 h-5 relative z-10" />
-            <span className="relative z-10">Start Battle</span>
+            <Save className="w-5 h-5" />
+            Save Deck
           </button>
         </motion.div>
       )}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useDeck } from '@/hooks/useDeck';
 import { prebuiltDecks, cardPool } from '@/lib/mock-data';
@@ -15,14 +15,18 @@ import type { PrebuiltDeck, Card } from '@/types/game';
 import { Class } from '@/types/game';
 import { DECK_SIZE } from '@/constants/game';
 import { motion } from 'framer-motion';
+
 import { useGetCards } from '@/hooks/useGetCards';
 import { useGetPrebuiltDecks } from '@/hooks/useGetPrebuildDecks';
+
+import { Map } from 'lucide-react';
+
 
 export function DeckBuilder() {
   const { cards } = useGetCards();
   const { decks } = useGetPrebuiltDecks();
   const router = useRouter();
-  const { saveDeck, deckInfo } = useDeck();
+  const { savedDeck, deckInfo, saveDeck } = useDeck();
   const [selectedDeck, setSelectedDeck] = useState<PrebuiltDeck | null>(
     deckInfo ? decks?.find((d) => d.id === deckInfo.id) || null : null
   );
@@ -30,6 +34,11 @@ export function DeckBuilder() {
   const [activeFilter, setActiveFilter] = useState<Class | null>(null);
   const [sortBy, setSortBy] = useState<'attack' | 'health' | 'cost'>('attack');
   const [activeTab, setActiveTab] = useState<'prebuilt' | 'custom'>('prebuilt');
+  const [hasDeck, setHasDeck] = useState(false);
+
+  useEffect(() => {
+    setHasDeck(!!savedDeck);
+  }, [savedDeck]);
 
   console.log(decks);
 
@@ -58,7 +67,7 @@ export function DeckBuilder() {
     setCustomDeck((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleStartGame = () => {
+  const handleSaveDeck = () => {
     if (activeTab === 'prebuilt' && !selectedDeck) {
       toast.error('Please select a deck first');
       return;
@@ -90,8 +99,8 @@ export function DeckBuilder() {
         saveDeck(customPrebuiltDeck);
       }
 
-      toast.success('Deck selected successfully!');
-      router.push('/battle');
+      setHasDeck(true);
+      toast.success('Deck saved successfully!');
     } catch (error) {
       toast.error('Failed to save deck. Please try again.');
     }
@@ -109,14 +118,26 @@ export function DeckBuilder() {
       transition={{ duration: 0.6 }}
     >
       <div className="max-w-7xl mx-auto">
-        <motion.h1
-          className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600 mb-8"
+        <motion.div
+          className="flex items-center justify-between mb-8"
           initial={{ y: -20 }}
           animate={{ y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          Deck Builder
-        </motion.h1>
+          <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600">
+            Deck Builder
+          </h1>
+
+          {hasDeck && (
+            <Button
+              className="bg-yellow-900/90 hover:bg-yellow-800 text-yellow-400 px-6 py-5 text-lg"
+              onClick={() => router.push('/map')}
+            >
+              <Map className="mr-2 h-5 w-5" />
+              Go to Map
+            </Button>
+          )}
+        </motion.div>
 
         <Tabs
           value={activeTab}
@@ -145,7 +166,7 @@ export function DeckBuilder() {
               decks={decks ?? []}
               selectedDeck={selectedDeck}
               onDeckSelect={handleDeckSelect}
-              onStartBattle={handleStartGame}
+              onSaveDeck={handleSaveDeck}
             />
           </TabsContent>
 
@@ -189,9 +210,9 @@ export function DeckBuilder() {
                   >
                     <Button
                       className="w-full bg-yellow-900/90 hover:bg-yellow-800 text-yellow-400 py-6 text-lg"
-                      onClick={handleStartGame}
+                      onClick={handleSaveDeck}
                     >
-                      Start Battle
+                      Save Deck
                     </Button>
                   </motion.div>
                 )}
