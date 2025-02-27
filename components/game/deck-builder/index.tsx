@@ -16,21 +16,22 @@ import { Class } from '@/types/game';
 import { DECK_SIZE } from '@/constants/game';
 import { motion } from 'framer-motion';
 import { useGetCards } from '@/hooks/useGetCards';
+import { useGetPrebuiltDecks } from '@/hooks/useGetPrebuildDecks';
 
 export function DeckBuilder() {
+  const { cards } = useGetCards();
+  const { decks } = useGetPrebuiltDecks();
   const router = useRouter();
   const { saveDeck, deckInfo } = useDeck();
   const [selectedDeck, setSelectedDeck] = useState<PrebuiltDeck | null>(
-    deckInfo ? prebuiltDecks.find((d) => d.id === deckInfo.id) || null : null
+    deckInfo ? decks?.find((d) => d.id === deckInfo.id) || null : null
   );
   const [customDeck, setCustomDeck] = useState<Card[]>([]);
   const [activeFilter, setActiveFilter] = useState<Class | null>(null);
   const [sortBy, setSortBy] = useState<'attack' | 'health' | 'cost'>('attack');
   const [activeTab, setActiveTab] = useState<'prebuilt' | 'custom'>('prebuilt');
 
-  const { cards } = useGetCards();
-
-  console.log(cards);
+  console.log(decks);
 
   const handleDeckSelect = (deck: PrebuiltDeck) => {
     setSelectedDeck(deck);
@@ -73,7 +74,7 @@ export function DeckBuilder() {
         saveDeck(selectedDeck);
       } else if (activeTab === 'custom') {
         const customPrebuiltDeck: PrebuiltDeck = {
-          id: 'custom-deck',
+          id: 0,
           name: 'Custom Deck',
           description: 'Your personally crafted deck',
           difficulty: 'Medium',
@@ -96,9 +97,9 @@ export function DeckBuilder() {
     }
   };
 
-  const filteredCards = cardPool.filter(
-    (card) => !activeFilter || card.class.includes(activeFilter)
-  );
+  const filteredCards = cards
+    ? cards.filter((card) => !activeFilter || card.class.includes(activeFilter))
+    : [];
 
   return (
     <motion.div
@@ -141,7 +142,7 @@ export function DeckBuilder() {
 
           <TabsContent value="prebuilt">
             <PrebuiltDeckList
-              decks={prebuiltDecks}
+              decks={decks ?? []}
               selectedDeck={selectedDeck}
               onDeckSelect={handleDeckSelect}
               onStartBattle={handleStartGame}

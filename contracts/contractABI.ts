@@ -198,6 +198,59 @@ export const contractABI = [
     type: 'function',
   },
   {
+    inputs: [
+      {
+        internalType: 'string',
+        name: '_name',
+        type: 'string',
+      },
+      {
+        internalType: 'string',
+        name: '_description',
+        type: 'string',
+      },
+      {
+        internalType: 'string',
+        name: '_difficulty',
+        type: 'string',
+      },
+      {
+        internalType: 'string',
+        name: '_playstyle',
+        type: 'string',
+      },
+      {
+        internalType: 'string[]',
+        name: '_strengths',
+        type: 'string[]',
+      },
+      {
+        internalType: 'string[]',
+        name: '_weaknesses',
+        type: 'string[]',
+      },
+      {
+        internalType: 'uint256[]',
+        name: '_cardIds',
+        type: 'uint256[]',
+      },
+      {
+        internalType: 'string',
+        name: '_coverImage',
+        type: 'string',
+      },
+      {
+        internalType: 'string',
+        name: '_strategy',
+        type: 'string',
+      },
+    ],
+    name: 'addPrebuiltDeck',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
     inputs: [],
     name: 'getAllMonsters',
     outputs: [
@@ -247,6 +300,140 @@ export const contractABI = [
           },
         ],
         internalType: 'struct DeckResponse.MonsterWithId[]',
+        name: '',
+        type: 'tuple[]',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'getAllPrebuiltDecks',
+    outputs: [
+      {
+        components: [
+          {
+            internalType: 'uint256',
+            name: 'id',
+            type: 'uint256',
+          },
+          {
+            components: [
+              {
+                internalType: 'string',
+                name: 'name',
+                type: 'string',
+              },
+              {
+                internalType: 'string',
+                name: 'description',
+                type: 'string',
+              },
+              {
+                internalType: 'string',
+                name: 'difficulty',
+                type: 'string',
+              },
+              {
+                internalType: 'string',
+                name: 'playstyle',
+                type: 'string',
+              },
+              {
+                internalType: 'string[]',
+                name: 'strengths',
+                type: 'string[]',
+              },
+              {
+                internalType: 'string[]',
+                name: 'weaknesses',
+                type: 'string[]',
+              },
+              {
+                components: [
+                  {
+                    internalType: 'uint256',
+                    name: 'id',
+                    type: 'uint256',
+                  },
+                  {
+                    internalType: 'string',
+                    name: 'name',
+                    type: 'string',
+                  },
+                  {
+                    internalType: 'uint256',
+                    name: 'attack',
+                    type: 'uint256',
+                  },
+                  {
+                    internalType: 'uint256',
+                    name: 'health',
+                    type: 'uint256',
+                  },
+                  {
+                    internalType: 'uint256',
+                    name: 'maxPerSession',
+                    type: 'uint256',
+                  },
+                  {
+                    internalType: 'uint256',
+                    name: 'staminaCost',
+                    type: 'uint256',
+                  },
+                  {
+                    internalType: 'string',
+                    name: 'image',
+                    type: 'string',
+                  },
+                  {
+                    internalType: 'enum DeckType.OnAttackEffect',
+                    name: 'onAttackEffect',
+                    type: 'uint8',
+                  },
+                  {
+                    internalType: 'enum DeckType.OnDeadEffect',
+                    name: 'onDeadEffect',
+                    type: 'uint8',
+                  },
+                  {
+                    internalType: 'enum DeckType.OnDefenseEffect',
+                    name: 'onDefenseEffect',
+                    type: 'uint8',
+                  },
+                  {
+                    internalType: 'enum DeckType.ActiveSkill',
+                    name: 'activeSkill',
+                    type: 'uint8',
+                  },
+                  {
+                    internalType: 'enum DeckType.Class[]',
+                    name: 'classes',
+                    type: 'uint8[]',
+                  },
+                ],
+                internalType: 'struct DeckType.Card[]',
+                name: 'cards',
+                type: 'tuple[]',
+              },
+              {
+                internalType: 'string',
+                name: 'coverImage',
+                type: 'string',
+              },
+              {
+                internalType: 'string',
+                name: 'strategy',
+                type: 'string',
+              },
+            ],
+            internalType: 'struct DeckType.PrebuiltDeck',
+            name: 'deck',
+            type: 'tuple',
+          },
+        ],
+        internalType: 'struct DeckResponse.PrebuiltDeckWithId[]',
         name: '',
         type: 'tuple[]',
       },
@@ -523,6 +710,13 @@ export const contractABI = [
       },
     ],
     stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'initializePrebuiltDecks',
+    outputs: [],
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {

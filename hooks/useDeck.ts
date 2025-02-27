@@ -7,7 +7,7 @@ const DECK_STORAGE_KEY = 'tcg-battle-deck';
 const DECK_INFO_KEY = 'tcg-deck-info';
 
 interface SavedDeckInfo {
-  id: string;
+  id: number;
   name: string;
   description: string;
   coverImage: string;
@@ -16,14 +16,14 @@ interface SavedDeckInfo {
 // Helper function to safely get initial data
 function getInitialData() {
   if (typeof window === 'undefined') return { deck: null, info: null };
-  
+
   try {
     const storedDeck = localStorage.getItem(DECK_STORAGE_KEY);
     const storedInfo = localStorage.getItem(DECK_INFO_KEY);
-    
+
     return {
       deck: storedDeck ? JSON.parse(storedDeck) : null,
-      info: storedInfo ? JSON.parse(storedInfo) : null
+      info: storedInfo ? JSON.parse(storedInfo) : null,
     };
   } catch (error) {
     console.error('Error loading initial deck data:', error);
@@ -37,7 +37,7 @@ export function useDeck() {
     const { deck, info } = getInitialData();
     return {
       savedDeck: deck as Card[] | null,
-      deckInfo: info as SavedDeckInfo | null
+      deckInfo: info as SavedDeckInfo | null,
     };
   });
 
@@ -45,7 +45,7 @@ export function useDeck() {
     try {
       // Save deck cards
       localStorage.setItem(DECK_STORAGE_KEY, JSON.stringify(deck.cards));
-      
+
       // Save deck info
       const info: SavedDeckInfo = {
         id: deck.id,
@@ -54,11 +54,11 @@ export function useDeck() {
         coverImage: deck.coverImage,
       };
       localStorage.setItem(DECK_INFO_KEY, JSON.stringify(info));
-      
+
       // Update state
       setState({
         savedDeck: deck.cards,
-        deckInfo: info
+        deckInfo: info,
       });
     } catch (error) {
       console.error('Error saving deck:', error);
@@ -72,7 +72,7 @@ export function useDeck() {
       localStorage.removeItem(DECK_INFO_KEY);
       setState({
         savedDeck: null,
-        deckInfo: null
+        deckInfo: null,
       });
     } catch (error) {
       console.error('Error clearing deck:', error);

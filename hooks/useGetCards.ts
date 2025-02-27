@@ -13,32 +13,7 @@ import {
 } from '@/types/game';
 import { Address } from 'viem';
 
-// Định nghĩa kiểu CardWithId
-interface CardWithId {
-  id: bigint;
-  card: Card;
-}
-
-// Định nghĩa kiểu PaginatedCardsWithId
-interface PaginatedCardsWithId {
-  cardsPage: CardWithId[];
-  totalPages: bigint;
-  totalElements: bigint;
-}
-
-// Hàm ánh xạ số sang Class
-const mapClassFromNumber = (classNumber: number): Class => {
-  const classMap: { [key: number]: Class } = {
-    0: Class.METAL,
-    1: Class.WOOD,
-    2: Class.WATER,
-    3: Class.FIRE,
-    4: Class.EARTH,
-  };
-  return classMap[classNumber] || Class.METAL; // Default nếu không khớp
-};
-
-// Kiểm tra dữ liệu hợp lệ
+// Kiểm tra dữ liệu hợp lệ từ contract
 function isValidPaginatedCards(data: unknown): data is {
   cardsPage: { id: bigint; card: any }[];
   totalPages: bigint;
@@ -73,9 +48,21 @@ function isValidPaginatedCards(data: unknown): data is {
   );
 }
 
+// Hàm ánh xạ số sang Class
+const mapClassFromNumber = (classNumber: number): Class => {
+  const classMap: { [key: number]: Class } = {
+    0: Class.METAL,
+    1: Class.WOOD,
+    2: Class.WATER,
+    3: Class.FIRE,
+    4: Class.EARTH,
+  };
+  return classMap[classNumber] || Class.METAL; // Default nếu không khớp
+};
+
 export function useGetCards(
-  initialPageIndex = BigInt(1),
-  initialPageSize = BigInt(10)
+  initialPageIndex = BigInt(0),
+  initialPageSize = BigInt(40)
 ) {
   const [pageIndex, setPageIndex] = useState<bigint>(initialPageIndex);
   const [pageSize, setPageSize] = useState<bigint>(initialPageSize);
@@ -89,14 +76,14 @@ export function useGetCards(
     address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as Address,
     abi: contractABI,
     functionName: 'getCardsPaginated',
-    args: [initialPageIndex, initialPageSize],
+    args: [pageIndex, pageSize], // Dùng state để linh hoạt
     query: {
       enabled: pageSize > 0,
       staleTime: 1000 * 60 * 5, // 5 phút
     },
   });
 
-  const processedCards: PaginatedCardsWithId | undefined = (() => {
+  const processedCards: Card[] | undefined = (() => {
     if (!contractData) return undefined;
 
     if (!isValidPaginatedCards(contractData)) {
@@ -104,43 +91,37 @@ export function useGetCards(
       return undefined;
     }
 
-    return {
-      cardsPage: contractData.cardsPage.map((item) => ({
-        id: BigInt(item.id),
-        card: {
-          id: Number(item.card.id),
-          name: item.card.name,
-          attack: Number(item.card.attack),
-          health: Number(item.card.health),
-          maxPerSession: Number(item.card.maxPerSession),
-          staminaCost: Number(item.card.staminaCost),
-          image: item.card.image,
-          onAttackEffect:
-            OnAttackEffect[
-              OnAttackEffect[
-                item.card.onAttackEffect as keyof typeof OnAttackEffect
-              ]
-            ],
-          onDeadEffect:
-            OnDeadEffect[
-              OnDeadEffect[item.card.onDeadEffect as keyof typeof OnDeadEffect]
-            ],
-          onDefenseEffect:
-            OnDefenseEffect[
-              OnDefenseEffect[
-                item.card.onDefenseEffect as keyof typeof OnDefenseEffect
-              ]
-            ],
-          activeSkill:
-            ActiveSkill[
-              ActiveSkill[item.card.activeSkill as keyof typeof ActiveSkill]
-            ],
-          class: item.card.classes.map((c: number) => mapClassFromNumber(c)),
-        },
-      })),
-      totalPages: BigInt(contractData.totalPages),
-      totalElements: BigInt(contractData.totalElements),
-    };
+    // Gộp id từ CardWithId vào Card và trả về mảng Card[]
+    return contractData.cardsPage.map((item) => ({
+      id: Number(item.id), // Lấy id từ CardWithId thay vì card.id
+      name: item.card.name,
+      attack: Number(item.card.attack),
+      health: Number(item.card.health),
+      maxPerSession: Number(item.card.maxPerSession),
+      staminaCost: Number(item.card.staminaCost),
+      image: item.card.image,
+      onAttackEffect:
+        OnAttackEffect[
+          OnAttackEffect[
+            item.card.onAttackEffect as keyof typeof OnAttackEffect
+          ]
+        ],
+      onDeadEffect:
+        OnDeadEffect[
+          OnDeadEffect[item.card.onDeadEffect as keyof typeof OnDeadEffect]
+        ],
+      onDefenseEffect:
+        OnDefenseEffect[
+          OnDefenseEffect[
+            item.card.onDefenseEffect as keyof typeof OnDefenseEffect
+          ]
+        ],
+      activeSkill:
+        ActiveSkill[
+          ActiveSkill[item.card.activeSkill as keyof typeof ActiveSkill]
+        ],
+      class: item.card.classes.map((c: number) => mapClassFromNumber(c)),
+    }));
   })();
 
   const fetchCardsByPage = (newPageIndex: bigint, newPageSize?: bigint) => {
