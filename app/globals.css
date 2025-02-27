@@ -4,28 +4,27 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 72.2% 50.6%;
-    --primary-foreground: 0 85.7% 97.3%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
+    --background: 270 60% 95%;
+    --foreground: 270 5% 10%;
+    --card: 270 50% 98%;
+    --card-foreground: 270 5% 15%;
+    --popover: 270 60% 98%;
+    --popover-foreground: 270 5% 10%;
+    --primary: 270 80% 60%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 260 40% 85%;
+    --secondary-foreground: 270 5% 15%;
+    --muted: 260 30% 90%;
+    --muted-foreground: 270 10% 40%;
+    --accent: 260 50% 80%;
+    --accent-foreground: 270 5% 10%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
+    --border: 270 20% 75%;
+    --input: 270 20% 75%;
+    --ring: 270 80% 60%;
     --radius: 0.5rem;
 
-    /* Element Colors */
     --fire-primary: 0 100% 50%;
     --fire-secondary: 20 100% 50%;
     --water-primary: 200 100% 50%;
@@ -39,25 +38,25 @@
   }
 
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
+    --background: 270 50% 10%;
+    --foreground: 270 5% 95%;
+    --card: 270 40% 15%;
     --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
+    --popover: 270 40% 15%;
     --popover-foreground: 0 0% 98%;
-    --primary: 0 72.2% 50.6%;
-    --primary-foreground: 0 85.7% 97.3%;
-    --secondary: 240 3.7% 15.9%;
+    --primary: 270 70% 70%;
+    --primary-foreground: 270 5% 10%;
+    --secondary: 260 30% 25%;
     --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
+    --muted: 260 20% 30%;
+    --muted-foreground: 270 10% 70%;
+    --accent: 260 40% 35%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
+    --border: 270 30% 20%;
+    --input: 270 30% 20%;
+    --ring: 270 70% 70%;
   }
 }
 
@@ -68,7 +67,7 @@
   body {
     @apply text-foreground;
     font-family: system-ui, -apple-system, sans-serif;
-    background-image: url("https://wallpapers.com/images/featured/1080p-gaming-background-g3jh3d1kcvj61sz5.jpg");
+    background-image: url('https://wallpapers.com/images/featured/1080p-gaming-background-g3jh3d1kcvj61sz5.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;

@@ -8,18 +8,18 @@ import {
   ActiveSkill,
   GameState,
   PrebuiltDeck,
-} from "@/types/game";
+} from '@/types/game';
 
 // Base card pool (40 cards)
 export const cardPool: Card[] = [
   {
     id: 1,
-    name: "Fire Dragon",
+    name: 'Fire Dragon',
     attack: 8,
     health: 6,
     maxPerSession: 2,
     image:
-      "https://res.cloudinary.com/dlotuochc/image/upload/v1739797748/TCG%20Battle%20Adventure/jzm1wj6kzrekhu3zq8an.png",
+      'https://res.cloudinary.com/dlotuochc/image/upload/v1739797748/TCG%20Battle%20Adventure/jzm1wj6kzrekhu3zq8an.png',
     class: [Class.FIRE],
     staminaCost: 3,
     onAttackEffect: OnAttackEffect.CRITICAL_STRIKE,
@@ -29,12 +29,12 @@ export const cardPool: Card[] = [
   },
   {
     id: 2,
-    name: "Earth Golem",
+    name: 'Earth Golem',
     attack: 4,
     health: 10,
     maxPerSession: 3,
     image:
-      "https://res.cloudinary.com/dlotuochc/image/upload/v1740049298/TCG%20Battle%20Adventure/r9ahkormzgxdmlfwuj9s.png",
+      'https://res.cloudinary.com/dlotuochc/image/upload/v1740049298/TCG%20Battle%20Adventure/r9ahkormzgxdmlfwuj9s.png',
     class: [Class.EARTH],
     staminaCost: 2,
     onAttackEffect: OnAttackEffect.NONE,
@@ -44,12 +44,12 @@ export const cardPool: Card[] = [
   },
   {
     id: 3,
-    name: "Water Elemental",
+    name: 'Water Elemental',
     attack: 6,
     health: 6,
     maxPerSession: 2,
     image:
-      "https://res.cloudinary.com/dlotuochc/image/upload/v1740049294/TCG%20Battle%20Adventure/vgsemseiixtxtyjjfo1v.png",
+      'https://res.cloudinary.com/dlotuochc/image/upload/v1740049294/TCG%20Battle%20Adventure/vgsemseiixtxtyjjfo1v.png',
     class: [Class.WATER],
     staminaCost: 2,
     onAttackEffect: OnAttackEffect.LIFESTEAL,
@@ -59,12 +59,12 @@ export const cardPool: Card[] = [
   },
   {
     id: 4,
-    name: "Metal Knight",
+    name: 'Metal Knight',
     attack: 7,
     health: 8,
     maxPerSession: 2,
     image:
-      "https://res.cloudinary.com/dlotuochc/image/upload/v1740049296/TCG%20Battle%20Adventure/bwmtrdybdv8wnz3zycg7.png",
+      'https://res.cloudinary.com/dlotuochc/image/upload/v1740049296/TCG%20Battle%20Adventure/bwmtrdybdv8wnz3zycg7.png',
     class: [Class.METAL],
     staminaCost: 3,
     onAttackEffect: OnAttackEffect.CRITICAL_STRIKE,
@@ -74,12 +74,12 @@ export const cardPool: Card[] = [
   },
   {
     id: 5,
-    name: "Wood Elf",
+    name: 'Wood Elf',
     attack: 5,
     health: 4,
     maxPerSession: 3,
     image:
-      "https://res.cloudinary.com/dlotuochc/image/upload/v1740049289/TCG%20Battle%20Adventure/hwa5oiqezmwdiid5gaci.jpg",
+      'https://res.cloudinary.com/dlotuochc/image/upload/v1740049289/TCG%20Battle%20Adventure/hwa5oiqezmwdiid5gaci.jpg',
     class: [Class.WOOD],
     staminaCost: 1,
     onAttackEffect: OnAttackEffect.LIFESTEAL,
@@ -89,12 +89,12 @@ export const cardPool: Card[] = [
   },
   {
     id: 6,
-    name: "Flame Assassin",
+    name: 'Flame Assassin',
     attack: 9,
     health: 4,
     maxPerSession: 2,
     image:
-      "https://res.cloudinary.com/dlotuochc/image/upload/v1740049293/TCG%20Battle%20Adventure/vnwlzhguts8rfc7jkhnp.png",
+      'https://res.cloudinary.com/dlotuochc/image/upload/v1740049293/TCG%20Battle%20Adventure/vnwlzhguts8rfc7jkhnp.png',
     class: [Class.FIRE],
     staminaCost: 3,
     onAttackEffect: OnAttackEffect.CRITICAL_STRIKE,
@@ -104,12 +104,12 @@ export const cardPool: Card[] = [
   },
   {
     id: 7,
-    name: "Stone Guardian",
+    name: 'Stone Guardian',
     attack: 3,
     health: 12,
     maxPerSession: 2,
     image:
-      "https://res.cloudinary.com/dlotuochc/image/upload/v1740049294/TCG%20Battle%20Adventure/pmvgcr6abzs1p2d8yarx.png",
+      'https://res.cloudinary.com/dlotuochc/image/upload/v1740049294/TCG%20Battle%20Adventure/pmvgcr6abzs1p2d8yarx.png',
     class: [Class.EARTH],
     staminaCost: 3,
     onAttackEffect: OnAttackEffect.NONE,
@@ -119,12 +119,12 @@ export const cardPool: Card[] = [
   },
   {
     id: 8,
-    name: "Water Healer",
+    name: 'Water Healer',
     attack: 4,
     health: 6,
     maxPerSession: 2,
     image:
-      "https://res.cloudinary.com/dlotuochc/image/upload/v1740049289/TCG%20Battle%20Adventure/hwa5oiqezmwdiid5gaci.jpg",
+      'https://res.cloudinary.com/dlotuochc/image/upload/v1740049289/TCG%20Battle%20Adventure/hwa5oiqezmwdiid5gaci.jpg',
     class: [Class.WATER],
     staminaCost: 2,
     onAttackEffect: OnAttackEffect.LIFESTEAL,
@@ -134,12 +134,12 @@ export const cardPool: Card[] = [
   },
   {
     id: 9,
-    name: "Metal Berserker",
+    name: 'Metal Berserker',
     attack: 8,
     health: 5,
     maxPerSession: 2,
     image:
-      "https://res.cloudinary.com/dlotuochc/image/upload/v1740049295/TCG%20Battle%20Adventure/qpfcfs8vffnipuicubrn.png",
+      'https://res.cloudinary.com/dlotuochc/image/upload/v1740049295/TCG%20Battle%20Adventure/qpfcfs8vffnipuicubrn.png',
     class: [Class.METAL],
     staminaCost: 3,
     onAttackEffect: OnAttackEffect.CRITICAL_STRIKE,
@@ -149,12 +149,12 @@ export const cardPool: Card[] = [
   },
   {
     id: 10,
-    name: "Forest Druid",
+    name: 'Forest Druid',
     attack: 5,
     health: 7,
     maxPerSession: 2,
     image:
-      "https://res.cloudinary.com/dlotuochc/image/upload/v1740049296/TCG%20Battle%20Adventure/lm03b601m6xeobc7wczu.png",
+      'https://res.cloudinary.com/dlotuochc/image/upload/v1740049296/TCG%20Battle%20Adventure/lm03b601m6xeobc7wczu.png',
     class: [Class.WOOD],
     staminaCost: 2,
     onAttackEffect: OnAttackEffect.LIFESTEAL,
@@ -164,12 +164,12 @@ export const cardPool: Card[] = [
   },
   {
     id: 11,
-    name: "Volcanic Giant",
+    name: 'Volcanic Giant',
     attack: 10,
     health: 8,
     maxPerSession: 1,
     image:
-      "https://res.cloudinary.com/dlotuochc/image/upload/v1740049291/TCG%20Battle%20Adventure/nonfpunalm20kyfl6jxe.png",
+      'https://res.cloudinary.com/dlotuochc/image/upload/v1740049291/TCG%20Battle%20Adventure/nonfpunalm20kyfl6jxe.png',
     class: [Class.FIRE, Class.EARTH],
     staminaCost: 4,
     onAttackEffect: OnAttackEffect.CRITICAL_STRIKE,
@@ -179,12 +179,12 @@ export const cardPool: Card[] = [
   },
   {
     id: 12,
-    name: "Storm Mage",
+    name: 'Storm Mage',
     attack: 7,
     health: 5,
     maxPerSession: 2,
     image:
-      "https://res.cloudinary.com/dlotuochc/image/upload/v1740049291/TCG%20Battle%20Adventure/zfna0w9d2ndjyyyjbmph.png",
+      'https://res.cloudinary.com/dlotuochc/image/upload/v1740049291/TCG%20Battle%20Adventure/zfna0w9d2ndjyyyjbmph.png',
     class: [Class.WATER, Class.METAL],
     staminaCost: 3,
     onAttackEffect: OnAttackEffect.CRITICAL_STRIKE,
@@ -199,7 +199,7 @@ export const cardPool: Card[] = [
     health: 8,
     maxPerSession: 2,
     image:
-      "https://res.cloudinary.com/dlotuochc/image/upload/v1740049294/TCG%20Battle%20Adventure/aeklge0zyujx8ikxcryz.png",
+      'https://res.cloudinary.com/dlotuochc/image/upload/v1740049294/TCG%20Battle%20Adventure/aeklge0zyujx8ikxcryz.png',
     class: [Class.WOOD, Class.EARTH],
     staminaCost: 3,
     onAttackEffect: OnAttackEffect.LIFESTEAL,
@@ -209,12 +209,12 @@ export const cardPool: Card[] = [
   },
   {
     id: 14,
-    name: "Blade Master",
+    name: 'Blade Master',
     attack: 8,
     health: 6,
     maxPerSession: 2,
     image:
-      "https://res.cloudinary.com/dlotuochc/image/upload/v1740049291/TCG%20Battle%20Adventure/vhdctqr1lot3u202xthg.png",
+      'https://res.cloudinary.com/dlotuochc/image/upload/v1740049291/TCG%20Battle%20Adventure/vhdctqr1lot3u202xthg.png',
     class: [Class.METAL],
     staminaCost: 3,
     onAttackEffect: OnAttackEffect.CRITICAL_STRIKE,
@@ -224,12 +224,12 @@ export const cardPool: Card[] = [
   },
   {
     id: 15,
-    name: "Ancient Treant",
+    name: 'Ancient Treant',
     attack: 4,
     health: 12,
     maxPerSession: 1,
     image:
-      "https://res.cloudinary.com/dlotuochc/image/upload/v1740049291/TCG%20Battle%20Adventure/wqujynso8o9akodknazz.png",
+      'https://res.cloudinary.com/dlotuochc/image/upload/v1740049291/TCG%20Battle%20Adventure/wqujynso8o9akodknazz.png',
     class: [Class.WOOD],
     staminaCost: 3,
     onAttackEffect: OnAttackEffect.NONE,
@@ -239,12 +239,12 @@ export const cardPool: Card[] = [
   },
   {
     id: 16,
-    name: "Phoenix Warrior",
+    name: 'Phoenix Warrior',
     attack: 7,
     health: 5,
     maxPerSession: 2,
     image:
-      "https://res.cloudinary.com/dlotuochc/image/upload/v1740049291/TCG%20Battle%20Adventure/sgpqtvvxsop5g9x04wa4.png",
+      'https://res.cloudinary.com/dlotuochc/image/upload/v1740049291/TCG%20Battle%20Adventure/sgpqtvvxsop5g9x04wa4.png',
     class: [Class.FIRE],
     staminaCost: 3,
     onAttackEffect: OnAttackEffect.LIFESTEAL,
@@ -254,12 +254,12 @@ export const cardPool: Card[] = [
   },
   {
     id: 17,
-    name: "Crystal Golem",
+    name: 'Crystal Golem',
     attack: 5,
     health: 9,
     maxPerSession: 2,
     image:
-      "https://res.cloudinary.com/dlotuochc/image/upload/v1740049328/TCG%20Battle%20Adventure/vi2awomtpdu6bwzt9vgg.png",
+      'https://res.cloudinary.com/dlotuochc/image/upload/v1740049328/TCG%20Battle%20Adventure/vi2awomtpdu6bwzt9vgg.png',
     class: [Class.EARTH, Class.METAL],
     staminaCost: 3,
     onAttackEffect: OnAttackEffect.NONE,
@@ -269,12 +269,12 @@ export const cardPool: Card[] = [
   },
   {
     id: 18,
-    name: "Tide Caller",
+    name: 'Tide Caller',
     attack: 6,
     health: 6,
     maxPerSession: 2,
     image:
-      "https://res.cloudinary.com/dlotuochc/image/upload/v1740049294/TCG%20Battle%20Adventure/vgsemseiixtxtyjjfo1v.png",
+      'https://res.cloudinary.com/dlotuochc/image/upload/v1740049294/TCG%20Battle%20Adventure/vgsemseiixtxtyjjfo1v.png',
     class: [Class.WATER],
     staminaCost: 2,
     onAttackEffect: OnAttackEffect.LIFESTEAL,
@@ -284,12 +284,12 @@ export const cardPool: Card[] = [
   },
   {
     id: 19,
-    name: "Steel Sentinel",
+    name: 'Steel Sentinel',
     attack: 6,
     health: 8,
     maxPerSession: 2,
     image:
-      "https://res.cloudinary.com/dlotuochc/image/upload/v1740049296/TCG%20Battle%20Adventure/bwmtrdybdv8wnz3zycg7.png",
+      'https://res.cloudinary.com/dlotuochc/image/upload/v1740049296/TCG%20Battle%20Adventure/bwmtrdybdv8wnz3zycg7.png',
     class: [Class.METAL],
     staminaCost: 3,
     onAttackEffect: OnAttackEffect.NONE,
@@ -299,12 +299,12 @@ export const cardPool: Card[] = [
   },
   {
     id: 20,
-    name: "Forest Scout",
+    name: 'Forest Scout',
     attack: 4,
     health: 4,
     maxPerSession: 3,
     image:
-      "https://res.cloudinary.com/dlotuochc/image/upload/v1740049289/TCG%20Battle%20Adventure/hwa5oiqezmwdiid5gaci.jpg",
+      'https://res.cloudinary.com/dlotuochc/image/upload/v1740049289/TCG%20Battle%20Adventure/hwa5oiqezmwdiid5gaci.jpg',
     class: [Class.WOOD],
     staminaCost: 1,
     onAttackEffect: OnAttackEffect.CRITICAL_STRIKE,
@@ -315,9 +315,9 @@ export const cardPool: Card[] = [
 ];
 
 export const mockGameState: GameState = {
-  _id: "mock-game-1",
-  playerId: "player-1",
-  sessionId: "session-1",
+  _id: 'mock-game-1',
+  playerId: 'player-1',
+  sessionId: 'session-1',
   currentStage: 1,
   playerHealth: 40,
   playerStamina: 1,
@@ -336,14 +336,14 @@ export const mockGameState: GameState = {
 
 export const prebuiltDecks: PrebuiltDeck[] = [
   {
-    id: "fire-aggro",
-    name: "Inferno Dominance",
+    id: 5,
+    name: 'Inferno Dominance',
     description:
-      "Overwhelm your enemies with aggressive fire attacks and explosive combinations",
-    difficulty: "Medium",
-    playstyle: "Aggressive",
-    strengths: ["High burst damage", "Critical strikes", "Explosive effects"],
-    weaknesses: ["Low survivability", "Vulnerable to control"],
+      'Overwhelm your enemies with aggressive fire attacks and explosive combinations',
+    difficulty: 'Medium',
+    playstyle: 'Aggressive',
+    strengths: ['High burst damage', 'Critical strikes', 'Explosive effects'],
+    weaknesses: ['Low survivability', 'Vulnerable to control'],
     cards: [
       cardPool[0], // Fire Dragon x2
       cardPool[0],
@@ -360,18 +360,18 @@ export const prebuiltDecks: PrebuiltDeck[] = [
       cardPool[11],
     ],
     coverImage:
-      "https://images.unsplash.com/photo-1544553866-7f0d760b6f46?q=80&w=2070",
+      'https://images.unsplash.com/photo-1544553866-7f0d760b6f46?q=80&w=2070',
     strategy:
-      "Focus on dealing maximum damage early. Use Water Elementals for sustain and Storm Mages for consistent damage.",
+      'Focus on dealing maximum damage early. Use Water Elementals for sustain and Storm Mages for consistent damage.',
   },
   {
-    id: "earth-defense",
+    id: 4,
     name: "Mountain's Bulwark",
-    description: "An impenetrable fortress of earth and stone",
-    difficulty: "Easy",
-    playstyle: "Defensive",
-    strengths: ["High health pool", "Thorns damage", "Good sustain"],
-    weaknesses: ["Low mobility", "Weak to burst damage"],
+    description: 'An impenetrable fortress of earth and stone',
+    difficulty: 'Easy',
+    playstyle: 'Defensive',
+    strengths: ['High health pool', 'Thorns damage', 'Good sustain'],
+    weaknesses: ['Low mobility', 'Weak to burst damage'],
     cards: [
       cardPool[1], // Earth Golem x3
       cardPool[1],
@@ -388,18 +388,18 @@ export const prebuiltDecks: PrebuiltDeck[] = [
       cardPool[19], // Forest Scout
     ],
     coverImage:
-      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2070",
+      'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2070',
     strategy:
-      "Build a wall of high-health units. Use thorns effects to punish attackers while slowly grinding them down.",
+      'Build a wall of high-health units. Use thorns effects to punish attackers while slowly grinding them down.',
   },
   {
-    id: "metal-control",
-    name: "Steel Legion",
-    description: "Precise strikes and calculated moves",
-    difficulty: "Hard",
-    playstyle: "Control",
-    strengths: ["Balanced stats", "Critical strikes", "Armor effects"],
-    weaknesses: ["Resource intensive", "Complex combinations"],
+    id: 3,
+    name: 'Steel Legion',
+    description: 'Precise strikes and calculated moves',
+    difficulty: 'Hard',
+    playstyle: 'Control',
+    strengths: ['Balanced stats', 'Critical strikes', 'Armor effects'],
+    weaknesses: ['Resource intensive', 'Complex combinations'],
     cards: [
       cardPool[3], // Metal Knight x2
       cardPool[3],
@@ -416,18 +416,18 @@ export const prebuiltDecks: PrebuiltDeck[] = [
       cardPool[10], // Volcanic Giant
     ],
     coverImage:
-      "https://images.unsplash.com/photo-1563089145-599997674d42?q=80&w=2070",
+      'https://images.unsplash.com/photo-1563089145-599997674d42?q=80&w=2070',
     strategy:
-      "Control the battlefield with armored units while setting up powerful critical strike combinations.",
+      'Control the battlefield with armored units while setting up powerful critical strike combinations.',
   },
   {
-    id: "nature-combo",
-    name: "Wild Synthesis",
+    id: 2,
+    name: 'Wild Synthesis',
     description: "Harness the power of nature's harmony",
-    difficulty: "Medium",
-    playstyle: "Combo",
-    strengths: ["Synergy bonuses", "Resource efficient", "Flexible gameplay"],
-    weaknesses: ["Requires setup", "Weak individually"],
+    difficulty: 'Medium',
+    playstyle: 'Combo',
+    strengths: ['Synergy bonuses', 'Resource efficient', 'Flexible gameplay'],
+    weaknesses: ['Requires setup', 'Weak individually'],
     cards: [
       cardPool[4], // Wood Elf x3
       cardPool[4],
@@ -443,18 +443,18 @@ export const prebuiltDecks: PrebuiltDeck[] = [
       cardPool[7],
     ],
     coverImage:
-      "https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=2070",
+      'https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=2070',
     strategy:
-      "Build powerful combinations between Wood and Water units. Focus on healing and sustain while growing stronger.",
+      'Build powerful combinations between Wood and Water units. Focus on healing and sustain while growing stronger.',
   },
   {
-    id: "elemental-chaos",
-    name: "Elemental Chaos",
-    description: "Master all elements in perfect discord",
-    difficulty: "Expert",
-    playstyle: "Versatile",
-    strengths: ["Unpredictable", "Powerful effects", "Multiple strategies"],
-    weaknesses: ["Inconsistent", "Hard to master"],
+    id: 1,
+    name: 'Elemental Chaos',
+    description: 'Master all elements in perfect discord',
+    difficulty: 'Expert',
+    playstyle: 'Versatile',
+    strengths: ['Unpredictable', 'Powerful effects', 'Multiple strategies'],
+    weaknesses: ['Inconsistent', 'Hard to master'],
     cards: [
       cardPool[0], // Fire Dragon
       cardPool[1], // Earth Golem
@@ -471,8 +471,8 @@ export const prebuiltDecks: PrebuiltDeck[] = [
       cardPool[17], // Tide Caller
     ],
     coverImage:
-      "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=2070",
+      'https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=2070',
     strategy:
-      "Adapt to each situation by combining different elemental effects. Requires deep knowledge of all mechanics.",
+      'Adapt to each situation by combining different elemental effects. Requires deep knowledge of all mechanics.',
   },
 ];

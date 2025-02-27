@@ -26,12 +26,12 @@ export function GameLobby() {
   ];
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-yellow-900/20 to-black">
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-purple-light/20 to-purple-dark">
       <Navbar />
       <BackgroundEffects />
 
       {/* Hero Section */}
-      <div className="relative min-h-screen">
+      <div className="relative min-h-screen pt-28">
         <HeroSection />
 
         {/* Menu Cards */}
