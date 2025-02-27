@@ -59,7 +59,7 @@ export default function ContextProvider({ children }: { children: Props }) {
           locale="en-US"
         >
           {mounted && children} */}
-        <HappyWalletProvider>{mounted && children}</HappyWalletProvider>
+        <HappyWalletProvider>{children}</HappyWalletProvider>
         {/* </RainbowKitProvider> */}
       </QueryClientProvider>
     </WagmiProvider>

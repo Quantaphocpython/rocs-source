@@ -15,17 +15,22 @@ import type { PrebuiltDeck, Card } from '@/types/game';
 import { Class } from '@/types/game';
 import { DECK_SIZE } from '@/constants/game';
 import { motion } from 'framer-motion';
+import { useGetCards } from '@/hooks/useGetCards';
 
 export function DeckBuilder() {
   const router = useRouter();
   const { saveDeck, deckInfo } = useDeck();
   const [selectedDeck, setSelectedDeck] = useState<PrebuiltDeck | null>(
-    deckInfo ? prebuiltDecks.find(d => d.id === deckInfo.id) || null : null
+    deckInfo ? prebuiltDecks.find((d) => d.id === deckInfo.id) || null : null
   );
   const [customDeck, setCustomDeck] = useState<Card[]>([]);
   const [activeFilter, setActiveFilter] = useState<Class | null>(null);
   const [sortBy, setSortBy] = useState<'attack' | 'health' | 'cost'>('attack');
   const [activeTab, setActiveTab] = useState<'prebuilt' | 'custom'>('prebuilt');
+
+  const { cards } = useGetCards();
+
+  console.log(cards);
 
   const handleDeckSelect = (deck: PrebuiltDeck) => {
     setSelectedDeck(deck);
@@ -38,7 +43,7 @@ export function DeckBuilder() {
       return;
     }
 
-    const cardCount = customDeck.filter(c => c.id === card.id).length;
+    const cardCount = customDeck.filter((c) => c.id === card.id).length;
     if (cardCount >= card.maxPerSession) {
       toast.error(`Can't add more copies of ${card.name}`);
       return;
@@ -49,7 +54,7 @@ export function DeckBuilder() {
   };
 
   const removeCard = (index: number) => {
-    setCustomDeck(prev => prev.filter((_, i) => i !== index));
+    setCustomDeck((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleStartGame = () => {
@@ -76,8 +81,10 @@ export function DeckBuilder() {
           strengths: ['Customized strategy', 'Personal playstyle'],
           weaknesses: ['Untested combinations'],
           cards: customDeck,
-          coverImage: 'https://images.unsplash.com/photo-1635859890085-ec9e0c90f072',
-          strategy: 'Use your custom combination of cards to develop your own unique strategy.',
+          coverImage:
+            'https://images.unsplash.com/photo-1635859890085-ec9e0c90f072',
+          strategy:
+            'Use your custom combination of cards to develop your own unique strategy.',
         };
         saveDeck(customPrebuiltDeck);
       }
@@ -90,7 +97,7 @@ export function DeckBuilder() {
   };
 
   const filteredCards = cardPool.filter(
-    card => !activeFilter || card.class.includes(activeFilter)
+    (card) => !activeFilter || card.class.includes(activeFilter)
   );
 
   return (
@@ -112,7 +119,9 @@ export function DeckBuilder() {
 
         <Tabs
           value={activeTab}
-          onValueChange={(value) => setActiveTab(value as 'prebuilt' | 'custom')}
+          onValueChange={(value) =>
+            setActiveTab(value as 'prebuilt' | 'custom')
+          }
           className="space-y-8"
         >
           <TabsList className="bg-black/50 border border-yellow-900/50 p-1 mb-8">
@@ -144,7 +153,9 @@ export function DeckBuilder() {
               <div className="col-span-9">
                 <div className="bg-black/30 border border-yellow-900/50 rounded-lg p-6 backdrop-blur-sm">
                   <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-xl font-bold text-yellow-400">Available Cards</h3>
+                    <h3 className="text-xl font-bold text-yellow-400">
+                      Available Cards
+                    </h3>
                     <div className="text-sm text-yellow-400/60">
                       Click on cards to add them to your deck
                     </div>
@@ -167,10 +178,7 @@ export function DeckBuilder() {
               </div>
 
               <div className="col-span-3">
-                <DeckPreview
-                  deck={customDeck}
-                  onRemoveCard={removeCard}
-                />
+                <DeckPreview deck={customDeck} onRemoveCard={removeCard} />
 
                 {customDeck.length === DECK_SIZE && (
                   <motion.div
