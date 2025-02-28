@@ -15,13 +15,12 @@ const nextConfig = {
     '@wagmi/connectors',
     'wagmi',
     '@rainbow-me/rainbowkit',
-    'sonner', // Thêm sonner nếu cần
+    'sonner',
   ],
   webpack: (config) => {
     config.module.rules.push({
-      test: /\.(js|ts|tsx)$/, // Thêm hỗ trợ .ts và .tsx
+      test: /\.(js|ts|tsx)$/,
       loader: 'babel-loader',
-      // Loại bỏ exclude để xử lý cả node_modules được transpile
       include: [
         /node_modules[\\/]@happy\.tech/,
         /node_modules[\\/]@walletconnect/,

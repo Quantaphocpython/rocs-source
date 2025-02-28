@@ -1,11 +1,10 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { CustomConnectButton } from '../wallet/CustomConnectButton';
-import Link from 'next/link';
+import { connect } from '@happy.tech/core';
 import { ConnectButton } from '@happy.tech/react';
-import { register, connect } from '@happy.tech/core';
+import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 export function Navbar({ className }: { className?: string }) {
   const onRegister = () => {
@@ -31,7 +30,6 @@ export function Navbar({ className }: { className?: string }) {
       </Link>
 
       <ConnectButton />
-      {/* <CustomConnectButton /> */}
     </motion.nav>
   );
 }

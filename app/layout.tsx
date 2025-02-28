@@ -8,12 +8,11 @@ import dynamic from 'next/dynamic';
 import { Toaster } from 'sonner';
 
 const ContextProvider = dynamic(
-  () => import('@/components/providers/ContextProvider'),
+  () => import('../components/providers/ContextProvider'),
   {
-    ssr: false,
+    ssr: false, // Tắt SSR cho ContextProvider
   }
 );
-
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
