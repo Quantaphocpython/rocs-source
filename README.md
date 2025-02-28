@@ -7,22 +7,22 @@ Welcome to the thrilling universe of **Realm of Cards - Frontend**! This is your
 
 ----------
 
-## 📜 Table of Contents
+## Table of Contents
 
-- [🌟 What is Realm of Cards - Frontend?](#what-is-realm-of-cards---frontend)
-- [🚀 How to Get Started](#how-to-get-started)
-  - [🛠️ Prerequisites](#prerequisites)
-  - [⚙️ Installation](#installation)
-- [💻 Technologies Powering the Realm](#technologies-powering-the-realm)
-- [🗂️ Project Structure](#project-structure)
-- [🤝 How to Contribute](#how-to-contribute)
-- [📜 License](#license)
+- [What is Realm of Cards - Frontend?](#what-is-realm-of-cards---frontend)
+- [How to Get Started](#how-to-get-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+- [Technologies Powering the Realm](#technologies-powering-the-realm)
+- [Project Structure](#project-structure)
+- [How to Contribute](#how-to-contribute)
+- [License](#license)
 
   
 
 ----------
 
-## 🌟 What is Realm of Cards - Frontend? 
+## What is Realm of Cards - Frontend? 
 
   
 
@@ -40,11 +40,11 @@ It’s card combat cranked up to eleven—perfect for strategists and blockchain
 
 ----------
 
-## 🚀 How to Get Started
+## How to Get Started
 
 Ready to jump into the action? Follow these steps to set up the **Realm of Cards - Frontend** on your own machine and start slinging cards! 🎮
 
-### 🛠️ Prerequisites
+### Prerequisites
 Before you begin, make sure you have:
 
 -   **Node.js**: Version 16 or higher—your engine for this epic quest.
@@ -53,7 +53,7 @@ Before you begin, make sure you have:
   
 -   **Web Browser**: Chrome, Firefox, or any browser that’s ready to roll!
 
-### ⚙️Installation
+### Installation
 
 1. **Clone the repository**:
    ```bash
@@ -84,7 +84,7 @@ Before you begin, make sure you have:
 
 ----------
 
-## 💻 Technologies Powering the Realm
+## Technologies Powering the Realm
 
 This frontend is forged with a powerful mix of modern tools and libraries, blending seamless gameplay with blockchain integration. Here’s the tech stack fueling the adventure:
 
@@ -109,7 +109,7 @@ Together, these tools create a slick, immersive frontend tied to the **HappyChai
 
 ----------
 
-## 🗂️ Project Structure
+## Project Structure
 
 ```
 .
@@ -126,14 +126,14 @@ Together, these tools create a slick, immersive frontend tied to the **HappyChai
 ```
 ----------
 
-## 🤝 How to Contribute
+## How to Contribute
 
 Want to join the adventure? We’d love your help! Fork the repository, make some epic changes, and send us a pull request. Whether it’s fixing bugs, adding features, or tweaking the UI, every contribution makes the **Realm of Cards** even more legendary! 🧙‍♂️⚡
 
 
 ----------
 
-## 📜 License
+## License 
 
   
 
