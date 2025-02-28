@@ -66,7 +66,7 @@ export default function Home() {
         {/* Footer */}
         <footer className="py-8 text-center text-sm text-white/60">
           <div className="container mx-auto px-4">
-            <p>© 2025 TCG Battle Adventure. All rights reserved.</p>
+            <p>© 2025 Realm of Cards Adventure. All rights reserved.</p>
           </div>
         </footer>
       </motion.main>
