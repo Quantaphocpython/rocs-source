@@ -5,17 +5,18 @@
 
 Welcome to the thrilling universe of **Realm of Cards - Frontend**! This is your gateway to an electrifying blockchain-powered trading card game (TCG) adventure. Whether you're a seasoned deck-builder or a newcomer ready to dive into epic battles, this frontend brings the **Realm of Cards** to life with style, speed, and a touch of magic. Here’s everything you need to know about this project! ⚔️🎴
 
+----------
 
-## Table of Contents
+## 📜 Table of Contents
 
-- [What is Realm of Cards - Frontend?](#overview)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-- [Technologies Used](#technologies-used)
-- [Project Structure](#project-structure)
-- [Contributing](#contributing)
-- [License](#license)
+- [🌟 What is Realm of Cards - Frontend?](#what-is-realm-of-cards---frontend)
+- [🚀 How to Get Started](#how-to-get-started)
+  - [🛠️ Prerequisites](#prerequisites)
+  - [⚙️ Installation](#installation)
+- [💻 Technologies Powering the Realm](#technologies-powering-the-realm)
+- [🗂️ Project Structure](#project-structure)
+- [🤝 How to Contribute](#how-to-contribute)
+- [📜 License](#license)
 
   
 
@@ -52,7 +53,7 @@ Before you begin, make sure you have:
   
 -   **Web Browser**: Chrome, Firefox, or any browser that’s ready to roll!
 
-### Installation
+### ⚙️Installation
 
 1. **Clone the repository**:
    ```bash
@@ -129,7 +130,6 @@ Together, these tools create a slick, immersive frontend tied to the **HappyChai
 
 Want to join the adventure? We’d love your help! Fork the repository, make some epic changes, and send us a pull request. Whether it’s fixing bugs, adding features, or tweaking the UI, every contribution makes the **Realm of Cards** even more legendary! 🧙‍♂️⚡
 
-  
 
 ----------
 
