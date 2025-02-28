@@ -37,7 +37,6 @@ const nextConfig = {
     return config;
   },
   experimental: {},
-  swcMinify: false,
 };
 
 module.exports = nextConfig;
