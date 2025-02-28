@@ -18,7 +18,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Realm of Cards',
-  description: 'TCG Battle',
+  description: 'Realm of Cards',
   icons: {
     icon: 'https://res.cloudinary.com/dlotuochc/image/upload/v1740388538/TCG%20Battle%20Adventure/xidofyh4oq2p24sguawe.png?fbclid=IwY2xjawItSs1leHRuA2FlbQIxMAABHX5XS30ZIYoL_9c7tfDeCQIqE7bc902Y7YCWUGCR7yuFzgU_Q4hpnwrkOQ_aem_x8cCBAlUI59rx3BkNmHY1Q',
   },

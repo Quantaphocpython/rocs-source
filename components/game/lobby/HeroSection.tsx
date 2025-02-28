@@ -37,7 +37,7 @@ export function HeroSection() {
         <Gamepad2 className="w-16 h-16 text-yellow-400" />
         <div className="text-center">
           <h1 className="text-6xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600">
-            TCG Battle
+            Realm of Cards
           </h1>
           <p className="text-2xl text-yellow-400/80 mt-2">Adventure</p>
         </div>
