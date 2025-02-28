@@ -4,11 +4,11 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Heart, Sword, Zap, Shield, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Card, GameCard as GameCardType } from '@/types/game';
+import { Card, Class, GameCard as GameCardType } from '@/types/game';
 import { CardDetails } from '@/components/game/card/CardDetails';
 
 interface GameCardProps {
-  card: Card | GameCardType;
+  card: Card | GameCardType | null;
   onClick?: () => void;
   selected?: boolean;
   disabled?: boolean;
@@ -25,24 +25,24 @@ export function GameCard({
   const [showDetails, setShowDetails] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
-  const isGameCard = 'currentHealth' in card;
+  const isGameCard = card !== null && 'currentHealth' in card;
 
   const sizeClasses = {
     normal: 'w-[160px] h-[220px]',
     small: 'w-[120px] h-[175px]',
-    tiny: 'w-[80px] h-[120px]'
+    tiny: 'w-[80px] h-[120px]',
   };
 
   const textSizes = {
     normal: 'text-sm',
     small: 'text-xs',
-    tiny: 'text-[8px]'
+    tiny: 'text-[8px]',
   };
 
   const iconSizes = {
     normal: 'w-4 h-4',
     small: 'w-3.5 h-3.5',
-    tiny: 'w-2.5 h-2.5'
+    tiny: 'w-2.5 h-2.5',
   };
 
   const getElementColors = (elementClass: string) => {
@@ -62,7 +62,7 @@ export function GameCard({
     }
   };
 
-  const mainElementColor = getElementColors(card.class[0]);
+  const mainElementColor = getElementColors(card?.class[0] ?? Class.EARTH);
 
   return (
     <>
@@ -83,32 +83,40 @@ export function GameCard({
         onMouseLeave={() => setIsHovered(false)}
       >
         {/* Card Frame */}
-        <div className={cn(
-          'absolute inset-0 rounded-lg overflow-hidden',
-          'transition-all duration-300',
-          selected && 'ring-2 ring-violet-400 shadow-lg shadow-violet-400/20'
-        )}>
+        <div
+          className={cn(
+            'absolute inset-0 rounded-lg overflow-hidden',
+            'transition-all duration-300',
+            selected && 'ring-2 ring-violet-400 shadow-lg shadow-violet-400/20'
+          )}
+        >
           {/* Background Gradient */}
-          <div className={cn(
-            'absolute inset-0 bg-gradient-to-br opacity-20',
-            mainElementColor
-          )} />
+          <div
+            className={cn(
+              'absolute inset-0 bg-gradient-to-br opacity-20',
+              mainElementColor
+            )}
+          />
 
           {/* Card Content */}
           <div className="relative h-full flex flex-col bg-black/60">
             {/* Card Header */}
-            <div className={cn(
-              'px-2 py-1 bg-black/40 border-b border-white/10 flex items-center justify-between',
-              size === 'tiny' && 'px-1.5 py-0.5'
-            )}>
-              <span className={cn(
-                'font-medium text-white truncate',
-                textSizes[size]
-              )}>
-                {card.name}
+            <div
+              className={cn(
+                'px-2 py-1 bg-black/40 border-b border-white/10 flex items-center justify-between',
+                size === 'tiny' && 'px-1.5 py-0.5'
+              )}
+            >
+              <span
+                className={cn(
+                  'font-medium text-white truncate',
+                  textSizes[size]
+                )}
+              >
+                {card?.name}
               </span>
               <div className="flex items-center gap-0.5">
-                {card.class.map((cls, idx) => (
+                {card?.class.map((cls, idx) => (
                   <div
                     key={idx}
                     className={cn(
@@ -124,52 +132,74 @@ export function GameCard({
             {/* Card Image */}
             <div className="relative flex-grow">
               <img
-                src={card.image}
-                alt={card.name}
+                src={card?.image}
+                alt={card?.name}
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
             </div>
 
             {/* Card Stats */}
-            <div className={cn(
-              'p-1.5 bg-black/40 border-t border-white/10',
-              size === 'tiny' && 'p-1'
-            )}>
+            <div
+              className={cn(
+                'p-1.5 bg-black/40 border-t border-white/10',
+                size === 'tiny' && 'p-1'
+              )}
+            >
               <div className="flex justify-between items-center">
                 {/* Attack */}
-                <div className={cn(
-                  'flex items-center gap-0.5',
-                  'px-1 py-0.5 rounded bg-black/30',
-                  size === 'tiny' && 'px-0.5 py-0.5'
-                )}>
+                <div
+                  className={cn(
+                    'flex items-center gap-0.5',
+                    'px-1 py-0.5 rounded bg-black/30',
+                    size === 'tiny' && 'px-0.5 py-0.5'
+                  )}
+                >
                   <Sword className={cn('text-orange-400', iconSizes[size])} />
-                  <span className={cn('text-orange-400 font-medium', textSizes[size])}>
-                    {card.attack}
+                  <span
+                    className={cn(
+                      'text-orange-400 font-medium',
+                      textSizes[size]
+                    )}
+                  >
+                    {card?.attack}
                   </span>
                 </div>
 
                 {/* Health */}
-                <div className={cn(
-                  'flex items-center gap-0.5',
-                  'px-1 py-0.5 rounded bg-black/30',
-                  size === 'tiny' && 'px-0.5 py-0.5'
-                )}>
+                <div
+                  className={cn(
+                    'flex items-center gap-0.5',
+                    'px-1 py-0.5 rounded bg-black/30',
+                    size === 'tiny' && 'px-0.5 py-0.5'
+                  )}
+                >
                   <Heart className={cn('text-red-400', iconSizes[size])} />
-                  <span className={cn('text-red-400 font-medium', textSizes[size])}>
-                    {isGameCard ? `${card.currentHealth}/${card.health}` : card.health}
+                  <span
+                    className={cn('text-red-400 font-medium', textSizes[size])}
+                  >
+                    {isGameCard
+                      ? `${card.currentHealth}/${card.health}`
+                      : card?.health}
                   </span>
                 </div>
 
                 {/* Stamina Cost */}
-                <div className={cn(
-                  'flex items-center gap-0.5',
-                  'px-1 py-0.5 rounded bg-black/30',
-                  size === 'tiny' && 'px-0.5 py-0.5'
-                )}>
+                <div
+                  className={cn(
+                    'flex items-center gap-0.5',
+                    'px-1 py-0.5 rounded bg-black/30',
+                    size === 'tiny' && 'px-0.5 py-0.5'
+                  )}
+                >
                   <Zap className={cn('text-yellow-400', iconSizes[size])} />
-                  <span className={cn('text-yellow-400 font-medium', textSizes[size])}>
-                    {card.staminaCost}
+                  <span
+                    className={cn(
+                      'text-yellow-400 font-medium',
+                      textSizes[size]
+                    )}
+                  >
+                    {card?.staminaCost}
                   </span>
                 </div>
               </div>
@@ -184,10 +214,12 @@ export function GameCard({
             animate={{ opacity: 1 }}
             className="absolute inset-0 rounded-lg"
           >
-            <div className={cn(
-              'absolute inset-0 bg-gradient-to-br opacity-10',
-              mainElementColor
-            )} />
+            <div
+              className={cn(
+                'absolute inset-0 bg-gradient-to-br opacity-10',
+                mainElementColor
+              )}
+            />
           </motion.div>
         )}
       </motion.div>
