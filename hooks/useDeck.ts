@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import type { Card, PrebuiltDeck } from '@/types/game';
+import { useState } from 'react';
 
 const DECK_STORAGE_KEY = 'tcg-battle-deck';
 const DECK_INFO_KEY = 'tcg-deck-info';
