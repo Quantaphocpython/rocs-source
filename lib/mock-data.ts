@@ -327,7 +327,12 @@ export const mockGameState: GameState = {
     health: 40,
     attack: 5,
   },
-  currentBoss: null,
+  currentBoss: {
+    bossId: 1,
+    monsterId: 1,
+    health: 1,
+    attack: 1,
+  },
   cardsOnField: [],
   battleHistory: [],
   createdAt: new Date().toISOString(),
