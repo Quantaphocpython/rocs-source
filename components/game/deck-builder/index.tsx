@@ -14,17 +14,15 @@ import type { PrebuiltDeck, Card } from '@/types/game';
 import { Class } from '@/types/game';
 import { DECK_SIZE } from '@/constants/game';
 import { motion } from 'framer-motion';
-import { useGetCards } from '@/hooks/useGetCards';
-import { useGetPrebuiltDecks } from '@/hooks/useGetPrebuildDecks';
 import { Map } from 'lucide-react';
+import { prebuiltDecks } from '@/lib/mock-data';
+import { cardData } from '@/app/wiki/page';
 
 export function DeckBuilder() {
-  const { cards } = useGetCards();
-  const { decks } = useGetPrebuiltDecks();
   const router = useRouter();
   const { savedDeck, deckInfo, saveDeck } = useDeck();
   const [selectedDeck, setSelectedDeck] = useState<PrebuiltDeck | null>(
-    deckInfo ? decks?.find((d) => d.id === deckInfo.id) || null : null
+    prebuiltDecks[0]
   );
   const [customDeck, setCustomDeck] = useState<Card[]>([]);
   const [activeFilter, setActiveFilter] = useState<Class | null>(null);
@@ -100,8 +98,10 @@ export function DeckBuilder() {
     }
   };
 
-  const filteredCards = cards
-    ? cards.filter((card) => !activeFilter || card.class.includes(activeFilter))
+  const filteredCards = cardData
+    ? cardData.filter(
+        (card) => !activeFilter || card.classes.includes(activeFilter)
+      )
     : [];
 
   return (
@@ -156,7 +156,7 @@ export function DeckBuilder() {
 
           <TabsContent value="prebuilt">
             <PrebuiltDeckList
-              decks={decks ?? []}
+              decks={prebuiltDecks ?? []}
               selectedDeck={selectedDeck}
               onDeckSelect={handleDeckSelect}
               onSaveDeck={handleSaveDeck}

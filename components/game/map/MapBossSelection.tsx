@@ -16,9 +16,9 @@ import {
 import { useState } from 'react';
 
 interface MapBossSelectionProps {
-  bosses: Monster[];
-  selectedBoss: Monster;
-  onSelectBoss: (boss: Monster) => void;
+  bosses: any;
+  selectedBoss: any;
+  onSelectBoss: (boss: any) => void;
 }
 
 export function MapBossSelection({
@@ -57,7 +57,7 @@ export function MapBossSelection({
       </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {bosses.map((boss, index) => {
+        {bosses.map((boss: any, index: any) => {
           const isLocked = isBossLocked(boss.id);
           const isCompleted = completedBosses.includes(boss.id);
           const isSelected = selectedBoss.id === boss.id;
@@ -120,7 +120,7 @@ export function MapBossSelection({
                     {boss.name}
                   </h3>
                   <div className="flex flex-wrap items-center gap-2">
-                    {boss.class.map((cls, i) => (
+                    {boss.class.map((cls: any, i: any) => (
                       <div
                         key={i}
                         className="flex items-center gap-1 bg-gray-800/70 px-2.5 py-1 rounded-full border border-purple-600/40 text-xs text-gray-100 shadow-sm"

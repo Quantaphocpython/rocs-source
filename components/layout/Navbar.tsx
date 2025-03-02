@@ -1,15 +1,10 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { connect } from '@happy.tech/core';
-import { ConnectButton } from '@happy.tech/react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 
 export function Navbar({ className }: { className?: string }) {
-  const onRegister = () => {
-    connect();
-  };
   return (
     <motion.nav
       initial={{ opacity: 0, y: -20 }}
@@ -28,8 +23,6 @@ export function Navbar({ className }: { className?: string }) {
       >
         Realm of Cards
       </Link>
-
-      <ConnectButton />
     </motion.nav>
   );
 }

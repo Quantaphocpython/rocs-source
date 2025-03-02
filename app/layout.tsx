@@ -4,15 +4,8 @@ import { ThemeProvider } from 'next-themes';
 import { Inter } from 'next/font/google';
 import './globals.css';
 
-import dynamic from 'next/dynamic';
 import { Toaster } from 'sonner';
 
-const ContextProvider = dynamic(
-  () => import('../components/providers/ContextProvider'),
-  {
-    ssr: false, // Tắt SSR cho ContextProvider
-  }
-);
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
@@ -38,9 +31,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Toaster richColors position="top-center" />
-          <ContextProvider>
-            <TooltipProvider>{children}</TooltipProvider>
-          </ContextProvider>
+          {/* <ContextProvider> */}
+          <TooltipProvider>{children}</TooltipProvider>
+          {/* </ContextProvider> */}
         </ThemeProvider>
       </body>
     </html>

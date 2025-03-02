@@ -7,7 +7,7 @@ import { convertToGameCard } from '@/utils/gameLogic';
 import { cn } from '@/lib/utils';
 
 interface CardGridProps {
-  cards: Card[];
+  cards: any;
   customDeck: Card[];
   onCardSelect: (card: Card) => void;
   size?: 'small' | 'normal' | 'large';
@@ -22,7 +22,7 @@ export function CardGrid({
   return (
     <div className="grid grid-cols-5 gap-6">
       <AnimatePresence mode="popLayout">
-        {cards.map((card) => {
+        {cards.map((card: any) => {
           const count = customDeck.filter((c) => c.id === card.id).length;
           const isMaxed = count >= card.maxPerSession;
 

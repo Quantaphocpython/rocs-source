@@ -4,35 +4,26 @@ import { BossDetails } from '@/components/game/map/BossDetails';
 import { MapBossSelection } from '@/components/game/map/MapBossSelection';
 import { Button } from '@/components/ui/button';
 import { useDeck } from '@/hooks/useDeck';
-import { useGetMonsters } from '@/hooks/useGetMonsters';
 import { Class } from '@/types/game';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Sword } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { useAccount } from 'wagmi';
+import { bossData } from '../wiki/page';
 
 export default function MapPage() {
   const router = useRouter();
   const { savedDeck } = useDeck();
-  const { monsters, isLoading: isMonsterLoading } = useGetMonsters();
-  const [selectedBoss, setSelectedBoss] = useState({
-    id: -1,
-    name: 'Default Monster',
-    health: 50,
-    attack: 10,
-    image: '/default-monster.png',
-    class: [Class.METAL],
-  });
+  const [selectedBoss, setSelectedBoss] = useState(bossData[0]);
   const [isLoading, setIsLoading] = useState(true);
-  const { address, isConnected } = useAccount();
+  // const { address, isConnected } = useAccount();
 
-  useEffect(() => {
-    if (monsters && monsters.length > 0 && selectedBoss.id === -1) {
-      setSelectedBoss(monsters.find((m) => m.id === 0) || monsters[0]);
-    }
-  }, [monsters, selectedBoss.id]);
+  // useEffect(() => {
+  //   if (bossData && bossData.length > 0 && selectedBoss.id === -1) {
+  //     setSelectedBoss(bossData.find((m) => m.id === 0) || bossData[0]);
+  //   }
+  // }, [bossData, selectedBoss.id]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -53,10 +44,10 @@ export default function MapPage() {
       return;
     }
 
-    if (!isConnected) {
-      toast.error('Please connect your wallet first');
-      return;
-    }
+    // if (!isConnected) {
+    //   toast.error('Please connect your wallet first');
+    //   return;
+    // }
 
     router.push(`/map/battle/${selectedBoss.id}`);
   };
@@ -88,9 +79,9 @@ export default function MapPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
-            {monsters && selectedBoss && (
+            {bossData && selectedBoss && (
               <MapBossSelection
-                bosses={monsters}
+                bosses={bossData}
                 selectedBoss={selectedBoss}
                 onSelectBoss={setSelectedBoss}
               />

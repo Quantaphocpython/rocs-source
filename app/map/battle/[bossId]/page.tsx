@@ -1,11 +1,8 @@
-import { useGetMonsters } from '@/hooks/useGetMonsters';
 import BossBattleClientPage from './client-page';
 import { bossList } from '@/lib/boss-data';
 import { useEffect, useState } from 'react';
 
 export function generateStaticParams() {
-  //   const { monsters } = useGetMonsters();
-
   return bossList.map((boss) => ({
     bossId: boss.id.toString(),
   }));

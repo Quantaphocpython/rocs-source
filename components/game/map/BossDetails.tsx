@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 
 interface BossDetailsProps {
-  boss: Monster;
+  boss: any;
 }
 
 export function BossDetails({ boss }: BossDetailsProps) {
@@ -75,7 +75,7 @@ export function BossDetails({ boss }: BossDetailsProps) {
             {boss.name}
           </h2>
           <div className="flex items-center gap-3 mt-3">
-            {boss.class.map((cls, i) => (
+            {boss.class.map((cls: any, i: any) => (
               <div
                 key={i}
                 className="flex items-center gap-2 bg-gray-800/80 px-3 py-1.5 rounded-full border border-gray-700/50 shadow-sm"
@@ -128,7 +128,7 @@ export function BossDetails({ boss }: BossDetailsProps) {
             Element Analysis
           </h3>
           <div className="grid gap-3">
-            {boss.class.map((cls, i) => (
+            {boss.class.map((cls: any, i: any) => (
               <div
                 key={i}
                 className={`rounded-lg shadow-md overflow-hidden border ${getClassColor(

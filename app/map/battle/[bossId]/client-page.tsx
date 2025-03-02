@@ -7,18 +7,17 @@ import { GameBoard } from '@/components/game/map-battle/GameBoard';
 import { LoadingScreen } from '@/components/game/map-battle/LoadingScreen';
 import { toast } from 'sonner';
 import { Card, Monster } from '@/types/game';
-import { useGetMonsters } from '@/hooks/useGetMonsters';
+import { bossData } from '@/app/wiki/page';
 
 export default function BossBattleClientPage() {
   const router = useRouter();
   const params = useParams();
   const { savedDeck } = useDeck();
-  const { monsters, isLoading: isMonstersLoading } = useGetMonsters();
 
-  const [currentBoss, setCurrentBoss] = useState<Monster | null>(null);
+  const [currentBoss, setCurrentBoss] = useState<any | null>(null);
 
   useEffect(() => {
-    if (isMonstersLoading) return; // Chờ dữ liệu
+    // if (isMonstersLoading) return; // Chờ dữ liệu
     if (!savedDeck) {
       toast.error('You need to select a deck first');
       router.push('/deck');
@@ -26,7 +25,7 @@ export default function BossBattleClientPage() {
     }
 
     const bossId = params.bossId as string;
-    const boss = monsters?.find((b) => b.id.toString() === bossId);
+    const boss = bossData?.find((b) => b.id.toString() === bossId);
 
     if (!boss) {
       toast.error('Boss not found');
@@ -37,16 +36,9 @@ export default function BossBattleClientPage() {
     if (!currentBoss || currentBoss.id !== boss.id) {
       setCurrentBoss(boss);
     }
-  }, [
-    savedDeck,
-    router,
-    params.bossId,
-    monsters,
-    isMonstersLoading,
-    currentBoss,
-  ]);
+  }, [savedDeck, router, params.bossId, bossData, currentBoss]);
 
-  if (isMonstersLoading || !currentBoss) {
+  if (!currentBoss) {
     return <LoadingScreen bossName={currentBoss?.name || 'Boss'} />;
   }
 
