@@ -1,66 +1,60 @@
-// 'use client';
+'use client'; // 🔥 Quan trọng khi dùng Next.js App Router
 
-// import CustomAvatar from '@/components/users/CustomAvatar';
-// import {
-//   AvatarComponent,
-//   RainbowKitProvider,
-//   darkTheme,
-//   lightTheme,
-// } from '@rainbow-me/rainbowkit';
-// import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-// import { useTheme } from 'next-themes';
-// import React, { useEffect, useState } from 'react';
-// import { useAccount, WagmiProvider } from 'wagmi';
+import React, { ReactNode } from 'react';
+import { InjectedConnector } from 'starknetkit/injected';
+import {
+  ArgentMobileConnector,
+  isInArgentMobileAppBrowser,
+} from 'starknetkit/argentMobile';
+import { WebWalletConnector } from 'starknetkit/webwallet';
+import { mainnet, sepolia } from '@starknet-react/chains';
+import { StarknetConfig, publicProvider } from '@starknet-react/core';
 
-// const queryClient = new QueryClient();
+type Props = {
+  children: ReactNode;
+};
 
-// type Props = React.ReactNode;
+export default function ContextProvider({ children }: Props) {
+  const chains = [mainnet, sepolia];
 
-// export default function ContextProvider({ children }: { children: Props }) {
-//   const [mounted, setMounted] = React.useState(false);
-//   const { theme } = useTheme();
-//   const [rainbowKitTheme, setRainbowKitTheme] = useState(
-//     darkTheme({
-//       accentColor: '#ff8800',
-//       accentColorForeground: 'white',
-//       borderRadius: 'none',
-//     })
-//   );
+  const connectors = React.useMemo(() => {
+    // Kiểm tra có đang chạy trên browser hay không để tránh lỗi SSR
+    if (typeof window === 'undefined') return [];
 
-//   useEffect(() => {
-//     setMounted(true);
-//   }, []);
+    return isInArgentMobileAppBrowser()
+      ? [
+          ArgentMobileConnector.init({
+            options: {
+              dappName: process.env.NEXT_PUBLIC_APP_NAME ?? '',
+              projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID,
+            },
+            inAppBrowserOptions: {},
+          }),
+        ]
+      : [
+          new InjectedConnector({
+            options: { id: 'braavos', name: 'Braavos' },
+          }),
+          new InjectedConnector({
+            options: { id: 'argentX', name: 'Argent X' },
+          }),
+          new WebWalletConnector({ url: 'https://web.argent.xyz' }),
+          ArgentMobileConnector.init({
+            options: {
+              dappName: 'Example dapp',
+              projectId: 'example-project-id',
+            },
+          }),
+        ];
+  }, []);
 
-//   useEffect(() => {
-//     const newTheme =
-//       theme === 'dark'
-//         ? darkTheme({
-//             accentColor: '#ff8800',
-//             accentColorForeground: 'white',
-//             borderRadius: 'none',
-//           })
-//         : lightTheme({
-//             accentColor: '#ff8800',
-//             accentColorForeground: 'white',
-//             borderRadius: 'none',
-//           });
-
-//     setRainbowKitTheme(newTheme);
-//   }, [theme]);
-
-//   return (
-//     <WagmiProvider config={walletConfig}>
-//       <QueryClientProvider client={queryClient}>
-//         <RainbowKitProvider
-//           initialChain={network}
-//           showRecentTransactions={true}
-//           theme={rainbowKitTheme}
-//           avatar={CustomAvatar}
-//           locale="en-US"
-//         >
-//           {mounted && children}
-//         </RainbowKitProvider>
-//       </QueryClientProvider>
-//     </WagmiProvider>
-//   );
-// }
+  return (
+    <StarknetConfig
+      chains={chains}
+      provider={publicProvider()}
+      connectors={connectors}
+    >
+      {children}
+    </StarknetConfig>
+  );
+}

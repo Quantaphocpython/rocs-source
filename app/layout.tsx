@@ -5,6 +5,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 
 import { Toaster } from 'sonner';
+import ContextProvider from '@/components/providers/ContextProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -31,9 +32,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Toaster richColors position="top-center" />
-          {/* <ContextProvider> */}
-          <TooltipProvider>{children}</TooltipProvider>
-          {/* </ContextProvider> */}
+          <ContextProvider>
+            <TooltipProvider>{children}</TooltipProvider>
+          </ContextProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -129,6 +129,7 @@ export function Navbar({ onNavigate }: NavbarProps) {
             >
               <span>Start Playing</span>
             </a>
+            <CustomConnectButton />
           </motion.div>
         </div>
       </div>
