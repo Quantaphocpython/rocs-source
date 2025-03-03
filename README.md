@@ -1,3 +1,4 @@
+
 # Realm of Cards - Frontend
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT) [![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen.svg)](https://github.com/WeTranscend-labs/FE-Realm-of-Cards/actions) [![Version](https://img.shields.io/badge/Version-1.0.0-orange.svg)](https://github.com/WeTranscend-labs/FE-Realm-of-Cards/releases) ![Starknet](https://img.shields.io/badge/Blockchain-Starknet-yellow.svg)
 
@@ -99,10 +100,10 @@ This frontend is forged with a powerful mix of modern tools and libraries, blend
   
 -   **Radix UI**: Accessible, polished components for dialogs, tooltips, and more. 🛠️
   
--   **Viem & Ethers.js**: Blockchain connectivity for wallets, transactions, and smart contracts. 🔐
+- **Starknet Kit**: Seamless Starknet blockchain integration for wallet connections, transactions, and smart contract interactions. 🌐
   
 
-Together, these tools create a slick, immersive frontend tied to the **HappyChain Testnet**—ready for card-slinging chaos! 🃏💥
+Together, these tools create a slick, immersive frontend tied to the **Starknet Sepolia**—ready for card-slinging chaos! 🃏💥
 
 ----------
 
@@ -113,7 +114,6 @@ Together, these tools create a slick, immersive frontend tied to the **HappyChai
 ├── app/                      # Contains the main application logic, routing, and page components for the game
 ├── components/               # Reusable UI components, such as card displays, battle interfaces, and modals
 ├── constants/                # Static values like card effects, game rules, or HappyChain configurations
-├── contracts/                # Smart contract ABIs or interfaces for interacting with HappyChain on-chain logic
 ├── hooks/                    # Custom React hooks for managing game state, blockchain interactions, and UI logic
 ├── lib/                      # Utility libraries and functions
 ├── styles/                   # Global and component-specific CSS/SCSS/Tailwind styles for the game’s design
