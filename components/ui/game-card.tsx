@@ -62,7 +62,9 @@ export function GameCard({
     }
   };
 
-  const mainElementColor = getElementColors(card?.classes[0] ?? Class.EARTH);
+  const mainElementColor = getElementColors(
+    (card?.classes && card?.classes) ?? Class.EARTH
+  );
 
   return (
     <>
@@ -116,16 +118,17 @@ export function GameCard({
                 {card?.name}
               </span>
               <div className="flex items-center gap-0.5">
-                {card?.classes.map((cls: any, idx: any) => (
-                  <div
-                    key={idx}
-                    className={cn(
-                      'rounded-full bg-gradient-to-br shadow-sm',
-                      getElementColors(cls),
-                      size === 'tiny' ? 'w-1.5 h-1.5' : 'w-2 h-2'
-                    )}
-                  />
-                ))}
+                {card?.classes &&
+                  card?.classes.map((cls: any, idx: any) => (
+                    <div
+                      key={idx}
+                      className={cn(
+                        'rounded-full bg-gradient-to-br shadow-sm',
+                        getElementColors(cls),
+                        size === 'tiny' ? 'w-1.5 h-1.5' : 'w-2 h-2'
+                      )}
+                    />
+                  ))}
               </div>
             </div>
 

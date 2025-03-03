@@ -110,17 +110,18 @@ export function CardDetails({ card, isOpen, onClose }: CardDetailsProps) {
 
               {/* Classes */}
               <div className="flex gap-3">
-                {card.classes.map((cls: any, index: any) => (
-                  <div
-                    key={index}
-                    className="flex items-center gap-2 px-3 py-1 rounded-md bg-gray-700/50 border border-gray-600"
-                  >
-                    {getClassIcon(cls)}
-                    <span className="text-xs font-medium text-white">
-                      {cls}
-                    </span>
-                  </div>
-                ))}
+                {card?.classes &&
+                  card.classes.map((cls: any, index: any) => (
+                    <div
+                      key={index}
+                      className="flex items-center gap-2 px-3 py-1 rounded-md bg-gray-700/50 border border-gray-600"
+                    >
+                      {getClassIcon(cls)}
+                      <span className="text-xs font-medium text-white">
+                        {cls}
+                      </span>
+                    </div>
+                  ))}
               </div>
 
               {/* Core Stats */}
@@ -193,7 +194,8 @@ export function CardDetails({ card, isOpen, onClose }: CardDetailsProps) {
             </div>
             <div className="space-y-1 text-xs text-gray-300">
               <p>
-                • Use this card's {card.classes.join(' and ')} element synergies
+                • Use this card's {card?.classes && card.classes.join(' and ')}{' '}
+                element synergies
               </p>
               {card.attack > 7 && (
                 <p>• High attack makes it great for offensive plays</p>
