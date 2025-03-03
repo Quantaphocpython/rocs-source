@@ -46,8 +46,8 @@ export function GameField({
   const [cardUnderAttack, setCardUnderAttack] = useState<number | null>(null);
 
   // Get animation class based on card element
-  const getElementalAnimationClass = (card: GameCard) => {
-    const primaryElement = card.class[0];
+  const getElementalAnimationClass = (card: any) => {
+    const primaryElement = card?.classes[0] ?? '';
     switch (primaryElement) {
       case Class.FIRE:
         return 'animate-fireAttack';
