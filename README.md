@@ -1,16 +1,16 @@
 
-# Realm of Cards - Frontend
+# Realm of Cards 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT) [![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen.svg)](https://github.com/WeTranscend-labs/FE-Realm-of-Cards/actions) [![Version](https://img.shields.io/badge/Version-1.0.0-orange.svg)](https://github.com/WeTranscend-labs/FE-Realm-of-Cards/releases) ![Starknet](https://img.shields.io/badge/Blockchain-Starknet-yellow.svg)
 
   
 
-Welcome to the thrilling universe of **Realm of Cards - Frontend**! This is your gateway to an electrifying blockchain-powered trading card game (TCG) adventure. Whether you're a seasoned deck-builder or a newcomer ready to dive into epic battles, this frontend brings the **Realm of Cards** to life with style, speed, and a touch of magic. Here’s everything you need to know about this project! ⚔️🎴
+Welcome to the thrilling universe of **Realm of Cards**! This is your gateway to an electrifying blockchain-powered trading card game (TCG) adventure. Whether you're a seasoned deck-builder or a newcomer ready to dive into epic battles, this frontend brings the **Realm of Cards** to life with style, speed, and a touch of magic. Here’s everything you need to know about this project! ⚔️🎴
 
 ----------
 
 ## Table of Contents
 
-- [What is Realm of Cards - Frontend?](#what-is-realm-of-cards---frontend)
+- [What is Realm of Cards?](#what-is-realm-of-cards)
 - [How to Get Started](#how-to-get-started)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
@@ -23,11 +23,11 @@ Welcome to the thrilling universe of **Realm of Cards - Frontend**! This is your
 
 ----------
 
-## What is Realm of Cards - Frontend? 
+## What is Realm of Cards? 
 
   
 
-**Realm of Cards - Frontend** is the beating heart of a turn-based card game built on the **Starknet** blockchain. Imagine a wild arena where you craft decks from 40 unique cards, face off against fearsome monsters, and track your victories—all powered by cutting-edge web technology and blockchain wizardry. With a sleek, real-time interface, this frontend lets you:
+**Realm of Cards** is the beating heart of a turn-based card game built on the **Starknet** blockchain. Imagine a wild arena where you craft decks from 40 unique cards, face off against fearsome monsters, and track your victories—all powered by cutting-edge web technology and blockchain wizardry. With a sleek, real-time interface, this frontend lets you:
 
 -   Build killer decks with flair 🎨
   
@@ -43,7 +43,7 @@ It’s card combat cranked up to eleven—perfect for strategists and blockchain
 
 ## How to Get Started
 
-Ready to jump into the action? Follow these steps to set up the **Realm of Cards - Frontend** on your own machine and start slinging cards! 🎮
+Ready to jump into the action? Follow these steps to set up the **Realm of Cards** on your own machine and start slinging cards! 🎮
 
 ### Prerequisites
 Before you begin, make sure you have:
@@ -70,7 +70,7 @@ Before you begin, make sure you have:
    - Add the following variables:
      ```env
      NEXT_PUBLIC_APP_NAME=<your-app-name>
-	 NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID=<your-wallet-connect-project-id>
+	 NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID=<your-wallet-connect-priject-id>
      ```
 4. **Start the development server**:
    ```bash
@@ -134,4 +134,4 @@ Want to join the adventure? We’d love your help! Fork the repository, make som
 
   
 
-The **Realm of Cards - Frontend** is released under the **MIT License**. Feel free to explore, modify, and share—just check the [LICENSE](./LICENSE) file for details.
+The **Realm of Card** is released under the **MIT License**. Feel free to explore, modify, and share—just check the [LICENSE](./LICENSE) file for details.
