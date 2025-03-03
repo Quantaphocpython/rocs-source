@@ -1,6 +1,5 @@
 'use client';
 
-import { Navbar } from '@/components/layout/Navbar';
 import { Button } from '@/components/ui/button';
 import { SectionHighlight } from '@/components/ui/section-highlight';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -28,7 +27,9 @@ import {
   Trees,
   Zap,
 } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 // Mock data for cards
@@ -1514,6 +1515,7 @@ export default function WikiPage() {
   const [filteredCards, setFilteredCards] = useState(cardData);
   const [filteredBosses, setFilteredBosses] = useState(bossData);
   const [elementFilter, setElementFilter] = useState<string | null>(null);
+  const router = useRouter();
 
   // Filter cards based on search term and element filter
   const handleSearch = (term: string) => {
@@ -1566,9 +1568,43 @@ export default function WikiPage() {
     setFilteredCards(filtered);
   };
 
+  const onRuturnHome = () => {
+    router.push('/');
+  };
+
   return (
-    <div className="min-h-screen bg-black">
-      <Navbar />
+    <div className="min-h-screen bg-black ">
+      <div className="container mx-auto px-4">
+        <div
+          className="flex items-center gap-3 pt-3 cursor-pointer"
+          onClick={onRuturnHome}
+        >
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
+            className="relative flex-shrink-0"
+          >
+            <Image
+              src={
+                'https://res.cloudinary.com/dlotuochc/image/upload/v1740388538/TCG%20Battle%20Adventure/xidofyh4oq2p24sguawe.png?fbclid=IwY2xjawItSs1leHRuA2FlbQIxMAABHX5XS30ZIYoL_9c7tfDeCQIqE7bc902Y7YCWUGCR7yuFzgU_Q4hpnwrkOQ_aem_x8cCBAlUI59rx3BkNmHY1Q'
+              }
+              alt="Logo"
+              width={48} // Tăng kích thước một chút
+              height={48}
+              className="rounded-full border-2 border-yellow-600/50 shadow-lg hover:shadow-xl transition-shadow duration-300"
+            />
+          </motion.div>
+          <motion.div
+            initial={{ x: -20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.2, ease: 'easeOut' }}
+            className="text-2xl font-extrabold bg-gradient-to-r from-yellow-400 via-amber-500 to-orange-500 bg-clip-text text-transparent tracking-tight"
+          >
+            Realm-of-Cards
+          </motion.div>
+        </div>
+      </div>
 
       <SectionHighlight
         containerClassName="py-20 min-h-screen"

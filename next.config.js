@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'export',
   reactStrictMode: true,
   typescript: {
     ignoreBuildErrors: true,
@@ -13,6 +14,7 @@ const nextConfig = {
     dirs: [],
   },
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',

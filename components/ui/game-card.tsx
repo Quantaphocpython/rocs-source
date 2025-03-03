@@ -8,7 +8,7 @@ import { Card, Class, GameCard as GameCardType } from '@/types/game';
 import { CardDetails } from '@/components/game/card/CardDetails';
 
 interface GameCardProps {
-  card: Card | GameCardType | null;
+  card: any;
   onClick?: () => void;
   selected?: boolean;
   disabled?: boolean;
@@ -62,7 +62,7 @@ export function GameCard({
     }
   };
 
-  const mainElementColor = getElementColors(card?.class[0] ?? Class.EARTH);
+  const mainElementColor = getElementColors(card?.classes[0] ?? Class.EARTH);
 
   return (
     <>
@@ -116,7 +116,7 @@ export function GameCard({
                 {card?.name}
               </span>
               <div className="flex items-center gap-0.5">
-                {card?.class.map((cls, idx) => (
+                {card?.classes.map((cls: any, idx: any) => (
                   <div
                     key={idx}
                     className={cn(
