@@ -24,7 +24,7 @@ import {
 } from 'lucide-react';
 
 interface CardDetailsProps {
-  card: (Card | GameCard) | null;
+  card: any;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -110,7 +110,7 @@ export function CardDetails({ card, isOpen, onClose }: CardDetailsProps) {
 
               {/* Classes */}
               <div className="flex gap-3">
-                {card.classes.map((cls, index) => (
+                {card.classes.map((cls: any, index: any) => (
                   <div
                     key={index}
                     className="flex items-center gap-2 px-3 py-1 rounded-md bg-gray-700/50 border border-gray-600"
