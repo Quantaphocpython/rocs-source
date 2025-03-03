@@ -1,5 +1,5 @@
 # Realm of Cards - Frontend
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT) [![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen.svg)](https://github.com/WeTranscend-labs/FE-Realm-of-Cards/actions) [![Version](https://img.shields.io/badge/Version-1.0.0-orange.svg)](https://github.com/WeTranscend-labs/FE-Realm-of-Cards/releases) [![HappyChain](https://img.shields.io/badge/Blockchain-HappyChain-yellow.svg)](https://happy-testnet-sepolia.hub.caldera.xyz/)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT) [![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen.svg)](https://github.com/WeTranscend-labs/FE-Realm-of-Cards/actions) [![Version](https://img.shields.io/badge/Version-1.0.0-orange.svg)](https://github.com/WeTranscend-labs/FE-Realm-of-Cards/releases) ![Starknet](https://img.shields.io/badge/Blockchain-Starknet-yellow.svg)
 
   
 
@@ -26,7 +26,7 @@ Welcome to the thrilling universe of **Realm of Cards - Frontend**! This is your
 
   
 
-**Realm of Cards - Frontend** is the beating heart of a turn-based card game built on the **HappyChain** blockchain. Imagine a wild arena where you craft decks from 40 unique cards, face off against fearsome monsters, and track your victories—all powered by cutting-edge web technology and blockchain wizardry. With a sleek, real-time interface, this frontend lets you:
+**Realm of Cards - Frontend** is the beating heart of a turn-based card game built on the **Starknet** blockchain. Imagine a wild arena where you craft decks from 40 unique cards, face off against fearsome monsters, and track your victories—all powered by cutting-edge web technology and blockchain wizardry. With a sleek, real-time interface, this frontend lets you:
 
 -   Build killer decks with flair 🎨
   
@@ -34,7 +34,7 @@ Welcome to the thrilling universe of **Realm of Cards - Frontend**! This is your
   
 -   Manage on-chain assets like a pro 🧙‍♂️
   
--   Experience seamless gameplay tied to the **HappyChain Testnet** ✨
+-   Experience seamless gameplay tied to the **Starknet Sepolia** ✨
   
 It’s card combat cranked up to eleven—perfect for strategists and blockchain enthusiasts alike!
 
@@ -70,7 +70,6 @@ Before you begin, make sure you have:
      ```env
      NEXT_PUBLIC_APP_NAME=<your-app-name>
 	 NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID=<your-wallet-connect-priject-id>
-	 NEXT_PUBLIC_CONTRACT_ADDRESS=<your-contract-address>
      ```
 4. **Start the development server**:
    ```bash
@@ -101,8 +100,6 @@ This frontend is forged with a powerful mix of modern tools and libraries, blend
 -   **Radix UI**: Accessible, polished components for dialogs, tooltips, and more. 🛠️
   
 -   **Viem & Ethers.js**: Blockchain connectivity for wallets, transactions, and smart contracts. 🔐
-  
--   **HappyChain SDK**: Gas sponsorship and session keys for a frictionless blockchain experience. ✨
   
 
 Together, these tools create a slick, immersive frontend tied to the **HappyChain Testnet**—ready for card-slinging chaos! 🃏💥
