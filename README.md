@@ -70,7 +70,7 @@ Before you begin, make sure you have:
    - Add the following variables:
      ```env
      NEXT_PUBLIC_APP_NAME=<your-app-name>
-	 NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID=<your-wallet-connect-priject-id>
+	 NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID=<your-wallet-connect-project-id>
      ```
 4. **Start the development server**:
    ```bash
