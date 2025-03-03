@@ -67,8 +67,8 @@ export function GameField({
   };
 
   // Get particle class based on card element
-  const getElementalParticleClass = (card: GameCard) => {
-    const primaryElement = card.class[0];
+  const getElementalParticleClass = (card: any) => {
+    const primaryElement = (card.classes && card?.classes[0]) ?? '';
     switch (primaryElement) {
       case Class.FIRE:
         return 'fire-particles';
@@ -81,13 +81,13 @@ export function GameField({
       case Class.METAL:
         return 'metal-particles';
       default:
-        return '';
+        return 'metal-particles';
     }
   };
 
   // Get trail class based on card element
-  const getElementalTrailClass = (card: GameCard) => {
-    const primaryElement = card.class[0];
+  const getElementalTrailClass = (card: any) => {
+    const primaryElement = (card.classes && card?.classes[0]) ?? '';
     switch (primaryElement) {
       case Class.FIRE:
         return 'fire-trail';
@@ -100,7 +100,7 @@ export function GameField({
       case Class.METAL:
         return 'metal-trail';
       default:
-        return '';
+        return 'metal-trail';
     }
   };
 
