@@ -49,7 +49,7 @@ export function GameField({
   const getElementalAnimationClass = (card: any) => {
     const primaryElement = (card.classes && card?.classes[0]) ?? '';
 
-    console.log(card.classes);
+    console.log(card.class);
     switch (primaryElement) {
       case Class.FIRE:
         return 'animate-fireAttack';
@@ -62,7 +62,7 @@ export function GameField({
       case Class.METAL:
         return 'animate-metalAttack';
       default:
-        return '';
+        return 'animate-metalAttack';
     }
   };
 
